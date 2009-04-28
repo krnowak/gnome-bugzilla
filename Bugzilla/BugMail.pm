@@ -260,6 +260,7 @@ sub Send {
         if ($who ne $lastwho) {
             $lastwho = $who;
             $fullwho = $whoname ? "$whoname <$who>" : $who;
+            $fullwho = email_filter($fullwho, 'force');
             $diffheader = "\n$fullwho changed:\n\n";
             $diffheader .= three_columns("What    ", "Removed", "Added");
             $diffheader .= ('-' x 76) . "\n";
@@ -712,8 +713,9 @@ sub prepare_comments {
     my $result = "";
     foreach my $comment (@$raw_comments) {
         if ($count) {
-            $result .= "\n\n--- Comment #$count from " . $comment->{'author'}->identity .
-                       "  " . format_time($comment->{'time'}) . " ---\n";
+            $result .= "\n\n--- Comment #$count from " 
+                    . email_filter($comment->{'author'}->identity, 'force')
+                    .  "  " . format_time($comment->{'time'}) . " ---\n";
         }
         # Format language specific comments. We don't update $comment->{'body'}
         # directly, otherwise it would grow everytime you call format_comment()
