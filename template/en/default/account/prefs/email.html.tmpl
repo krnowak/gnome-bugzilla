@@ -77,6 +77,18 @@ document.write('<input type="button" value="Disable All Mail" onclick="SetCheckb
   <tr>
     <td width="150"></td>
     <td>
+      <label>
+      <input type="checkbox" value="1" name="globalwatcher" id="globalwatcher"
+             [% 'checked="checked"' IF user.is_global_watcher %]>
+      Get all [% terms.bug %]mail that [% terms.Bugzilla %] sends that I
+      am allowed to see. (Overrides all options below.)
+      </label>
+    </td>
+  </tr>
+
+  <tr>
+    <td width="150"></td>
+    <td>
       [% prefname = "email-$constants.REL_ANY-$constants.EVT_FLAG_REQUESTED" %]
       <input type="checkbox" name="[% prefname %]" id="[% prefname %]" 
         value="1"
@@ -98,16 +110,6 @@ document.write('<input type="button" value="Disable All Mail" onclick="SetCheckb
       <br>
     </td>
   </tr>
-[% IF user.is_global_watcher %]
-  <tr>
-    <td width="150"></td>
-    <td>
-      You are watching all [% terms.bugs %]. To be removed from this role,
-      contact
-      <a href="mailto:[% Param("maintainer") %]">[% Param("maintainer") %]</a>.
-    </td>
-  </tr>
-[% END %]
 </table>
 
 <hr>
