@@ -1430,11 +1430,6 @@ sub _check_keywords {
     $keyword_string = trim($keyword_string);
     return [] if !$keyword_string;
     
-    # On creation, only editbugs users can set keywords.
-    if (!ref $invocant) {
-        return [] if !Bugzilla->user->in_group('editbugs', $product->id);
-    }
-    
     my %keywords;
     foreach my $keyword (split(/[\s,]+/, $keyword_string)) {
         next unless $keyword;
@@ -3447,6 +3442,10 @@ sub check_can_change_field {
 
     # Allow anyone to change comments.
     if ($field =~ /^longdesc/) {
+        return 1;
+    }
+    # And keywords
+    if ($field eq 'keywords') {
         return 1;
     }
 
