@@ -67,7 +67,6 @@
       <th align="left">ID</th>
       <th align="left">Sev</th>
       <th align="left">Pri</th>
-      <th align="left">Plt</th>
       <th align="left">Assignee</th>
       <th align="left">Status</th>
       <th align="left">Resolution</th>
@@ -80,7 +79,6 @@
             [%- bug.bug_id %]">[% bug.bug_id %]</a></td>
         <td align="left">[% bug.bug_severity FILTER html %]</td>
         <td align="left">[% bug.priority FILTER html %]</td>
-        <td align="left">[% bug.rep_platform FILTER html %]</td>
         <td align="left">[% bug.$assignee_login_string FILTER html %]</td>
         <td align="left">[% get_status(bug.bug_status) FILTER html %]</td>
         <td align="left">[% get_resolution(bug.resolution) FILTER html %]</td>

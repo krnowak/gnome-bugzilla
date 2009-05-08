@@ -55,7 +55,6 @@
   [%+ urlbase %]show_bug.cgi?id=[% bug.bug_id +%]
   Priority: [%+ bug.priority -%]
   Severity: [%+ bug.bug_severity -%]
-  Platform: [%+ bug.rep_platform %]
   Assignee: [%+ bug.$assignee_login_string %]
     Status: [%+ get_status(bug.bug_status) %]
             [%- IF bug.resolution -%] Resolution: [% get_resolution(bug.resolution) -%]
