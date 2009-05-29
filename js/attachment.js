@@ -43,6 +43,15 @@ function setContentTypeDisabledState(form)
     form.contenttypeentry.disabled = isdisabled;
 }
 
+function setStatusDisabledState(form)
+{
+    var isdisabled = false;
+    if (!form.ispatch.checked)
+        isdisabled = true;
+
+    document.getElementById('attachments.status').disabled = isdisabled;
+}
+
 function URLFieldHandler() {
     var field_attachurl = document.getElementById("attachurl");
     var greyfields = new Array("data", "ispatch", "autodetect",
@@ -100,7 +109,12 @@ function clearAttachmentFields() {
         URLFieldHandler();
     }
     document.getElementById('description').value = '';
-    document.getElementById('ispatch').checked = '';
+    /* Fire onchange so that the disabled state of the content-type
+     * radio buttons are also reset 
+     */
+    element = document.getElementById('ispatch');
+    element.checked = '';
+    bz_fireEvent(element, 'change');
     if ((element = document.getElementById('isprivate')))
         element.checked = '';
 }

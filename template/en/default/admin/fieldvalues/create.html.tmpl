@@ -61,6 +61,13 @@
           the status. It cannot be edited later.
         </td>
       </tr>
+    [% ELSIF field.name == "attachments.status" %]
+      <tr>
+        <th align="right"><label for="description">Description:</label></th>
+        <td>
+          <textarea name="description" cols="64" rows="4"></textarea>
+        </td>
+      </tr>
     [% END %]
     [% IF field.value_field %]
       <tr>

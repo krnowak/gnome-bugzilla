@@ -51,7 +51,7 @@
 
       <td valign="top">
         [% IF a.ispatch %]
-          <i>patch</i>
+          <i>patch</i> ([% a.status FILTER html %])
         [% ELSE %]
           [% a.contenttype FILTER html %]
         [% END %]
