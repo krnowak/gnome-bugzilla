@@ -598,6 +598,15 @@ sub update_table_definitions {
     # migrate make sure that we have the 'none' entry
     _populate_gnome_attachment_status();
 
+    if (!$dbh->bz_column_info('classifications', 'is_gnome')) {
+        $dbh->bz_add_column('classifications', 'is_gnome',
+            {TYPE => 'BOOLEAN', NOTNULL => 1, DEFAULT => 'FALSE'});
+
+        $dbh->do("UPDATE classifications
+                     SET is_gnome = 1
+                   WHERE name IN ('Desktop', 'Platform', 'Bindings')");
+    }
+
     ################################################################
     # New --TABLE-- changes should go *** A B O V E *** this point #
     ################################################################

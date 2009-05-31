@@ -38,6 +38,7 @@ use constant DB_COLUMNS => qw(
     name
     description
     sortkey
+    is_gnome
 );
 
 use constant REQUIRED_CREATE_FIELDS => qw(
@@ -48,12 +49,14 @@ use constant UPDATE_COLUMNS => qw(
     name
     description
     sortkey
+    is_gnome
 );
 
 use constant VALIDATORS => {
     name        => \&_check_name,
     description => \&_check_description,
     sortkey     => \&_check_sortkey,
+    is_gnome    => \&Bugzilla::Object::check_boolean,
 };
 
 ###############################
@@ -122,6 +125,7 @@ sub _check_sortkey {
 sub set_name        { $_[0]->set('name', $_[1]); }
 sub set_description { $_[0]->set('description', $_[1]); }
 sub set_sortkey     { $_[0]->set('sortkey', $_[1]); }
+sub set_is_gnome    { $_[0]->set('is_gnome', $_[1]); }
 
 sub product_count {
     my $self = shift;
@@ -156,6 +160,7 @@ sub products {
 
 sub description { return $_[0]->{'description'}; }
 sub sortkey     { return $_[0]->{'sortkey'};     }
+sub is_gnome    { return $_[0]->{'is_gnome'};    }
 
 1;
 
