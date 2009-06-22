@@ -539,6 +539,10 @@ sub create {
     $dbh->do('INSERT INTO longdescs (' . join(',', @columns)  . ")
                    VALUES ($qmarks)", undef, @values);
 
+    Bugzilla::Hook::process('bug-end_of_create', { bug => $bug,
+                                                   timestamp => $timestamp,
+                                                 });
+
     $dbh->bz_commit_transaction();
 
     # Because MySQL doesn't support transactions on the fulltext table,
@@ -3054,9 +3058,13 @@ sub GetComments {
     my $sth = $dbh->prepare($query);
     $sth->execute(@args);
 
+    # Cache the users we look up
+    my %users;
+
     while (my $comment_ref = $sth->fetchrow_hashref()) {
         my %comment = %$comment_ref;
-        $comment{'author'} = new Bugzilla::User($comment{'userid'});
+        $users{$comment{'userid'}} ||= new Bugzilla::User($comment{'userid'});
+        $comment{'author'} = $users{$comment{'userid'}};
 
         # If raw data is requested, do not format 'special' comments.
         $comment{'body'} = format_comment(\%comment) unless $raw;
@@ -3071,29 +3079,15 @@ sub GetComments {
     return \@comments;
 }
 
-# Format language specific comments. This routine must not update
-# $comment{'body'} itself, see BugMail::prepare_comments().
+# Format language specific comments.
 sub format_comment {
     my $comment = shift;
+    my $template = Bugzilla->template_inner;
+    my $vars = {comment => $comment};
     my $body;
 
-    if ($comment->{'type'} == CMT_DUPE_OF) {
-        $body = $comment->{'body'} . "\n\n" .
-                get_text('bug_duplicate_of', { dupe_of => $comment->{'extra_data'} });
-    }
-    elsif ($comment->{'type'} == CMT_HAS_DUPE) {
-        $body = get_text('bug_has_duplicate', { dupe => $comment->{'extra_data'} });
-    }
-    elsif ($comment->{'type'} == CMT_POPULAR_VOTES) {
-        $body = get_text('bug_confirmed_by_votes');
-    }
-    elsif ($comment->{'type'} == CMT_MOVED_TO) {
-        $body = $comment->{'body'} . "\n\n" .
-                get_text('bug_moved_to', { login => $comment->{'extra_data'} });
-    }
-    else {
-        $body = $comment->{'body'};
-    }
+    $template->process("bug/format_comment.txt.tmpl", $vars, \$body)
+        || ThrowTemplateError($template->error());
     return $body;
 }
 

@@ -319,7 +319,7 @@ div#docslinks {
 
 /** End Comments **/
 
-.bz_default_hidden, .bz_tui_hidden {
+.bz_default_hidden, .bz_tui_hidden, .bz_hidden_field, .bz_hidden_option {
     /* We have !important because we want elements with these classes to always
      * be hidden, even if there is some CSS that overrides it (we use these
      * classes inside JavaScript to hide things). */
@@ -456,13 +456,6 @@ div.user_match {
     vertical-align: top;
 }
 
-.bz_hidden_field, .bz_hidden_option {
-    display: none;
-}
-.bz_hidden_option {
-    visibility: hidden;
-}
-
 .calendar_button {
     background: transparent url("global/calendar.png") no-repeat;
     width: 20px;
@@ -501,6 +494,7 @@ form#Create .comment {
     background-repeat: no-repeat;
     background-position: center center;
     width: 30px;
+    height: 20px;
 }
 
 #select_button {
