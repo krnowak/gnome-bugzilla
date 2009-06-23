@@ -126,6 +126,15 @@ sub IssueEmailChangeToken {
     MessageToMTA($message);
 }
 
+# Generates a password token, and returns it and the expiration time
+sub GeneratePasswordToken {
+    my ($user) = @_;
+
+    my ($token, $token_ts) = _create_token($user->id, 'password', $::ENV{'REMOTE_ADDR'});
+
+    return ($token, ctime($token_ts + MAX_TOKEN_AGE * 86400));
+}
+
 # Generates a random token, adds it to the tokens table, and sends it
 # to the user with instructions for using it to change their password.
 sub IssuePasswordToken {
@@ -142,7 +151,7 @@ sub IssuePasswordToken {
 
     ThrowUserError('too_soon_for_new_token', {'type' => 'password'}) if $too_soon;
 
-    my ($token, $token_ts) = _create_token($user->id, 'password', $::ENV{'REMOTE_ADDR'});
+    my ($token, $expiration_ts) = GeneratePasswordToken($user);
 
     # Mail the user the token along with instructions for using it.
     my $template = Bugzilla->template_inner($user->settings->{'lang'}->{'value'});
@@ -150,7 +159,7 @@ sub IssuePasswordToken {
 
     $vars->{'token'} = $token;
     $vars->{'emailaddress'} = $user->email;
-    $vars->{'expiration_ts'} = ctime($token_ts + MAX_TOKEN_AGE * 86400);
+    $vars->{'expiration_ts'} = $expiration_ts;
     # The user is not logged in (else he wouldn't request a new password).
     # So we have to pass this information to the template.
     $vars->{'timezone'} = $user->timezone;
