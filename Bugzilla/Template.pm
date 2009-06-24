@@ -339,7 +339,7 @@ sub get_bug_link {
         my ($pre, $title, $post) = ("", "", "");
 
         $title = get_text('get_status', {status => $bug_state});
-        if ($bug_state eq 'UNCONFIRMED') {
+        if ($bug_state eq 'UNCONFIRMED' || $bug_state eq 'NEEDINFO') {
             $pre = "<i>";
             $post = "</i>";
         }
