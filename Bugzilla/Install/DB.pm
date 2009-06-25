@@ -607,6 +607,8 @@ sub update_table_definitions {
                    WHERE name IN ('Desktop', 'Platform', 'Bindings')");
     }
 
+    _gnome_remove_closed_status();
+
     ################################################################
     # New --TABLE-- changes should go *** A B O V E *** this point #
     ################################################################
@@ -2962,6 +2964,7 @@ sub _initialize_workflow {
                         ['VERIFIED', 'REOPENED', $reopen],
                         ['VERIFIED', 'CLOSED', $close],
                         ['CLOSED', 'UNCONFIRMED', $reopen],
+                        ['CLOSED', 'VERIFIED', 0],
                         ['CLOSED', 'REOPENED', $reopen]);
 
         print "Now filling the 'status_workflow' table with valid bug status transitions...\n";
@@ -3297,6 +3300,52 @@ sub _populate_gnome_attachment_status {
     if (!$dbh->selectrow_arrayref("SELECT 1 FROM attachment_status LIMIT 1")) {
         $dbh->do("INSERT INTO attachment_status (value, sortkey, description)
                        VALUES ('none', 0, 'None')");
+    }
+}
+
+sub _gnome_remove_closed_status {
+    my $dbh = Bugzilla->dbh;
+
+    my ($total) = $dbh->selectrow_array("SELECT COUNT(*)
+                                           FROM bugs
+                                          WHERE bug_status = 'CLOSED'");
+    if ($total) {
+        require Bugzilla::Bug;
+        require Bugzilla::Status;
+        require Bugzilla::User;
+
+        my $status = Bugzilla::Status->check('CLOSED');
+
+        my $bugmaster = Bugzilla::User->check('bugmaster@gnome.org');
+        Bugzilla->set_user($bugmaster);
+
+        my $sth = $dbh->prepare("SELECT bug_id
+                                   FROM bugs
+                                  WHERE bug_status = 'CLOSED'");
+        $sth->execute;
+
+        my $timestamp = $dbh->selectrow_array("SELECT NOW()");
+
+        print "Moving CLOSED bugs to VERIFIED\n";
+
+        my $cnt = 0;
+        while (my ($id) = $sth->fetchrow_array) {
+            my $bug = Bugzilla::Bug->new($id);
+            $bug->set_status('VERIFIED');
+            $bug->update($timestamp);
+
+            $cnt++;
+            indicate_progress({ total => $total,
+                                current => $cnt,
+                                every => 500 });
+        }
+
+        # No FKs!
+        $dbh->do("DELETE FROM status_workflow
+                   WHERE old_status = ?
+                      OR new_status = ?",
+                 undef, $status->id, $status->id);
+        $dbh->do("DELETE FROM bug_status WHERE value = 'CLOSED'");
     }
 }
 
