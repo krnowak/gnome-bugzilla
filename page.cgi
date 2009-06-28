@@ -50,6 +50,12 @@ if ($id) {
         ThrowCodeError("bad_page_cgi_id", { "page_id" => $id });
     }
 
+    if ($1 eq 'bug-status') {
+        print $cgi->redirect(-location=>'page.cgi?id=fields.html',
+                             -status=>'301 Permanent Redirect');
+        exit;
+    }
+
     my $format = $template->get_format("pages/$1", undef, $2);
     
     $cgi->param('id', $id);
