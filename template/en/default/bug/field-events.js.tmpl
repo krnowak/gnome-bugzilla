@@ -26,6 +26,21 @@
                 '[% field.name FILTER js %]',
                 '[% controlled_field.visibility_value.name FILTER js %]');
 [% END %]
+[%# These gnome fields depend on the classification, which for these
+  # purposes means the product.
+  # The fields should be visible whenever the product's classification
+  # has the 'is_gnome' flag set.
+  #%]
+[% IF field.name == 'product' %]
+  [% FOREACH controlled_field = [ 'cf_gnome_target', 'cf_gnome_version' ] %]
+    showFieldWhen('[% controlled_field FILTER js %]', 'product',
+                  new Array(
+                    [% FOREACH p = user.get_selectable_gnome_products %]
+                      '[% p.name FILTER js %]'[% ',' UNLESS loop.last %]
+                    [% END %]
+                  ));
+  [% END %]
+[% END %]
 [% FOREACH legal_value = field.legal_values %]
   [% FOREACH controlled_field = legal_value.controlled_values.keys %]
     [% SET cont_ids = [] %]

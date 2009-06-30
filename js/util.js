@@ -207,12 +207,18 @@ function bz_populateSelectFromArray(aSelect, aArray) {
  * case-sensitive.
  *
  * @param aSelect        The select you're checking.
- * @param aValue         The value that you want to know about.
+ * @param aValue         The value(s) that you want to know about.
  */
 function bz_valueSelected(aSelect, aValue) {
     var options = aSelect.options;
+    var vals;
+    if (YAHOO.lang.isArray(aValue)) {
+	vals = aValue;
+    } else {
+	vals = new Array(aValue);
+    }
     for (var i = 0; i < options.length; i++) {
-        if (options[i].selected && options[i].value == aValue) {
+        if (options[i].selected && bz_isValueInArray(vals, options[i].value)) {
             return true;
         }
     }
