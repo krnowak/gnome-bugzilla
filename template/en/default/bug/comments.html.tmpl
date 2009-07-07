@@ -104,7 +104,6 @@
     [% sort_order = "oldest_to_newest" %]
 [% END %]
 
-
 [%# Set up the variables as needed, depending on the sort order %]
 [% IF sort_order == "oldest_to_newest" %]
     [% count = 0 %]
@@ -191,6 +190,11 @@
           [% INCLUDE global/user.html.tmpl who = comment.author %]
           [% IF comment.author.id == bug.reporter.id %]
             <span class="comment_reporter_tag">[reporter]</span>
+          [% END %]
+          [% IF comment.author.is_developer %]
+            <span class="comment_developer_tag">
+              [[% IF comment.author.is_developer(bug.product) %][% bug.product FILTER html %]&nbsp;[% END %]Developer]
+            </span>
           [% END %]
         </span>
 

@@ -1740,6 +1740,19 @@ sub validate_password {
     return 1;
 }
 
+sub is_developer {
+    my ($self, $product) = @_;
+
+    if ($product) {
+        my $developer_group = ref $product ? $product->name . "_developers" : $product . "_developers";
+        return $self->in_group($developer_group) ? 1 : 0;
+    }
+    else {
+        return $self->in_group("developers") ? 1 : 0;
+    }
+           
+    return 0; 
+}
 
 1;
 
@@ -2127,6 +2140,11 @@ i.e. if the 'insidergroup' parameter is set and the user belongs to this group.
 
 Returns true if the user is a global watcher,
 i.e. if the 'globalwatchers' parameter contains the user.
+
+=item C<is_developer>
+
+Returns true if the user is either a developer for the given product specifically
+or simply a developer for any product if no product is given. Otherwise returns false.
 
 =back
 
