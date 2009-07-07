@@ -119,6 +119,9 @@ sub create {
     $product->_create_bug_group() if Bugzilla->params->{'makeproductgroups'};
     $product->_create_series() if $create_series;
 
+    # Create developer group for the new product
+    $product->_create_developer();
+
     $dbh->bz_commit_transaction();
     return $product;
 }
@@ -359,6 +362,20 @@ sub update {
             }
         }
     }
+
+    # We also have to fix the developer group name if one exists
+    if ($changes->{name}) {
+        my $developer_group = new Bugzilla::Group(
+            { name => $old_self->name . "_developers" });
+        my $new_group = new Bugzilla::Group(
+            { name => $self->name . '_developers' });
+        if ($developer_group && !$new_group) {
+            $developer_group->set_name($self->name . "_developers");
+            $developer_group->set_description($self->name . " Developers");
+            $developer_group->update();
+        }        
+    }
+
     $dbh->bz_commit_transaction();
     # Changes have been committed.
     delete $self->{check_group_controls};
@@ -393,6 +410,22 @@ sub remove_from_db {
         else {
             ThrowUserError('product_has_bugs', { nb => $self->bug_count });
         }
+    }
+
+    # Delete this product's developer group and it's members
+    my $group = Bugzilla::Group->new({ name => $self->name . '_developers' });
+    if ($group) {
+        $dbh->do('DELETE FROM user_group_map WHERE group_id = ?',
+                  undef, $group->id);
+        $dbh->do('DELETE FROM group_group_map 
+                  WHERE grantor_id = ? OR member_id = ?',
+                  undef, ($group->id, $group->id));
+        $dbh->do('DELETE FROM bug_group_map WHERE group_id = ?',
+                  undef, $group->id);
+        $dbh->do('DELETE FROM group_control_map WHERE group_id = ?',
+                  undef, $group->id);
+        $dbh->do('DELETE FROM groups WHERE id = ?',
+                  undef, $group->id);
     }
 
     # XXX - This line can go away as soon as bug 427455 is fixed.
@@ -596,6 +629,47 @@ sub _create_series {
                         $sdata->[1] . "&product=" . url_quote($self->name), 1);
         $series->writeToDatabase();
     }
+}
+
+sub _create_developer {
+    my $self = shift;
+
+    # For every product in Bugzilla, create a group named like "<product_name>_developers". 
+    # Every developer in the product should be made a member of this group.
+    my $new_group = Bugzilla::Group->create({
+        name        => $self->{'name'} . '_developers',
+        description => $self->{'name'} . ' Developers',
+        isactive    => 1,
+        isbuggroup  => 1,
+    });
+ 
+    # The "<product name>_developers" group should be set to
+    # "MemberControl: Shown, OtherControl: N/A" in the product's group controls. 
+    # The "<product name>_developers" group should also be given editcomponents 
+    # for the product.
+    my $dbh = Bugzilla->dbh;
+    $dbh->do('INSERT INTO group_control_map
+              (group_id, product_id, entry, membercontrol,
+               othercontrol, canedit, editcomponents)
+              VALUES (?, ?, 0, ?, ?, 0, 1)',
+              undef, ($new_group->id, $self->id, CONTROLMAPSHOWN, CONTROLMAPNA));
+
+    # The new <product_name>_developers groups should be automatically
+    # made a member of the global developers group
+    my $dev_group = Bugzilla::Group->new({ name => 'developers' });
+    if (!$dev_group) {
+        $dev_group = Bugzilla::Group->create({
+            name        => 'developers',
+            description => 'Developer Group',
+            isbuggroup  => 1,
+            isactive    => 1,
+        });
+    }
+
+    $dbh->do('INSERT INTO group_group_map
+              (member_id, grantor_id, grant_type)
+              VALUES (?, ?, ?)',
+             undef, ($new_group->id, $dev_group->id, GROUP_MEMBERSHIP));
 }
 
 sub set_name { $_[0]->set('name', $_[1]); }
@@ -853,6 +927,26 @@ sub flag_types {
     return $self->{'flag_types'};
 }
 
+sub developers {
+    my ($self) = @_;
+
+    if (!defined $self->{'developers'}) {
+        $self->{'developers'} = [];
+
+        my $group = Bugzilla::Group->new({ name => $self->name . '_developers' });
+
+        if ($group) {
+            my $dbh = Bugzilla->dbh;
+            my $developer_ids = $dbh->selectcol_arrayref("SELECT user_id FROM user_group_map 
+                                                          WHERE isbless = 0 AND group_id IN (" .
+                                                          join(',', @{Bugzilla::Group->flatten_group_membership($group->id)}) . ")");
+            $self->{'developers'} = Bugzilla::User->new_from_list($developer_ids);
+        }
+    }
+
+    return $self->{'developers'};
+}
+
 ###############################
 ####      Accessors      ######
 ###############################
@@ -1047,6 +1141,15 @@ groups, in this product.
  Params:      none.
 
  Returns:     Two references to an array of flagtype objects.
+
+=item C<developers()>
+ 
+ Description: Returns list of users that are currently
+              in the developers group for this product.
+
+ Params:      none.
+ 
+ Returns:     Reference to an array of user objects.
 
 =back
 
