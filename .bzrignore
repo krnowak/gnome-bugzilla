@@ -7,6 +7,7 @@
 ./skins/custom
 ./skins/contrib/Dusk/IE-fixes.css
 ./skins/contrib/Dusk/admin.css
+./skins/contrib/Dusk/browse.css
 ./skins/contrib/Dusk/create_attachment.css
 ./skins/contrib/Dusk/dependency-tree.css
 ./skins/contrib/Dusk/duplicates.css
@@ -25,6 +26,7 @@
 ./lib/*
 ./skins/contrib/GNOME/IE-fixes.css
 ./skins/contrib/GNOME/admin.css
+./skins/contrib/GNOME/browse.css
 ./skins/contrib/GNOME/create_attachment.css
 ./skins/contrib/GNOME/dependency-tree.css
 ./skins/contrib/GNOME/duplicates.css
