@@ -463,8 +463,11 @@ sub update_table_definitions {
                           {TYPE => 'BOOLEAN', NOTNULL => 1,  DEFAULT => 0});
     $dbh->bz_alter_column('products', 'votesperuser', 
                           {TYPE => 'INT2', NOTNULL => 1, DEFAULT => 0});
-    $dbh->bz_alter_column('products', 'votestoconfirm',
-                          {TYPE => 'INT2', NOTNULL => 1, DEFAULT => 0});
+    my $vtc_info = $dbh->bz_column_info('products', 'votestoconfirm');
+    if (!defined $vtc_info->{DEFAULT}) {
+        $dbh->bz_alter_column('products', 'votestoconfirm',
+                              {TYPE => 'INT2', NOTNULL => 1, DEFAULT => 0});
+    }
 
     # 2006-08-04 LpSolit@gmail.com - Bug 305941
     $dbh->bz_drop_column('profiles', 'refreshed_when');
