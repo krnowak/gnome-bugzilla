@@ -9,6 +9,9 @@
 /* global (end) */
 
 /* header (begin) */
+  #header #titles {
+    -moz-border-radius: 0;
+  }
 /* header (end)   */
 
 /* banner (begin) */
@@ -27,9 +30,18 @@
 /* link lists (end) */
 
 /* tabs (begin) */
+    #bugzilla-body .tabbed {
+        margin: 0 -1em;
+    }
+    #bugzilla-body .tabbody {
+        margin: 0 1em;
+    }
 /* tabs (end) */
 
 /* generic (begin) */
+    #bugzilla-body {
+        margin: 0 1em 1em 1em;
+    }
     a img {
          border: 0px;
     }
