@@ -613,6 +613,8 @@ sub update_table_definitions {
 
     _gnome_remove_closed_status();
 
+    _set_vote_fields();
+
     ################################################################
     # New --TABLE-- changes should go *** A B O V E *** this point #
     ################################################################
@@ -3406,6 +3408,19 @@ sub _gnome_remove_closed_status {
                       OR new_status = ?",
                  undef, $status->id, $status->id);
         $dbh->do("DELETE FROM bug_status WHERE value = 'CLOSED'");
+    }
+}
+
+sub _set_vote_fields {
+    my $dbh = Bugzilla->dbh;
+
+    my $vtc_info = $dbh->bz_column_info('products', 'votestoconfirm');
+    if ($vtc_info->{DEFAULT} == 0) {
+        print "Enabling UNCONFIRMED in every product...\n";
+        $dbh->do('UPDATE products SET votestoconfirm = 10000, votesperuser = 0,
+                                      maxvotesperbug = 0');
+        $dbh->bz_alter_column('products', 'votestoconfirm',
+            {TYPE => 'INT2', NOTNULL => 1, DEFAULT => 10000});
     }
 }
 
