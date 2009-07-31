@@ -473,6 +473,13 @@ sub update_table_definitions {
     $dbh->bz_drop_column('profiles', 'refreshed_when');
     $dbh->bz_drop_column('groups', 'last_changed');
 
+    # GNOME had a "0" in the flagtypes id column, which needs to be changed
+    # to a 7 before we can alter the column.
+    if ($dbh->bz_column_info('attachments', 'status_id')) {
+        $dbh->do('UPDATE flagtypes SET id = 7 WHERE id = 0');
+        $dbh->do('UPDATE attachments SET status_id = 7 WHERE status_id = 0');
+    }
+
     # 2006-08-06 LpSolit@gmail.com - Bug 347521
     $dbh->bz_alter_column('flagtypes', 'id',
           {TYPE => 'SMALLSERIAL', NOTNULL => 1, PRIMARYKEY => 1});
