@@ -51,7 +51,7 @@ use Bugzilla::Search;
 use Bugzilla::Field;
 use Bugzilla::Status;
 use Bugzilla::Util;
-use Bugzilla::Install::Util;
+use Bugzilla::Install::Util qw(vers_cmp);
 
 use constant IMPORTANT_PATCH_STATUSES => qw(
     none
