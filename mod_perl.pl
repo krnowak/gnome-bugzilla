@@ -63,7 +63,7 @@ PerlChildInitHandler "sub { srand(); }"
     PerlCleanupHandler  Apache2::SizeLimit
     PerlOptions +ParseHeaders
     Options +ExecCGI
-    AllowOverride Limit
+    AllowOverride All
     DirectoryIndex index.cgi index.html
 </Directory>
 EOT
