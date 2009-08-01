@@ -625,6 +625,8 @@ sub update_table_definitions {
 
     _set_vote_fields();
 
+    _cleanup_old_gnome_db();
+
     ################################################################
     # New --TABLE-- changes should go *** A B O V E *** this point #
     ################################################################
@@ -3432,6 +3434,13 @@ sub _set_vote_fields {
         $dbh->bz_alter_column('products', 'votestoconfirm',
             {TYPE => 'INT2', NOTNULL => 1, DEFAULT => 10000});
     }
+}
+
+sub _cleanup_old_gnome_db {
+    my $dbh = Bugzilla->dbh;
+    # The GNOME Bugzilla had extra indexes
+    $dbh->bz_drop_index('bugs', 'status_index');
+    $dbh->bz_drop_index('longdescs', 'comment_text');
 }
 
 1;
