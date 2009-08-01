@@ -3388,30 +3388,30 @@ sub _gnome_remove_closed_status {
         require Bugzilla::Status;
         require Bugzilla::User;
 
+        $dbh->bz_start_transaction();
+
         my $status = Bugzilla::Status->check('CLOSED');
 
-        my $bugmaster = Bugzilla::User->check('bugmaster@gnome.org');
+        my $bugmaster = Bugzilla::User->check('mkanat@bugzilla.org');
         Bugzilla->set_user($bugmaster);
 
-        my $sth = $dbh->prepare("SELECT bug_id
-                                   FROM bugs
-                                  WHERE bug_status = 'CLOSED'");
-        $sth->execute;
+        my $bug_ids = $dbh->selectcol_arrayref(
+            "SELECT bug_id FROM bugs WHERE bug_status = 'CLOSED'");
+        my $bugs = Bugzilla::Bug->new_from_list($bug_ids);
 
         my $timestamp = $dbh->selectrow_array("SELECT NOW()");
 
-        print "Moving CLOSED bugs to VERIFIED\n";
+        print "Moving $total CLOSED bugs to VERIFIED\n";
 
         my $cnt = 0;
-        while (my ($id) = $sth->fetchrow_array) {
-            my $bug = Bugzilla::Bug->new($id);
+        foreach my $bug (@$bugs) {
             $bug->set_status('VERIFIED');
             $bug->update($timestamp);
 
             $cnt++;
             indicate_progress({ total => $total,
                                 current => $cnt,
-                                every => 500 });
+                                every => 50 });
         }
 
         # No FKs!
@@ -3420,6 +3420,8 @@ sub _gnome_remove_closed_status {
                       OR new_status = ?",
                  undef, $status->id, $status->id);
         $dbh->do("DELETE FROM bug_status WHERE value = 'CLOSED'");
+
+        $dbh->bz_commit_transaction();
     }
 }
 
