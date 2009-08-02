@@ -122,7 +122,8 @@
 /************/
 
 .bz_comment {
-    border: 0;
+    border-top: 1px solid #cccccc;
+    margin-top: 0.5em;
     /* border-bottom: 1px dashed #ccc; */
     /* border-top: 1px solid #ccc; */
     padding: 0.2em;
