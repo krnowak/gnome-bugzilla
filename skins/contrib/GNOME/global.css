@@ -131,6 +131,8 @@
 
 .bz_comment_head, .bz_first_comment_head {
     background-color: transparent;
+    font-size: 105%;
+    font-weight: bold;
 }
 
 /** End Comments **/
