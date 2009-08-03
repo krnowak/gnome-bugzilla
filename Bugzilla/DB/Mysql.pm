@@ -365,6 +365,8 @@ EOT
         if (!$self->bz_table_info('attach_data')) {
             require Bugzilla::Install::DB;
             $self->bz_add_table('attach_data');
+            $self->do("ALTER TABLE attach_data AVG_ROW_LENGTH=1000000,
+                                               MAX_ROWS=100000");
             Bugzilla::Install::DB::_copy_attachments_thedata_to_attach_data();
         }
     }
