@@ -274,6 +274,45 @@ your column name(s) onto the array.
 
 =back
 
+=head2 bug-linkify_comment
+
+Allows you to add custom "linkification" to comments. (For example, you could
+make "revision 1234" into a link to something in particular.) You do this by
+returning two regular expressions: one that matches the section you want to
+replace, and then another that says what you want to replace that match with.
+
+The matching and replacement will be run with the C</g> switch on the regex.
+
+Params:
+
+=over
+
+=item C<match>
+
+An array. Push a regular expression on to the array to indicate what you want
+to replace.
+
+If you push something into C<match>, you must always push something into
+C<replace>.
+
+=item C<replace>
+
+An array. Push a regular expression on to the array to indicate what you
+want to replace your C<match> I<with>. Remember that you will need to
+escape the C<$> in C<$1>, C<$2>, etc. if you use them.
+
+=item C<text>
+
+A B<reference> to the text of the comment that will be highlighted. Generally
+you should not change this yourself. Instead you should be returning regular
+expressions in the C<match> and C<replace> arrays.
+
+=item C<bug_id>
+
+The id of the bug that this comment is on.
+
+=back
+
 =head2 buglist-columns
 
 This happens in buglist.cgi after the standard columns have been defined and

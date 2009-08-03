@@ -170,6 +170,11 @@ sub quoteUrls {
     # \0 is used because it's unlikely to occur in the text, so the cost of
     # doing this should be very small
 
+    my (@hook_match, @hook_replace);
+    Bugzilla::Hook::process('bug-linkify_comment', 
+        { text => \$text, bug_id => $curr_bugid, match => \@hook_match, 
+          replace => \@hook_replace });
+
     # escape the 2nd escape char we're using
     my $chr1 = chr(1);
     $text =~ s/\0/$chr1\0/g;
@@ -211,7 +216,6 @@ sub quoteUrls {
                ($things[$count++] = "<a href=\"$tmp\">$tmp</a>") &&
                ("\0\0" . ($count-1) . "\0\0")
               ~egox;
-
     # We have to quote now, otherwise the html itself is escaped
     # THIS MEANS THAT A LITERAL ", <, >, ' MUST BE ESCAPED FOR A MATCH
 
@@ -261,6 +265,14 @@ sub quoteUrls {
                (?=\ \*\*\*\Z)
               ~get_bug_link($1, $1)
               ~egmx;
+
+    foreach my $match (@hook_match) {
+        my $replace = shift @hook_replace;
+        # In the future, we may allow people to specify coderefs for $replace,
+        # and then we'll se the count/things system for those replacements.
+        # But for now we just have a simple regex system.
+        $text =~ s/$match/$replace/g;
+    }
 
     # Now remove the encoding hacks
     $text =~ s/\0\0(\d+)\0\0/$things[$1]/eg;
