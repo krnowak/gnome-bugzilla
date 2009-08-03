@@ -850,9 +850,8 @@ sub _fix_defaults {
                 # "fixing" by bz_column_info_real.
                 my $raw_info = $self->_bz_raw_column_info($table, $column);
                 my $raw_default = $raw_info->{COLUMN_DEF};
-                if (defined $raw_default) {
+                if (defined $raw_default and $raw_default ne '') {
                     $self->bz_alter_column_raw($table, $column, $abs_def);
-                    $raw_default = "''" if $raw_default eq '';
                     print "Removed incorrect DB default: $raw_default\n";
                 }
             }
