@@ -360,6 +360,7 @@ EOT
                             SELECT bug_id, who, bug_when, thetext, work_time, 
                                    isprivate, already_wrapped
                               FROM longdescs_old ORDER BY bug_when');
+            $self->bz_drop_table('longdescs_old');
         }
 
         if (!$self->bz_table_info('attach_data')) {
