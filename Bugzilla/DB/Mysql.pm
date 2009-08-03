@@ -344,6 +344,31 @@ EOT
 
     my ($sd_index_deleted, $longdescs_index_deleted);
     my @tables = $self->bz_table_list_real();
+
+    # For GNOME, we need to speed up the very long (20+ hours)
+    # upgrade process. We do this by taking all the largest tables
+    # and copying them over into a new version of themselves directly,
+    # or performing large changes before the InnoDB conversion.
+    if (grep($_ eq 'bz_schema', @tables)) {
+        if (!$self->bz_column_info('longdescs', 'comment_id')) {
+            $self->bz_rename_table('longdescs', 'longdescs_old');
+            $self->bz_add_table('longdescs');
+            print "Populating longdescs...\n";
+            $self->do('INSERT INTO longdescs (bug_id, who, bug_when, thetext,
+                                              work_time, isprivate, 
+                                              already_wrapped)
+                            SELECT bug_id, who, bug_when, thetext, work_time, 
+                                   isprivate, already_wrapped
+                              FROM longdescs_old ORDER BY bug_when');
+        }
+
+        if (!$self->bz_table_info('attach_data')) {
+            require Bugzilla::Install::DB;
+            $self->bz_add_table('attach_data');
+            Bugzilla::Install::DB::_copy_attachments_thedata_to_attach_data();
+        }
+    }
+
     # We want to convert tables to InnoDB, but it's possible that they have 
     # fulltext indexes on them, and conversion will fail unless we remove
     # the indexes.
