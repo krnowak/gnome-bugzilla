@@ -704,7 +704,9 @@ EOT
     $self->_after_table_status([map($_->{Name}, @$utf_table_status)]);
     my @non_utf8_tables = grep($_->{Collation} !~ /^utf8/, @$utf_table_status);
     
-    if (Bugzilla->params->{'utf8'} && scalar @non_utf8_tables) {
+    # For GNOME, we always want to do the UTF-8 conversion on upgrade. We'll
+    # turn on the utf8 parameter later.
+    if (scalar @non_utf8_tables) {
         print <<EOT;
 
 WARNING: We are about to convert your table storage format to UTF8. This
