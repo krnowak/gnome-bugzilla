@@ -198,8 +198,7 @@ sub quoteUrls {
 
     foreach my $match (@hook_match) {
         my $replace = shift @hook_replace;
-        $text =~ s/$match/($tmp = html_quote($replace)) 
-                          && ($things[$count++] = $tmp) 
+        $text =~ s/$match/($things[$count++] = $replace) 
                           && ("\0\0" . ($count-1) . "\0\0")/egox;
     }
 

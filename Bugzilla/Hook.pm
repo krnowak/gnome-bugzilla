@@ -301,11 +301,17 @@ An array. Push a regular expression on to the array to indicate what you
 want to replace your C<match> I<with>. Remember that you will need to
 escape the C<$> in C<$1>, C<$2>, etc. if you use them.
 
+B<You are responsible for HTML-escaping your returned data.> Failing to
+do so could open a security hole in Bugzilla.
+
 =item C<text>
 
 A B<reference> to the text of the comment that will be highlighted. Generally
 you should not change this yourself. Instead you should be returning regular
 expressions in the C<match> and C<replace> arrays.
+
+This text is passed to you before it is HTML-escaped, so you get "&", not 
+"&amp;"
 
 =item C<bug_id>
 
