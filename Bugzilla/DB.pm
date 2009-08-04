@@ -444,6 +444,7 @@ sub bz_setup_foreign_keys {
     # items from _bz_real_schema.
     my @tables = $self->_bz_schema->get_table_list();
     foreach my $table (@tables) {
+        next if $table eq 'bugs_fulltext';
         my @columns = $self->_bz_schema->get_table_columns($table);
         foreach my $column (@columns) {
             my $def = $self->_bz_schema->get_column_abstract($table, $column);
