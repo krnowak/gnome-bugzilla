@@ -813,10 +813,11 @@ EOT
 
             $self->do("ALTER TABLE $table DEFAULT CHARACTER SET utf8");
 
-            foreach my $fk_args (@dropped_fks) {
-                $self->bz_add_fk(@$fk_args);
-            }
         } # foreach my $table (@tables)
+
+        foreach my $fk_args (@dropped_fks) {
+            $self->bz_add_fk(@$fk_args);
+        }
     }
 
     # Sometimes you can have a situation where all the tables are utf8,
