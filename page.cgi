@@ -34,6 +34,7 @@ use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Error;
+use Bugzilla::Hook;
 
 Bugzilla->login();
 
@@ -56,13 +57,17 @@ if ($id) {
         exit;
     }
 
+    my %vars;
+    Bugzilla::Hook::process('page-before_template', 
+                            { page_id => $id, vars => \%vars });
+
     my $format = $template->get_format("pages/$1", undef, $2);
     
     $cgi->param('id', $id);
 
     print $cgi->header($format->{'ctype'});
 
-    $template->process("$format->{'template'}")
+    $template->process("$format->{'template'}", \%vars)
       || ThrowTemplateError($template->error());
 }
 else {
