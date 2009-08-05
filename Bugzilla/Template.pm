@@ -159,7 +159,7 @@ sub get_format {
 # If you want to modify this routine, read the comments carefully
 
 sub quoteUrls {
-    my ($text, $curr_bugid, $already_wrapped) = (@_);
+    my ($text, $bug, $comment) = (@_);
     return $text unless $text;
 
     # We use /g for speed, but uris can have other things inside them
@@ -176,7 +176,8 @@ sub quoteUrls {
 
     # If the comment is already wrapped, we should ignore newlines when
     # looking for matching regexps. Else we should take them into account.
-    my $s = $already_wrapped ? qr/\s/ : qr/[[:blank:]]/;
+    my $s = ($comment && $comment->{already_wrapped}) 
+            ? qr/\s/ : qr/[[:blank:]]/;
 
     # However, note that adding the title (for buglinks) can affect things
     # In particular, attachment matches go before bug titles, so that titles
@@ -191,15 +192,15 @@ sub quoteUrls {
     my $count = 0;
     my $tmp;
 
-    my (@hook_match, @hook_replace);
-    Bugzilla::Hook::process('bug-linkify_comment',
-        { text => \$text, bug_id => $curr_bugid, match => \@hook_match,
-          replace => \@hook_replace });
+    my @hook_regexes;
+    Bugzilla::Hook::process('bug-format_comment',
+        { text => \$text, bug => $bug, regexes => \@hook_regexes,
+          comment => $comment });
 
-    foreach my $match (@hook_match) {
-        my $replace = shift @hook_replace;
+    foreach my $re (@hook_regexes) {
+        my ($match, $replace) = @$re{qw(match replace)};
         $text =~ s/$match/($things[$count++] = $replace) 
-                          && ("\0\0" . ($count-1) . "\0\0")/egox;
+                          && ("\0\0" . ($count-1) . "\0\0")/egx;
     }
 
     # Provide tooltips for full bug links (Bug 74355)
@@ -249,7 +250,7 @@ sub quoteUrls {
               ~egmxi;
 
     # Current bug ID this comment belongs to
-    my $current_bugurl = $curr_bugid ? "show_bug.cgi?id=$curr_bugid" : "";
+    my $current_bugurl = $bug ? ("show_bug.cgi?id=" . $bug->id) : "";
 
     # This handles bug a, comment b type stuff. Because we're using /g
     # we have to do this in one pattern, and so this is semi-messy.
@@ -568,10 +569,10 @@ sub create {
             css_class_quote => \&Bugzilla::Util::css_class_quote ,
 
             quoteUrls => [ sub {
-                               my ($context, $bug, $already_wrapped) = @_;
+                               my ($context, $bug, $comment) = @_;
                                return sub {
                                    my $text = shift;
-                                   return quoteUrls($text, $bug, $already_wrapped);
+                                   return quoteUrls($text, $bug, $comment);
                                };
                            },
                            1

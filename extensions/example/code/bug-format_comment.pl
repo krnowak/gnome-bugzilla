@@ -27,7 +27,5 @@ use Bugzilla;
 # This replaces every occurrence of the word "foo" with the word
 # "bar"
 
-my $match = Bugzilla->hook_args->{'match'};
-my $replace = Bugzilla->hook_args->{'replace'};
-push(@$match, qr/\bfoo\b/);
-push(@$replace, 'bar');
+my $regexes = Bugzilla->hook_args->{'regexes'};
+push(@$regexes, { match => qr/\bfoo\b/, replace => 'bar' });

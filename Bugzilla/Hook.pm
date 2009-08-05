@@ -274,12 +274,12 @@ your column name(s) onto the array.
 
 =back
 
-=head2 bug-linkify_comment
+=head2 bug-format_comment
 
-Allows you to add custom "linkification" to comments. (For example, you could
-make "revision 1234" into a link to something in particular.) You do this by
-returning two regular expressions: one that matches the section you want to
-replace, and then another that says what you want to replace that match with.
+Allows you to do custom parsing on comments before they are displayed. You do
+this by returning two regular expressions: one that matches the section you 
+want to replace, and then another that says what you want to replace that 
+match with.
 
 The matching and replacement will be run with the C</g> switch on the regex.
 
@@ -287,35 +287,44 @@ Params:
 
 =over
 
-=item C<match>
+=item C<regexes>
 
-An array. Push a regular expression on to the array to indicate what you want
-to replace.
+An arrayref of hashrefs.
 
-If you push something into C<match>, you must always push something into
-C<replace>.
-
-=item C<replace>
-
-An array. Push a regular expression on to the array to indicate what you
-want to replace your C<match> I<with>. Remember that you will need to
-escape the C<$> in C<$1>, C<$2>, etc. if you use them.
+You should push a hashref containing two keys (C<match> and C<replace>)
+in to this array. C<match> is the regular expression that matches the
+text you want to replace, C<replace> is what you want to replace that
+text with. (This gets passed into a regular expression like 
+C<s/$match/$replace/>.)
 
 B<You are responsible for HTML-escaping your returned data.> Failing to
 do so could open a security hole in Bugzilla.
 
 =item C<text>
 
-A B<reference> to the text of the comment that will be highlighted. Generally
-you should not change this yourself. Instead you should be returning regular
-expressions in the C<match> and C<replace> arrays.
+A B<reference> to the exact text that you are parsing.
 
-This text is passed to you before it is HTML-escaped, so you get "&", not 
-"&amp;"
+Generally you should not modify this yourself. Instead you should be 
+returning regular expressions using the C<regexes> array.
 
-=item C<bug_id>
+The text has already been word-wrapped, but has not been parsed in any way
+otherwise. (So, for example, it is not HTML-escaped. You get "&", not 
+"&amp;".)
 
-The id of the bug that this comment is on.
+=item C<bug>
+
+The L<Bugzilla::Bug> object that this comment is on. Sometimes this is
+C<undef>, meaning that we are parsing text that is not on a bug.
+
+=item C<comment>
+
+A hashref representing the comment you are about to parse, including
+all of the fields that comments contain when they are returned by
+by L<Bugzilla::Bug/longdescs>.
+
+Sometimes this is C<undef>, meaning that we are parsing text that is
+not a bug comment (but could still be some other part of a bug, like
+the summary line).
 
 =back
 
