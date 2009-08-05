@@ -933,14 +933,7 @@ sub developers {
         $self->{'developers'} = [];
 
         my $group = Bugzilla::Group->new({ name => $self->name . '_developers' });
-
-        if ($group) {
-            my $dbh = Bugzilla->dbh;
-            my $developer_ids = $dbh->selectcol_arrayref("SELECT user_id FROM user_group_map 
-                                                          WHERE isbless = 0 AND group_id IN (" .
-                                                          join(',', @{Bugzilla::Group->flatten_group_membership($group->id)}) . ")");
-            $self->{'developers'} = Bugzilla::User->new_from_list($developer_ids);
-        }
+        $self->{developers} = $group->members_non_inherited;
     }
 
     return $self->{'developers'};
