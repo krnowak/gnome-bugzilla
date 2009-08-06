@@ -35,21 +35,15 @@ use Bugzilla::Field;
 use Bugzilla::Mailer;
 use Bugzilla::Token;
 
-# Don't require login
-use constant LOGIN_EXEMPT => {
-    createBug => 1,
-    Add => 1,
-};
-
 # Alias for compat
-BEGIN { *createBug = \&Add }
+BEGIN { *Add = \&createBug; }
 
 # Based on gnome 2.20 customisations
-sub Add {
+sub createBug {
     my ($self, $params) = @_;
 
     # BugBuddy errors are handled slightly differently
-    #Bugzilla->error_mode(ERROR_MODE_BUGBUDDY);
+    Bugzilla->error_mode(ERROR_MODE_BUGBUDDY);
 
     my $given_gnome_version = $params->{'gnome_version'};
     if (!defined($given_gnome_version)) {
@@ -142,9 +136,9 @@ sub Add {
         $bug_params->{$f} = $params->{$f}
             if exists $params->{$f};
     }
-    if (!$bug_params{op_sys}) {
+    if (!$bug_params->{op_sys}) {
         my $op_syses = get_legal_field_values('op_sys');
-        $bug_params{op_sys} = $op_systes->[0];
+        $bug_params->{op_sys} = $op_syses->[0];
     }
 
     # Force nautilus-cd-burner -> nautilus, see bug 352989
