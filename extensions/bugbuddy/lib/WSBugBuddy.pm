@@ -49,7 +49,7 @@ sub Add {
     my ($self, $params) = @_;
 
     # BugBuddy errors are handled slightly differently
-    Bugzilla->error_mode(ERROR_MODE_BUGBUDDY);
+    #Bugzilla->error_mode(ERROR_MODE_BUGBUDDY);
 
     my $given_gnome_version = $params->{'gnome_version'};
     if (!defined($given_gnome_version)) {
@@ -141,6 +141,10 @@ sub Add {
     foreach my $f (@bug_fields) {
         $bug_params->{$f} = $params->{$f}
             if exists $params->{$f};
+    }
+    if (!$bug_params{op_sys}) {
+        my $op_syses = get_legal_field_values('op_sys');
+        $bug_params{op_sys} = $op_systes->[0];
     }
 
     # Force nautilus-cd-burner -> nautilus, see bug 352989
