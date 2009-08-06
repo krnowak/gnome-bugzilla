@@ -66,6 +66,7 @@ sub VALIDATORS {
 sub create {
     my $class = shift;
     my $self = $class->SUPER::create(@_);
+    delete Bugzilla->request_cache->{status_bug_state_open};
     add_missing_bug_status_transitions();
     return $self;
 }
@@ -120,9 +121,12 @@ sub _check_value {
 ###############################
 
 sub BUG_STATE_OPEN {
-    # XXX - We should cache this list.
     my $dbh = Bugzilla->dbh;
-    return @{$dbh->selectcol_arrayref('SELECT value FROM bug_status WHERE is_open = 1')};
+    my $cache = Bugzilla->request_cache;
+    $cache->{status_bug_state_open} ||=
+        $dbh->selectcol_arrayref('SELECT value FROM bug_status 
+                                   WHERE is_open = 1');
+    return @{ $cache->{status_bug_state_open} };
 }
 
 # Tells you whether or not the argument is a valid "open" state.
