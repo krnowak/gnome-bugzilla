@@ -1767,8 +1767,11 @@ sub is_developer {
     my ($self, $product) = @_;
 
     if ($product) {
-        my $developer_group = ref $product ? $product->name . "_developers" : $product . "_developers";
-        return $self->in_group($developer_group) ? 1 : 0;
+        # Given the only use of this is being passed bug.product_obj,
+        # at the moment the performance of this should be fine.
+        my $devs = $product->developers;
+        my $is_dev = grep { $_->id == $self->id } @$devs;
+        return $is_dev ? 1 : 0;
     }
     else {
         return $self->in_group("developers") ? 1 : 0;

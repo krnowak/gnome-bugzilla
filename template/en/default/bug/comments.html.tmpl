@@ -192,7 +192,7 @@
           [% END %]
           [% IF comment.author.is_developer %]
             <span class="comment_developer_tag">
-              [[% IF comment.author.is_developer(bug.product) %][% bug.product FILTER html %]&nbsp;[% END %]Developer]
+              [[% IF comment.author.is_developer(bug.product_obj) %][% bug.product FILTER html %]&nbsp;[% END %]developer]
             </span>
           [% END %]
         </span>
