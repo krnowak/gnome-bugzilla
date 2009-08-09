@@ -31,16 +31,20 @@
 <h3>Categories</h3>
   <ul>
     <li> <a href="[% self_url FILTER html %]#generic">Generic Gnome reports</a> </li>
-    <li> <a href="[% self_url FILTER html %]#byversion">Reports organized by version</a> </li>
+    <!-- 
+   <li> <a href="[% self_url FILTER html %]#byversion">Reports organized
+      by version</a> </li> -->
     <li> <a href="[% self_url FILTER html %]#explain">Explanation of [% terms.bugzilla %] terms and fields</a></li>
   </ul>
 
 <h2>Generic Gnome reports<a name="generic"></a></h2>
   <ul>
+    <!--
     <li>
       <a href="reports/weekly-bug-summary.cgi">Summary of [%
       terms.bug %] activity for the last week</a>.
     </li>
+    -->
     <li>
       <a href="duplicates.cgi">Frequently (and recently)
       duplicated [% terms.bugs %]</a>
@@ -49,10 +53,12 @@
       <a href="page.cgi?id=popular-traces.html">Frequently Duplicated Stack 
         Traces</a>
     </li>
+    <!--
     <li>
       Products with the <a href="reports/patch-diligence-report.cgi">
       fewest unreviewed patches per total patches</a>.
     </li>
+    -->
   <!--
     <li>Unreviewed patches:
       <ul>
@@ -74,6 +80,7 @@
 <h2>Reports for Potential Contributors<a name="contributors"></a></h2>
   <ul>
     <li>[% terms.Bugs %] to <a href="http://live.gnome.org/Bugsquad/TriageGuide">triage</a></li>
+      <!--
       <ul>
         <li>
           <a href="reports/core-bugs-today.cgi">[% terms.Bugs %] filed
@@ -96,13 +103,16 @@
           component.
         </li>
       </ul>
+      -->
     <li>Finding tasks to work on</li>
       <ul>
+        <!--
         <li>
           [% terms.Bugs %] marked by developers as being <a
           href="reports/gnome-love.cgi">good tasks for new
           developers</a>
         </li>
+        -->
         <li>
           Looking at <a href="browse.cgi">product overviews</a>
         </li>
@@ -113,6 +123,7 @@
       </ul>
   </ul>
 
+<!--
 <h2>Reports organized by version<a name="byversion"></a></h2>
   <ul>
     <li> Open [% terms.bugs %] for specific GNOME versions, broken down by
@@ -131,6 +142,7 @@
       </ul>
     </li>
   </ul>
+-->
 
 <h2>Explanation of various [% terms.bugzilla %] terms and fields<a name="explain"></a></h2>
   <ul>
@@ -138,33 +150,30 @@
       <a href="describecomponents.cgi">Products</a>
     </li>
     <li>
-      <a href="page.cgi?id=bug-status.html">Basic states</a>
+      <a href="page.cgi?id=fields.html">[% terms.Bug %] Fields</a>
       <ul>
         <li> 
-          <a href="page.cgi?id=bug-status.html#status">[% terms.Bug %] status</a>
+          <a href="page.cgi?id=fields.html#status">[% terms.Bug %] status</a>
         </li>
         <li>
-          <a href="page.cgi?id=bug-status.html#resolution">Resolution</a>
+          <a href="page.cgi?id=fields.html#resolution">Resolution</a>
         </li>
         <li>
-          <a href="page.cgi?id=bug-status.html#severity">Severities</a>
+          <a href="page.cgi?id=fields.html#severity">Severities</a>
         </li>
         <li>
-          <a href="page.cgi?id=bug-status.html#priority">Priorities</a>
+          <a href="page.cgi?id=fields.html#priority">Priorities</a>
         </li>
         <li>
-          <a href="page.cgi?id=bug-status.html#gnome_version">Gnome Version</a>
+          <a href="page.cgi?id=fields.html#gnome_version">Gnome Version</a>
         </li>
         <li>
-          <a href="page.cgi?id=bug-status.html#gnome_target">Gnome Target Milestone</a>
+          <a href="page.cgi?id=fields.html#gnome_target">Gnome Target Milestone</a>
         </li>
       </ul>
     </li>
     <li>
       <a href="describekeywords.cgi">Keywords</a>
-    </li>
-    <li>
-      <a href="describeflagtypes.cgi">Attachment statuses</a>
     </li>
   </ul>
 
