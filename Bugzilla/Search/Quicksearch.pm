@@ -130,7 +130,7 @@ sub quicksearch {
         # Allow separation by comma or whitespace.
         $searchstring =~ s/[,\s]+/,/g;
 
-        if (index($searchstring, ',') < $[) {
+        if (!$permissive and index($searchstring, ',') < $[) {
             # Single bug number; shortcut to show_bug.cgi.
             print $cgi->redirect(-uri => "${urlbase}show_bug.cgi?id=$searchstring");
             exit;
@@ -145,7 +145,7 @@ sub quicksearch {
     else {
         # It's not just a bug number or a list of bug numbers.
         # Maybe it's an alias?
-        if ($searchstring =~ /^([^,\s]+)$/) {
+        if (!$permissive and $searchstring =~ /^([^,\s]+)$/) {
             if (Bugzilla->dbh->selectrow_array(q{SELECT COUNT(*)
                                                    FROM bugs
                                                   WHERE alias = ?},

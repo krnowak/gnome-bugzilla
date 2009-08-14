@@ -3505,21 +3505,20 @@ sub _fix_saved_searches {
     my $total = scalar @$queries_to_fix;
     my $count = 1;
     print "Fixing saved searches...\n";
+    $dbh->bz_start_transaction();
     foreach my $row (@$queries_to_fix) {
         my ($id, $query) = @$row;
         indicate_progress({ current => $count++, total => $total,
                             every => 10 });
-        $query =~ s/^query/quicksearch/;
-        my $fixed = quicksearch($query, 1);
-        if ($fixed) {
-            $dbh->do('UPDATE namedqueries SET query = ? WHERE id = ?',
-                     undef, $fixed, $id);
-        }
-        else {
-            $dbh->do('DELETE FROM namedqueries WHERE id = ?', undef,
-                     $id);
-        }
+        my $cgi = new Bugzilla::CGI($query);
+        my $quicksearch = $cgi->param('query');
+        my $fixed = quicksearch($quicksearch, 1);
+        $dbh->do('UPDATE namedqueries SET query = ? WHERE id = ?',
+                 undef, $fixed, $id);
+        # quicksearch() uses Bugzilla->cgi to store its variables.
+        Bugzilla->cgi->delete_all();
     }
+    $dbh->bz_commit_transaction();
 }
 
 1;
