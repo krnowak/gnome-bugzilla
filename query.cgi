@@ -380,8 +380,11 @@ $vars->{'query_format'} = $cgi->param('query_format');
 
 # Set default page to "specific" if none provided
 if (!($cgi->param('query_format') || $cgi->param('format'))) {
-    if (defined $cgi->cookie('DEFAULTFORMAT')) {
-        $vars->{'format'} = $cgi->cookie('DEFAULTFORMAT');
+    if (my $cookie_format = $cgi->cookie('DEFAULTFORMAT')) {
+        if ($cookie_format =~ /short/) {
+            $cookie_format = 'specific';
+        }
+        $vars->{'format'} = $cookie_format;
     } else {
         $vars->{'format'} = 'specific';
     }
