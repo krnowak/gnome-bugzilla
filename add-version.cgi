@@ -10,11 +10,9 @@ use Bugzilla::Product;
 use Bugzilla::Util qw(i_am_cgi);
 use Bugzilla::Version;
 
-# Note: The 76.102 IP is just in there for testing, it can be removed.
 use constant ALLOWED_HOSTS => qw(
     209.132.176.176
     206.132.176.181
-    76.102.163.242
 );
 
 ###############
@@ -25,9 +23,8 @@ sub check_if_version_exists {
     my ($name, $product) = @_;
     my $version = new Bugzilla::Version({ product => $product, name => $name });
     if ($version) {
-        ThrowUserError('version_already_exists',
-                       {'name' => $version->name,
-                        'product' => $product->name});
+      print "Bugzilla version $name exists for product ", $product->name, "\n";
+      exit;
     }
 }
 
