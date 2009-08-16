@@ -399,7 +399,7 @@ Browse:
 <h3>Developers</h3>
 [% IF product.developers.size > 0 %]
   <table cellpadding="3" cellspacing="0">
-  [% FOREACH developer = product.developers %]
+  [% FOREACH developer = product.developers.sort('name') %]
     <tr>
       <td>
         [% IF user.id %]
