@@ -901,7 +901,7 @@ sub create {
     }
 
     my $status;
-    if ($cgi->param('ispatch')) {
+    if ($cgi->param('ispatch') and Bugzilla->user->in_group('editbugs')) {
         $class->validate_status($throw_error) || return;
         $status = $cgi->param('attachments.status');
         trick_taint($status);
