@@ -35,8 +35,9 @@ BEGIN {
         import ModPerl::Const -compile => 'EXIT';
      }
     else {
-        # Create a fake constant.
-        sub ModPerl::EXIT;
+        # Create a fake constant. We have to do this in a string eval,
+        # otherwise this will always be defined.
+        eval('sub ModPerl::EXIT;');
     }
 }
 
