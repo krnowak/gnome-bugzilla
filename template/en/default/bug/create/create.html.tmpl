@@ -82,10 +82,10 @@ function set_assign_to() {
     // with the default component owner, and the "QA Contact:" field
     // with the default QA Contact. It also selectively enables flags.
     var form = document.Create;
-    var assigned_to = form.assigned_to.value;
+//    var assigned_to = form.assigned_to.value;
 
 [% IF Param("useqacontact") %]
-    var qa_contact = form.qa_contact.value;
+//    var qa_contact = form.qa_contact.value;
 [% END %]
 
     var index = -1;
@@ -96,26 +96,27 @@ function set_assign_to() {
         index = 0;
     }
     if (index != -1) {
-        var owner = initialowners[index];
+//        var owner = initialowners[index];
         var component = components[index];
-        if (assigned_to == last_initialowner
+/*        if (assigned_to == last_initialowner
             || assigned_to == owner
             || assigned_to == '') {
             form.assigned_to.value = owner;
             last_initialowner = owner;
         }
-
+*/
         document.getElementById('initial_cc').innerHTML = initialccs[index];
         document.getElementById('comp_desc').innerHTML = comp_desc[index];
 
         [% IF Param("useqacontact") %]
-            var contact = initialqacontacts[index];
+/*            var contact = initialqacontacts[index];
             if (qa_contact == last_initialqacontact
                 || qa_contact == contact
                 || qa_contact == '') {
                   form.qa_contact.value = contact;
                   last_initialqacontact = contact;
             }
+*/
         [% END %]
 
         // First, we disable all flags. Then we re-enable those
