@@ -263,7 +263,8 @@ Browse:
 [% PROCESS gnomeblocker list = blockers_stable
                         target = target_stable %]
 
-<form class="boogleform" name="queryform" action="buglist.cgi" method="get">
+<form class="boogleform" id="boogle_search" action="buglist.cgi" 
+      method="get">
 <div>
   <p>Search for [% terms.bugs %] in [% product.name FILTER html %]: <br />
   <input id="boogle_search_box" name="quicksearch" type="text" 

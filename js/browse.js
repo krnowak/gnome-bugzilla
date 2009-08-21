@@ -15,24 +15,22 @@ function addText(text) {
   /* Get the querytype */
   var colonloc = text.indexOf(":");
   var querytype;
+  var searchBox = document.getElementById('boogle_search_box');
 
   if (colonloc != -1)
     querytype = text.substring(0,colonloc);
-  else
-    { /* comment or +critical_warning */
-    var oldvalue = document.forms["queryform"].elements.query.value;
+  else { 
+    /* comment or +critical_warning */
+    var oldvalue = searchBox.value;
     var location = oldvalue.indexOf(text);
 
     if (location == -1) {
       /* This is new; just prepend it */
-      document.forms["queryform"].elements.query.value = 
-      text + " " + oldvalue;
+      searchBox.value = text + " " + oldvalue;
 
     } else {
-
-      document.forms["queryform"].elements.query.value = 
-      oldvalue.substring(0, location) + 
-      oldvalue.substring(location + text.length + 1);
+      searchBox.value = oldvalue.substring(0, location)
+                        + oldvalue.substring(location + text.length + 1);
     }
     return;
   } /* if (colonloc != -1) */
@@ -50,13 +48,12 @@ function addText(text) {
   }
 
   /* Find if this querytype is already in the boogle query */
-  var oldvalue = document.forms["queryform"].elements.query.value;
+  var oldvalue = searchBox.value;
   var location = oldvalue.search(querytype);
 
   if (location == -1) {
     /* This is a new query type; just prepend it */
-    document.forms["queryform"].elements.query.value = 
-    text + " " + oldvalue;
+    searchBox.value = text + " " + oldvalue;
   } else {
     /* This querytype already appears, so doing an and with a different
      * value does not make any sense.  So, just add it as a comma separated
@@ -65,9 +62,8 @@ function addText(text) {
 
     if (oldvalue.search(value) == -1) {
       /* prepend the new value */
-      document.forms["queryform"].elements.query.value = 
-      oldvalue.substring(0,location) + text + "," +
-      oldvalue.substring(location + querytype.length + 1);
+      searchBox.value = oldvalue.substring(0,location) + text + "," 
+                        + oldvalue.substring(location + querytype.length + 1);
 
     } else {
 
@@ -90,9 +86,8 @@ function addText(text) {
 
       if (numberofvalues == 1) {
         /* remove the querytype name and value */
-        document.forms["queryform"].elements.query.value = 
-        oldvalue.substring(0,location) + 
-        oldvalue.substring(vlocation + value.length + 1);
+        searchBox.value = oldvalue.substring(0,location)
+                          + oldvalue.substring(vlocation + value.length + 1);
       } else {
         /* only remove one value */
 
@@ -105,14 +100,12 @@ function addText(text) {
               vlocation + value.length + 1) == ' ')   
            ) 
         {
-          document.forms["queryform"].elements.query.value = 
-          oldvalue.substring(0,vlocation-1) + 
-          oldvalue.substring(vlocation + value.length);
+          searchBox.value = oldvalue.substring(0,vlocation-1)
+                            + oldvalue.substring(vlocation + value.length);
 
         } else {
-          document.forms["queryform"].elements.query.value = 
-          oldvalue.substring(0,vlocation) + 
-          oldvalue.substring(vlocation + value.length + 1);
+          searchBox.value = oldvalue.substring(0,vlocation)
+                            + oldvalue.substring(vlocation + value.length + 1);
         }
       } /* if(numberofvalues == 1) */
 
