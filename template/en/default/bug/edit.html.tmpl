@@ -171,6 +171,15 @@
       <td><b>Status:</b></td>
       <td>[% bug.bug_status FILTER html %]</td>
     </tr>
+    [% IF bug.resolution %]
+      <tr>
+        <td><b>Resolution:</b></td>
+        <td>[% bug.resolution FILTER html %]
+          [%~ IF bug.dup_id %]
+            of [% bug.dup_id FILTER bug_link(bug.dup_id) %]
+          [% END %]
+      </tr>
+    [% END %]
     <tr>
       <td><b>Priority:</b></td>
       <td>[% bug.priority FILTER html %]</td>
