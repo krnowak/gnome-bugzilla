@@ -411,7 +411,7 @@ sub remove_from_db {
         }
     }
 
-    # Delete this product's developer group and it's members
+    # Delete this product's developer group and its members
     my $group = Bugzilla::Group->new({ name => $self->name . '_developers' });
     if ($group) {
         $dbh->do('DELETE FROM user_group_map WHERE group_id = ?',
@@ -633,7 +633,8 @@ sub _create_series {
 sub _create_developer {
     my $self = shift;
 
-    # For every product in Bugzilla, create a group named like "<product_name>_developers". 
+    # For every product in Bugzilla, create a group named like 
+    # "<product_name>_developers". 
     # Every developer in the product should be made a member of this group.
     my $new_group = Bugzilla::Group->create({
         name        => $self->{'name'} . '_developers',
@@ -643,7 +644,8 @@ sub _create_developer {
     });
  
     # The "<product name>_developers" group should be set to
-    # "MemberControl: Shown, OtherControl: N/A" in the product's group controls. 
+    # "MemberControl: Shown, OtherControl: N/A" in the product's group controls.
+    #
     # The "<product name>_developers" group should also be given editcomponents 
     # for the product.
     my $dbh = Bugzilla->dbh;
@@ -653,13 +655,18 @@ sub _create_developer {
               VALUES (?, ?, 0, ?, ?, 0, 1)',
               undef, ($new_group->id, $self->id, CONTROLMAPSHOWN, CONTROLMAPNA));
 
+    # The group should be able to bless itself.
+    $dbh->do('INSERT INTO group_group_map (grantor_id, member_id, grant_type)
+                   VALUES (?,?,?)',
+              undef, $new_group->id, $new_group->id, GROUP_BLESS);
+
     # The new <product_name>_developers groups should be automatically
     # made a member of the global developers group
     my $dev_group = Bugzilla::Group->new({ name => 'developers' });
     if (!$dev_group) {
         $dev_group = Bugzilla::Group->create({
             name        => 'developers',
-            description => 'Developer Group',
+            description => 'Developers',
             isbuggroup  => 1,
             isactive    => 1,
         });
