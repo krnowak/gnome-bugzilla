@@ -706,7 +706,7 @@ EOT
     
     # For GNOME, we always want to do the UTF-8 conversion on upgrade. We'll
     # turn on the utf8 parameter later.
-    if (scalar @non_utf8_tables) {
+    if (Bugzilla->params->{'utf8'} and scalar @non_utf8_tables) {
         print <<EOT;
 
 WARNING: We are about to convert your table storage format to UTF8. This
