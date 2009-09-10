@@ -715,6 +715,7 @@ sub update {
     my $fieldid = get_field_id('attachments.status');
     $sth->execute($bug->id, $attachment->id, $user->id, $timestamp, $fieldid,
                   $attachment->status, $updated_attachment->status);
+    $updated = 1;
   }
 
   if ($updated) {
