@@ -124,15 +124,16 @@
     [% FOREACH col = by_patch_status %]
       <tr>
         <td>
-        <!--
-        <a class="boogle_edit" 
-           href="javascript:addText('patch-status:[% col.0 FILTER js %]')"> -->
-        [% col.0 FILTER html %] <!-- </a> -->
-        [% IF col.0 == 'none' %] (unreviewed)[% END %]</td>
-        <td align="right">
           <!--
-          <a href="reports/patch-report.cgi?product=[% product.name FILTER url_quote%]&amp;patch-status=[% col.0 FILTER url_quote %]"> -->
-        [% col.1 FILTER html %] <!-- </a> -->
+          <a class="boogle_edit" 
+             href="javascript:addText('patch-status:[% col.0 FILTER js %]')"> -->
+          [% col.0 FILTER html %] <!-- </a> -->
+          [% IF col.0 == 'none' %] (unreviewed)[% END %]
+        </td>
+        <td align="right">
+          <a href="[% buglink FILTER html %]&amp;type0-1-0=equals&amp;query_format=advanced&amp;value0-2-0=0&amp;value0-1-0=1&amp;field0-1-0=attachments.ispatch&amp;field0-0-0=attachments.status&amp;field0-2-0=attachments.isobsolete&amp;type0-0-0=equals&amp;value0-0-0=[% col.0 FILTER url_quote %]&amp;type0-2-0=equals">
+            [% col.1 FILTER html %]
+          </a>
         </td>
       </tr>
     [% END %]
