@@ -588,22 +588,11 @@ sub sendMail {
         }
     }
  
-    if ($difftext eq "" && $newcomments eq "" && !$isnew) {
+    if ($difftext eq "" && !scalar(@$newcomments) && !$isnew) {
       # Whoops, no differences!
       return 0;
     }
     
-    # If an attachment was created, then add an URL. (Note: the 'g'lobal
-    # replace should work with comments with multiple attachments.)
-
-    if ( $newcomments =~ /Created an attachment \(/ ) {
-
-        my $showattachurlbase =
-            Bugzilla->params->{'urlbase'} . "attachment.cgi?id=";
-
-        $newcomments =~ s/(Created an attachment \(id=([0-9]+)\))/$1\n --> \(${showattachurlbase}$2\)/g;
-    }
-
     my $diffs = $difftext;
     if ($isnew) {
         my $head = "";
@@ -695,9 +684,15 @@ sub get_comments_by_bug {
 
     my $raw = 1; # Do not format comments which are not of type CMT_NORMAL.
     my $comments = Bugzilla::Bug::GetComments($id, "oldest_to_newest", $start, $end, $raw);
+    my $attach_base = correct_urlbase() . 'attachment.cgi?id=';
 
     foreach my $comment (@$comments) {
         $comment->{count} = $count++;
+        # If an attachment was created, then add an URL. (Note: the 'g'lobal
+        # replace should work with comments with multiple attachments.)
+        if ($comment->{body} =~ /Created an attachment \(/) {
+            $comment->{body} =~ s/(Created an attachment \(id=([0-9]+)\))/$1\n --> \($attach_base$2\)/g;
+        }
     }
 
     if (Bugzilla->params->{'insidergroup'}) {
