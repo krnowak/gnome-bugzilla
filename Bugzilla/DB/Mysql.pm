@@ -325,7 +325,7 @@ EOT
     my @isam_tables;
     foreach my $row (@$table_status) {
         my ($name, $type) = @$row;
-        push(@isam_tables, $name) if $type eq "ISAM";
+        push(@isam_tables, $name) if (defined($type) && $type eq "ISAM");
     }
 
     if(scalar(@isam_tables)) {
@@ -398,7 +398,7 @@ EOT
     my @myisam_tables;
     foreach my $row (@$table_status) {
         my ($name, $type) = @$row;
-        if ($type =~ /^MYISAM$/i 
+        if (defined ($type) && $type =~ /^MYISAM$/i 
             && !grep($_ eq $name, Bugzilla::DB::Schema::Mysql::MYISAM_TABLES))
         {
             push(@myisam_tables, $name) ;
@@ -702,7 +702,7 @@ EOT
     my $utf_table_status =
         $self->selectall_arrayref("SHOW TABLE STATUS", {Slice=>{}});
     $self->_after_table_status([map($_->{Name}, @$utf_table_status)]);
-    my @non_utf8_tables = grep($_->{Collation} !~ /^utf8/, @$utf_table_status);
+    my @non_utf8_tables = grep(defined($_->{Collation}) && $_->{Collation} !~ /^utf8/, @$utf_table_status);
     
     # For GNOME, we always want to do the UTF-8 conversion on upgrade. We'll
     # turn on the utf8 parameter later.

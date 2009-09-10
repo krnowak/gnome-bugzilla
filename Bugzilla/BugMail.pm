@@ -337,11 +337,10 @@ sub Send {
                     $deptext .= $thisdiff;
                 }
                 $lastbug = $depbug;
-                my $urlbase = Bugzilla->params->{"urlbase"};
                 $thisdiff =
                   "\nBug $id depends on bug $depbug, which changed state.\n\n" .
                   "Bug $depbug Summary: $summary\n" .
-                  "${urlbase}show_bug.cgi?id=$depbug\n\n";
+                  correct_urlbase() . "show_bug.cgi?id=$depbug\n\n";
                 $thisdiff .= three_columns("What    ", "Old Value", "New Value");
                 $thisdiff .= ('-' x 76) . "\n";
                 $interestingchange = 0;
@@ -362,7 +361,7 @@ sub Send {
 
         if ($deptext) {
             my $diffpart = {};
-            $diffpart->{'text'} = "\n" . trim("\n\n" . $deptext);
+            $diffpart->{'text'} = "\n" . trim($deptext);
             push(@diffparts, $diffpart);
         }
     }
@@ -587,13 +586,15 @@ sub sendMail {
             $difftext .= $diff->{'text'};
         }
     }
- 
+
     if ($difftext eq "" && !scalar(@$newcomments) && !$isnew) {
       # Whoops, no differences!
       return 0;
     }
-    
+
     my $diffs = $difftext;
+    # Remove extra newlines.
+    $diffs =~ s/^\n+//s; $diffs =~ s/\n+$//s;
     if ($isnew) {
         my $head = "";
         foreach my $f (@headerlist) {
