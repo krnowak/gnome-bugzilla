@@ -31,7 +31,7 @@
   [%# These actions are based on the current custom workflow. %]
   [% FOREACH bug_status = bug.status.can_change_to %]
     [% NEXT IF bug.isunconfirmed && bug_status.is_open && !bug.user.canconfirm %]
-    [% NEXT IF bug.isopened && !bug.isunconfirmed && bug_status.is_open && !bug.user.canedit %]
+    [% NEXT IF bug_status.name != 'UNCONFIRMED' && bug.isopened && !bug.isunconfirmed && bug_status.is_open && !bug.user.canedit %]
     [% NEXT IF (!bug_status.is_open || !bug.isopened) && !bug.user.canedit &&
        !(bug.user.isreporter && bug.resolution != 'WONTFIX') %]
     [%# Special hack to only display UNCO or REOP when reopening, but not both;

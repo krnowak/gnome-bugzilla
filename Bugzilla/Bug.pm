@@ -3573,8 +3573,11 @@ sub check_can_change_field {
     if ($field eq 'bug_status'
         && is_open_state($oldvalue) && is_open_state($newvalue)) 
     {
-       $$PrivilegesRequired = 2;
-       return 0;
+       # Though they can change from NEEDINFO -> UNCONFIRMED
+       if (!($oldvalue eq 'NEEDINFO' and $newvalue eq 'UNCONFIRMED')) {
+           $$PrivilegesRequired = 2;
+           return 0;
+       }
     }
 
     # The reporter is allowed to change anything else.
