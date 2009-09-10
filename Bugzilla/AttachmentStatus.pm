@@ -58,7 +58,7 @@ sub bug_count {
     $count = $dbh->selectrow_array("SELECT COUNT(DISTINCT bugs.bug_id)
                                     FROM bugs, attachments, attachment_status
                                     WHERE bugs.bug_id = attachments.bug_id
-                                    AND attachments.status_id = attachment_status.id
+                                    AND attachments.status = attachment_status.value
                                     AND attachment_status.value = ?",
                                     undef, $self->name);
     $self->{bug_count} = $count;
