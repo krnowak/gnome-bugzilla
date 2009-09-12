@@ -328,7 +328,7 @@ sub list_blockers {
         push(@list_blockers_stable, $bug);
     }
     
-    return (\@list_blockers_development, \@list_blockers_stable);
+    return (\@list_blockers_stable, \@list_blockers_development);
 }
 
 1;
