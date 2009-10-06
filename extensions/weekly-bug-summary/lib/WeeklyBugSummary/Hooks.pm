@@ -747,7 +747,7 @@ sub get_patch_reviewers_list {
            AND bugs_activity.bug_when >= NOW() - " .
                    Bugzilla->dbh->sql_interval('?', 'DAY');
 
-    push(@args, get_field_id('flagtypes.name'), $days);
+    push(@args, get_field_id('attachments.status'), $days);
 
     if ($keyword) {
         push(@args, lc($keyword));
