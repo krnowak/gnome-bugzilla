@@ -120,7 +120,7 @@
 
     <ul>
     [% FOREACH product = developed_products %]
-      <li><a href="browse.cgi?product=[% product FILTER url_quote %]">[% product 
+      <li><a href="browse.cgi?product=[% product.name FILTER url_quote %]">[% product 
           FILTER html %]</a></li>
     [% END %]
     </ul>
@@ -131,7 +131,7 @@
 
     <ul>
     [% FOREACH product = userinfo.product_interests %]
-      <li><a href="browse.cgi?product=[% product FILTER url_quote %]">[% product.name
+      <li><a href="browse.cgi?product=[% product.name FILTER url_quote %]">[% product.name
            FILTER html %]</a></li>
     [% END %]
     </ul>
