@@ -56,10 +56,10 @@
   <tr>
     <td>New Patches</td>
     <td align="right">
-    <!--
-    <a href="reports/patch-report.cgi?product=[% product.name FILTER url_quote%]
-    &amp;patch-status=[% col.0 FILTER url_quote %]&amp;max_days=7">%] -->
-    [% new_patches FILTER html %] <!-- </a> --></td>
+      <a href="page.cgi?id=patchreport.html&amp;product=[%- product.name FILTER url_quote %]&amp;max_days=7">
+        [% new_patches FILTER html %]
+      </a>
+    </td>
   </tr>
 
   <tr>
@@ -131,7 +131,7 @@
           [% IF col.0 == 'none' %] (unreviewed)[% END %]
         </td>
         <td align="right">
-          <a href="[% buglink FILTER html %]&amp;type0-1-0=equals&amp;query_format=advanced&amp;value0-2-0=0&amp;value0-1-0=1&amp;field0-1-0=attachments.ispatch&amp;field0-0-0=attachments.status&amp;field0-2-0=attachments.isobsolete&amp;type0-0-0=equals&amp;value0-0-0=[% col.0 FILTER url_quote %]&amp;type0-2-0=equals">
+          <a href="page.cgi?id=patchreport.html&amp;product=[%- product.name FILTER url_quote %]&amp;patch-status=[% col.0 FILTER url_quote %]">
             [% col.1 FILTER html %]
           </a>
         </td>
