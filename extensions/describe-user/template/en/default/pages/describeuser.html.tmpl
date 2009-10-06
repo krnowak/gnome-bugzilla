@@ -169,9 +169,9 @@
         [% "&amp;bug_status=REOPENED&amp;bug_status=ASSIGNED" %]
         [% "&amp;emailassigned_to1=1&amp;emailtype1=exact&amp;email1=" %]
         [% userinfo.email FILTER url_quote %]">
-        <b>Assigned to [% displayname FILTER none %]</b></a> 
+        <b>Assigned to [% displayname FILTER html %]</b></a> 
       [% "(the issue has been assigned to" %]
-      [%+ displayname FILTER none %]
+      [%+ displayname FILTER html %]
       [%+ "and it is not resolved or closed yet)" %]
     </span></h3>
     <table border="0" cellpadding="2" cellspacing="0">
@@ -207,7 +207,7 @@
         [% "buglist.cgi?bug_status=NEEDINFO&amp;emailreporter1=1&amp;emailtype1=" %]
         [% "exact&amp;email1=" %] [% userinfo.email FILTER url_quote %]">
         <b>Needinfo</b></a>
-      ([% displayname FILTER none %] 
+      ([% displayname FILTER html %] 
       [%+ "reported this issue, it requires more information and you should " %]
       [% "provide it) " %]
     </span></h3>
@@ -242,7 +242,7 @@
         [% "bug_status=REOPENED&amp;emailreporter1=1&amp;emailtype1=exact" %]
         [% "&amp;email1=" %] [% userinfo.email FILTER url_quote %]">
         <b>New</b></a>
-      ([% displayname FILTER none %] 
+      ([% displayname FILTER html %] 
       [%+ "reported it but nobody has accepted it yet)" %]
      </span></h3>
     <table border="0" cellpadding="3" cellspacing="0">
@@ -277,7 +277,7 @@
         [% "emailtype1=exact&amp;email1=" %]
         [% userinfo.email FILTER url_quote %]">
         <b>In progress</b></a>
-      ([% displayname FILTER none %]
+      ([% displayname FILTER html %]
        [%+ "reported it, the developer accepted the issue and is hopefully " %]
        [% "working on it)" %]
     </span></h3>
@@ -307,7 +307,7 @@
   </p>
 
   <p>
-    <h3><span>Closed Issues: <b>Recently closed</b></a> ([% displayname FILTER none %] reported it and the issue was closed in the last 7 days)</span></h3>
+    <h3><span>Closed Issues: <b>Recently closed</b></a> ([% displayname FILTER html %] reported it and the issue was closed in the last 7 days)</span></h3>
     <table border="0" cellpadding="3" cellspacing="0">
     [% FOREACH bug = recentlyclosed %]
       <tr class="[%+ IF loop.count() % 2 == 0 %]

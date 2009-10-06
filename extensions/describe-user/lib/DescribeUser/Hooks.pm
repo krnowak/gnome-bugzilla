@@ -54,13 +54,13 @@ sub _page_describeuser {
     my $displayname;
     my $to_be_conjugation;
 
-    if (defined $cgi->param('login')) {
+    if (defined $cgi->param('login') && (!Bugzilla->user->id || (trim($cgi->param('login') != Bugzilla->user->login)) {
         $r_userid = login_to_id(trim($cgi->param('login')));
         if ($r_userid == 0) {
                 ThrowUserError('invalid_username', { name => $cgi->param('login') });
         }
         $r_user = Bugzilla::User->new($r_userid);
-        $displayname = $r_user->{name} || $r_user->{login};
+        $displayname = $r_user->name || $r_user->login;
         $to_be_conjugation = 'is';
     } else {
         $r_user = Bugzilla->user;
