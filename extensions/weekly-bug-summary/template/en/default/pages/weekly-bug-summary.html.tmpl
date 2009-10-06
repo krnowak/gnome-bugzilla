@@ -84,13 +84,7 @@
 <tr class="[%+ IF loop.count() % 2 == 0 %]bz_row_even[% ELSE %]bz_row_odd[% END %]">
   <td>[% position FILTER html %]</td>
   <td>
-    [% IF user.id %]
-      <a href="describeuser.cgi?login=[% row.2.email FILTER url_quote %]">
-    [% END %]
-    [% row.2.identity FILTER html %]
-    [% IF user.id %]
-      </a>
-    [% END %]
+    [% INCLUDE global/user.html.tmpl who = row.2 %]
   </td>
   [% IF links == "yes" %]
     <td><a href="[% row.3 FILTER html %]">[% row.1 FILTER html %]</a></td>
@@ -113,13 +107,7 @@
 <tr class="[%+ IF loop.count() % 2 == 0 %]bz_row_even[% ELSE %]bz_row_odd[% END %]">
   <td>[% position FILTER html %]</td>
   <td>
-    [% IF user.id %]
-      <a href="describeuser.cgi?login=[% row.2.email FILTER url_quote %]">
-    [% END %]
-    [% row.2.identity FILTER html %]
-    [% IF user.id %]
-      </a>
-    [% END %]
+    [% INCLUDE global/user.html.tmpl who = row.2 %]
   </td>
   [% IF links == "yes" %]
     <td><a href="[% row.3 FILTER html %]">[% row.1 FILTER html %]</a></td>
@@ -142,13 +130,7 @@
 <tr class="[%+ IF loop.count() % 2 == 0 %]bz_row_even[% ELSE %]bz_row_odd[% END %]">
   <td>[% position FILTER html %]</td>
   <td>
-    [% IF user.id %]
-      <a href="describeuser.cgi?login=[% row.2.email FILTER url_quote %]">
-    [% END %]
-    [% row.2.identity FILTER html %]
-    [% IF user.id %]
-      </a>
-    [% END %]
+    [% INCLUDE global/user.html.tmpl who = row.2 %]
   </td>
     <td>[% row.1 FILTER html %]</td>
 </tr>
@@ -167,13 +149,7 @@
 <tr class="[%+ IF loop.count() % 2 == 0 %]bz_row_even[% ELSE %]bz_row_odd[% END %]">
   <td>[% position FILTER html %]</td>
   <td>
-    [% IF user.id %]
-      <a href="describeuser.cgi?login=[% row.2.email FILTER url_quote %]">
-    [% END %]
-    [% row.2.identity FILTER html %]
-    [% IF user.id %]
-      </a>
-    [% END %]
+    [% INCLUDE global/user.html.tmpl who = row.2 %]
   </td>
     <td>[% row.1 FILTER html %]</td>
 </tr>
