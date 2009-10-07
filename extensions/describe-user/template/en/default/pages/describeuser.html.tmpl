@@ -67,12 +67,12 @@
 
     [% IF showuser != '' %]
       for 
-      [% IF user.groups.editusers %]
-        <a href="editusers.cgi?action=edit&user=[% userinfo.email 
+      [% IF user.in_group('editusers') %]
+        <a href="editusers.cgi?action=edit&userid=[% userinfo.id 
                 FILTER url_quote %]">
       [% END %]
       [% showuser FILTER html %]
-      [% IF user.groups.editusers %]
+      [% IF user.in_group('editusers') %]
         </a>
       [% END %]
     [% END %]
