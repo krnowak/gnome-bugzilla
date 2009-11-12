@@ -568,8 +568,7 @@ sub update_table_definitions {
     _add_visiblity_value_to_value_tables();
 
     # 2009-03-02 arbingersys@gmail.com - Bug 423613
-    $dbh->bz_add_index('profiles', 'profiles_extern_id_idx',
-                       {TYPE => 'UNIQUE', FIELDS => [qw(extern_id)]});
+    _add_extern_id_index();
 
     # 2009-05-06 bbaetz@everythingsolved.com - gnome specific
     # Move from the old hacked-up custom fields to the new ones
@@ -3519,6 +3518,16 @@ sub _fix_saved_searches {
         Bugzilla->cgi->delete_all();
     }
     $dbh->bz_commit_transaction();
+
+sub _add_extern_id_index {
+    my $dbh = Bugzilla->dbh;
+    if (!$dbh->bz_index_info('profiles', 'profiles_extern_id_idx')) {
+        # Some Bugzillas have a multiple empty strings in extern_id,
+        # which need to be converted to NULLs before we add the index.
+        $dbh->do("UPDATE profiles SET extern_id = NULL WHERE extern_id = ''");
+        $dbh->bz_add_index('profiles', 'profiles_extern_id_idx',
+                           {TYPE => 'UNIQUE', FIELDS => [qw(extern_id)]});
+    }
 }
 
 1;
