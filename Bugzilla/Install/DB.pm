@@ -3518,6 +3518,7 @@ sub _fix_saved_searches {
         Bugzilla->cgi->delete_all();
     }
     $dbh->bz_commit_transaction();
+}
 
 sub _add_extern_id_index {
     my $dbh = Bugzilla->dbh;
