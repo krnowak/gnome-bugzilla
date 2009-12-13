@@ -13,6 +13,7 @@ use Bugzilla::Version;
 use constant ALLOWED_HOSTS => qw(
     209.132.176.176
     206.132.176.181
+    209.132.180.167
 );
 
 ###############
