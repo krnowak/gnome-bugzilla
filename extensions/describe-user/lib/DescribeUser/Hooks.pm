@@ -136,8 +136,9 @@ sub _page_describeuser {
 
     my @patches;
     my $sth = $dbh->prepare("
-            SELECT attachments.status as status, attachments.attach_id,
-                   products.name as product, attachments.description
+            SELECT attachments.bug_id, attachments.status as status,
+                   attachments.attach_id, products.name as product,
+                   attachments.description
               FROM attachments, bugs, products
              WHERE attachments.bug_id = bugs.bug_id
                AND bugs.product_id = products.id
