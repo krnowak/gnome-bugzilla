@@ -67,7 +67,7 @@
 
     [% IF showuser != '' %]
       for 
-      [% IF user.in_group('editusers') %]
+      [% IF user.in_group('editusers') || user.can_bless %]
         <a href="editusers.cgi?action=edit&userid=[% userinfo.id 
                 FILTER url_quote %]">
       [% END %]
@@ -85,7 +85,7 @@
 [%### Actually handling the header ###%]
   [% PROCESS global/header.html.tmpl
     title = "$terms.Bugzilla User Info$name_title"
-    h1 = "$terms.Bugzilla User Info$linked_name"
+    header = "$terms.Bugzilla User Info$linked_name"
     style = "
   table.figures td { padding-top: 0px; padding-bottom: 0px }
   table.figures td { margin-top: 0px; margin-bottom: 0px }
