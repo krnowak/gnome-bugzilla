@@ -226,11 +226,19 @@ sub quoteUrls {
     # Current bug ID this comment belongs to
     my $current_bugurl = $bug ? ("show_bug.cgi?id=" . $bug->id) : "";
 
+    # This is a hack to speed up displaying comments for the Bugzilla 3.4
+    # branch.
+    my $word_cache = Bugzilla->request_cache->{template_get_text} ||= {};
+    Bugzilla->template_inner; # populates request_cache->{language}
+    my $lang = Bugzilla->request_cache->{language} || '';
+    my $bug_word = $word_cache->{$lang}->{bug} 
+                   ||= get_text('term', { term => 'bug' });
+
     # This handles bug a, comment b type stuff. Because we're using /g
     # we have to do this in one pattern, and so this is semi-messy.
     # Also, we can't use $bug_re?$comment_re? because that will match the
     # empty string
-    my $bug_word = get_text('term', { term => 'bug' });
+
     my $bug_re = qr/\Q$bug_word\E\s*\#?\s*(\d+)/i;
     my $comment_re = qr/comment\s*\#?\s*(\d+)/i;
     $text =~ s~\b($bug_re(?:\s*,?\s*$comment_re)?|$comment_re)
@@ -315,15 +323,26 @@ sub get_bug_link {
     # if we don't change them below (which is highly likely).
     my ($pre, $title, $post) = ("", "", "");
 
-    $title = get_text('get_status', { status => $bug->bug_status });
+    # This is a hack to speed up displaying comments for the Bugzilla 3.4
+    # branch.
+    my $word_cache = Bugzilla->request_cache->{template_get_text} ||= {};
+    Bugzilla->template_inner; # populates request_cache->{language}
+    my $lang = Bugzilla->request_cache->{language} || '';
+
+    my $status = $word_cache->{$lang}->{status}->{$bug->bug_status}
+                 ||= get_text('get_status', {status => $bug->bug_status});
+    $title = $status;
+
     if ($bug->bug_status eq 'UNCONFIRMED') {
         $pre = "<i>";
         $post = "</i>";
     }
     if ($bug->resolution) {
         $pre = '<span class="bz_closed">';
-        $title .= ' ' . get_text('get_resolution',
-                                 { resolution => $bug->resolution });
+        my $resolution = $word_cache->{$lang}->{resolution}->{$bug->resolution}
+                         ||= get_text('get_resolution', 
+                                      { resolution => $bug->resolution });
+        $title .= ' ' . $resolution;
         $post = '</span>';
     }
     if (Bugzilla->user->can_see_bug($bug)) {
