@@ -803,6 +803,14 @@ sub init {
     %chartfields = @{$dbh->selectcol_arrayref(
         q{SELECT name, id FROM fielddefs}, { Columns=>[1,2] })};
 
+    if (!$user->is_timetracker) {
+        foreach my $tt_field (qw(estimated_time remaining_time work_time
+                                 actual_time percentage_complete deadline)) 
+        {
+            delete $chartfields{$tt_field};
+        }
+    }
+
     $row = 0;
     for ($chart=-1 ;
          $chart < 0 || $params->param("field$chart-0-0") ;
@@ -1237,7 +1245,8 @@ sub _contact_exact_group {
     $$v =~ m/%group\\.([^%]+)%/;
     my $group = $1;
     my $groupid = Bugzilla::Group::ValidateGroupName( $group, ($user));
-    $groupid || ThrowUserError('invalid_group_name',{name => $group});
+    ($groupid && $user->in_group_id($groupid))
+      || ThrowUserError('invalid_group_name',{name => $group});
     my @childgroups = @{Bugzilla::Group->flatten_group_membership($groupid)};
     my $table = "user_group_map_$$chartid";
     push (@$supptables, "LEFT JOIN user_group_map AS $table " .
@@ -1309,7 +1318,8 @@ sub _cc_exact_group {
     $$v =~ m/%group\\.([^%]+)%/;
     my $group = $1;
     my $groupid = Bugzilla::Group::ValidateGroupName( $group, ($user));
-    $groupid || ThrowUserError('invalid_group_name',{name => $group});
+    ($groupid && $user->in_group_id($groupid))
+      || ThrowUserError('invalid_group_name',{name => $group});
     my @childgroups = @{Bugzilla::Group->flatten_group_membership($groupid)};
     my $chartseq = $$chartid;
     if ($$chartid eq "") {

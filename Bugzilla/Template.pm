@@ -268,8 +268,8 @@ sub get_attachment_link {
     my ($attachid, $link_text) = @_;
     my $dbh = Bugzilla->dbh;
 
-    detaint_natural($attachid)
-      || die "get_attachment_link() called with non-integer attachment number";
+    (detaint_natural($attachid) && $attachid <= MAX_INT_32)
+      || return $link_text;
 
     my ($bugid, $isobsolete, $desc) =
         $dbh->selectrow_array('SELECT bug_id, isobsolete, description
@@ -315,6 +315,9 @@ sub get_bug_link {
     if (!$bug) {
         return html_quote('<missing bug number>');
     }
+    my $quote_bug_num = html_quote($bug_num);
+    detaint_natural($bug_num) || return "&lt;invalid bug number: $quote_bug_num&gt;";
+    ($bug_num <= MAX_INT_32) || return $link_text;
 
     $bug = blessed($bug) ? $bug : new Bugzilla::Bug($bug);
     return $link_text if $bug->{error};
@@ -373,6 +376,9 @@ $Template::Directive::WHILE_MAX = 1000000;
 # Use the Toolkit Template's Stash module to add utility pseudo-methods
 # to template variables.
 use Template::Stash;
+
+# Allow keys to start with an underscore or a dot.
+$Template::Stash::PRIVATE = undef;
 
 # Add "contains***" methods to list variables that search for one or more 
 # items in a list and return boolean values representing whether or not 
