@@ -11,9 +11,8 @@ use Bugzilla::Util qw(i_am_cgi);
 use Bugzilla::Version;
 
 use constant ALLOWED_HOSTS => qw(
-    209.132.176.176
-    206.132.176.181
     209.132.180.167
+    209.132.180.178
 );
 
 ###############
