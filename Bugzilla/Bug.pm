@@ -3464,7 +3464,7 @@ sub check_can_change_field {
     }
 
     # GNOME: require loads of priviledges to change the GNOME target field
-    if ($field eq 'cf_gnome_target' && !$user->in_group('editclassifications') {
+    if ($field eq 'cf_gnome_target' && !$user->in_group('editclassifications')) {
         $$PrivilegesRequired = 3;
         return 0;
     }
