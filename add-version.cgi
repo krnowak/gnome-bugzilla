@@ -23,7 +23,7 @@ sub check_if_version_exists {
     my ($name, $product) = @_;
     my $version = new Bugzilla::Version({ product => $product, name => $name });
     if ($version) {
-      print "Bugzilla version $name exists for product ", $product->name, "\n";
+      print ", exists (", $product->name, ")";
       exit;
     }
 }
@@ -98,4 +98,4 @@ while (1) {
 }
 
 Bugzilla::Version::create($version_major_minor_x, $product);
-print "OK: Created $version_major_minor_x in the $product_name product\n";
+print ", added";
