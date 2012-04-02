@@ -58,7 +58,7 @@ sub get_param_list {
   {
    name => 'mybugstemplate',
    type => 't',
-   default => 'buglist.cgi?bug_status=NEEDINFO&amp;bug_status=UNCONFIRMED&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;emailassigned_to1=1&amp;emailreporter1=1&amp;emailtype1=exact&amp;email1=%userid%&amp;field0-0-0=bug_status&amp;type0-0-0=notequals&amp;value0-0-0=UNCONFIRMED&amp;field0-0-1=reporter&amp;type0-0-1=equals&amp;value0-0-1=%userid%'
+   default => 'page.cgi?id=describeuser.html'
   },
 
   {
