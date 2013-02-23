@@ -125,6 +125,7 @@ sub get_format {
     return
     {
         'template'    => $template,
+        'format'      => $format,
         'extension'   => $ctype,
         'ctype'       => Bugzilla::Constants::contenttypes->{$ctype}
     };
