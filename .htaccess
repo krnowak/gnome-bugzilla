@@ -1,0 +1,26 @@
+# Don't allow people to retrieve non-cgi executable files or our private data
+<FilesMatch ^(.*\.pm|.*\.pl|.*localconfig.*)$>
+  deny from all
+</FilesMatch>
+
+<FilesMatch "\.cgi$">
+  ErrorDocument 403 /page.cgi?id=403.html
+</FilesMatch>
+
+RewriteEngine On
+RewriteRule bug-HOWTO.html$ /page.cgi?id=bug-writing.html [R=301,L]
+RewriteRule bugwritinghelp.html$ /page.cgi?id=bug-writing.html [R=301,L]
+RewriteRule describeflagtypes.cgi$ /page.cgi?id=fields.html#attachments.status [NE,R=301,L]
+RewriteRule bugbuddy.cgi /xmlrpc.cgi [PT,L]
+
+# 15 Jul 2006: ovitters: prevent some common names from being interpreted
+# as aliases
+RewriteRule ^/(dupfinder|reports)$ - [L]
+
+# Rewrite plain bug numbers
+# 15 Jul 2006: ovitters: and rewrite aliases as well.
+RewriteRule ^/([A-Za-z0-9]+)$ /show_bug.cgi?id=$1 [L,R]
+
+RewriteCond %{THE_REQUEST} id=472370
+#RewriteRule show_bug.cgi http://blogs.gnome.org/ovitters/2007/09/06/how-to-report-inappropriate-content-on-gnome-bugzilla/?
+RewriteRule show_bug.cgi http://www.gnome.org/?

@@ -1,0 +1,141 @@
+/* global (begin) */
+    body {
+	margin: 0px;
+	padding: 0px;
+	font-family: "Bitstream Vera Sans", "Luxi Sans", "Lucida Grande", "Trebuchet MS", helvetica, verdana, arial, sans-serif;
+        /* font-size: small; */
+        color: #333;
+    }
+/* global (end) */
+
+/* header (begin) */
+  #header #titles {
+    -moz-border-radius: 0;
+  }
+/* header (end)   */
+
+/* banner (begin) */
+/* banner (end) */
+
+/* titles (begin) */
+/* titles (end) */
+
+/* footer (begin)
+ * See also the "header" section for styles that apply
+ * to both the header and footer. 
+ */
+/* footer (end) */
+
+/* link lists (begin) */
+/* link lists (end) */
+
+/* tabs (begin) */
+    #bugzilla-body .tabbed {
+        margin: 0 -1em;
+    }
+    #bugzilla-body .tabbody {
+        margin: 0 1em;
+    }
+/* tabs (end) */
+
+/* generic (begin) */
+    #bugzilla-body {
+        margin: 0 1em 1em 1em;
+    }
+    a img {
+         border: 0px;
+    }
+    a[name] {
+        text-decoration: inherit;
+    }
+    a[name][href] {
+        text-decoration: underline;
+    }
+    h1, h2, h3, h4 {
+        margin-top: 0;
+        margin-bottom: .5em;
+        padding-bottom: 0;
+    }
+    h1, h2 {
+        font-size: 1.3em;
+        margin: 0;
+        padding-bottom: 10px;
+    }
+    h1 {
+        padding-top: 0;
+        /* font-size: x-large; */
+        color: #000;
+    }
+    h2 {
+        font-size: medium;
+        margin: 0;
+        color: #777;
+        padding-top: 12px;
+    }
+    h3, h4 {
+        font-size: small;
+        margin-bottom: 0;
+    }
+    h4 {
+        font-size: x-small;
+    }
+    hr {
+        border-style: none;
+        border: 0px;
+        background-color: #ffffff;
+        color: #ffffff;
+        border-bottom: 1px dashed #ccc;
+        padding: 0.5em;
+    }
+    input, textarea {
+        border: 1px solid #6f6f6f;
+        /* background: #dddddd; */
+    }
+    input[type=radio] {
+        margin-left: 1em;
+    }
+    /* input[type=submit] {
+        background: #dddddd;
+        -moz-border-radius: 10%;
+    } */
+    /* input[type=username] {
+        padding-left: 18px;
+        background-image: url('/images/stock_person.png');
+        background-repeat: no-repeat;
+    }
+    input[type=password] {
+        padding-left: 18px;
+        background-image: url('/images/stock_keyring.png');
+        background-repeat: no-repeat;
+    } */
+    input:focus, textarea:focus {
+        background-color: #f7f2d0;
+        color: #000000;
+    }
+    option {
+        border: 0px none #ffffff;
+    }
+    /* select {
+        border: groove;
+    } */
+/* generic (end) */
+
+/************/
+/* Comments */
+/************/
+
+.bz_comment {
+    border-top: 1px solid #cccccc;
+    margin-top: 0.5em;
+    /* border-bottom: 1px dashed #ccc; */
+    /* border-top: 1px solid #ccc; */
+    padding: 0.2em;
+}
+
+.bz_comment_head, .bz_first_comment_head {
+    background-color: transparent;
+    font-size: 105%;
+    font-weight: bold;
+}
+
+/** End Comments **/

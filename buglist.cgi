@@ -92,6 +92,11 @@ if ($cgi->request_method() eq 'POST') {
     }
 }
 
+# Backwards-compat for old GNOME Bugzilla 2.20 saved searches and links.
+if (defined $cgi->param('query') and !defined $cgi->param('quicksearch')) {
+    $cgi->param('quicksearch', $cgi->param('query'));
+    $cgi->delete('query');
+}
 # Determine whether this is a quicksearch query.
 my $searchstring = $cgi->param('quicksearch');
 if (defined($searchstring)) {
@@ -132,16 +137,6 @@ if (defined $cgi->param('format') && $cgi->param('format') eq "rdf"
 # Treat requests for ctype=rss as requests for ctype=atom
 if (defined $cgi->param('ctype') && $cgi->param('ctype') eq "rss") {
     $cgi->param('ctype', "atom");
-}
-
-# The js ctype presents a security risk; a malicious site could use it  
-# to gather information about secure bugs. So, we only allow public bugs to be
-# retrieved with this format.
-#
-# Note that if and when this call clears cookies or has other persistent 
-# effects, we'll need to do this another way instead.
-if ((defined $cgi->param('ctype')) && ($cgi->param('ctype') eq "js")) {
-    Bugzilla->logout_request();
 }
 
 # An agent is a program that automatically downloads and extracts data
@@ -1090,6 +1085,17 @@ $vars->{'displaycolumns'} = \@displaycolumns;
 
 $vars->{'openstates'} = [BUG_STATE_OPEN];
 $vars->{'closedstates'} = [map {$_->name} closed_bug_statuses()];
+
+# The iCal file needs priorities ordered from 1 to 9 (highest to lowest)
+# If there are more than 9 values, just make all the lower ones 9
+if ($format->{'extension'} eq 'ics') {
+    my $n = 1;
+    $vars->{'ics_priorities'} = {};
+    my $priorities = get_legal_field_values('priority');
+    foreach my $p (@$priorities) {
+        $vars->{'ics_priorities'}->{$p} = ($n > 9) ? 9 : $n++;
+    }
+}
 
 # The list of query fields in URL query string format, used when creating
 # URLs to the same query results page with different parameters (such as

@@ -113,6 +113,9 @@ sub _throw_error {
                 $code = ERROR_UNKNOWN_TRANSIENT if $name =~ /user/i;
             }
             die SOAP::Fault->faultcode($code)->faultstring($message);
+        } elsif (Bugzilla->error_mode == ERROR_MODE_BUGBUDDY) {
+            # bug-buddy uses the strings, not a code
+            die SOAP::Fault->faultcode(999)->faultstring($error);
         }
     }
     exit;

@@ -694,6 +694,23 @@ sub get_selectable_classifications {
     return $self->{selectable_classifications};
 }
 
+sub get_selectable_gnome_products {
+    my ($self) = @_;
+
+    my @gnome_products = ();
+    my %visible_products = map { $_->name => $_ }
+        @{$self->get_selectable_products};
+
+    foreach my $c (@{Bugzilla::Classification->match({ 'is_gnome' => 1 })}) {
+        foreach my $p (@{$c->products}) {
+            next unless $visible_products{$p->name};
+            push @gnome_products, $p;
+        }
+    }
+
+    return \@gnome_products;
+}
+
 sub can_enter_product {
     my ($self, $product_name, $warn) = @_;
     my $dbh = Bugzilla->dbh;
@@ -1489,6 +1506,9 @@ sub wants_mail {
     # No mail if there are no events
     return 0 if !scalar(@$events);
 
+    # No mail if you are an @gnome.bugs user.
+    return 0 if $self->login =~ /\@gnome\.bugs$/;
+
     # If a relationship isn't given, default to REL_ANY.
     if (!defined($relationship)) {
         $relationship = REL_ANY;
@@ -1536,10 +1556,9 @@ sub is_insider {
 sub is_global_watcher {
     my $self = shift;
 
-    if (!defined $self->{'is_global_watcher'}) {
-        my @watchers = split(/[,\s]+/, Bugzilla->params->{'globalwatchers'});
-        $self->{'is_global_watcher'} = scalar(grep { $_ eq $self->login } @watchers) ? 1 : 0;
-    }
+    my @watchers = split(/[,\s]+/, Bugzilla->params->{'globalwatchers'});
+    $self->{'is_global_watcher'} = 
+        scalar(grep { $_ eq $self->login } @watchers) ? 1 : 0;
     return  $self->{'is_global_watcher'};
 }
 
@@ -1750,6 +1769,45 @@ sub validate_password {
     return 1;
 }
 
+sub product_interests {
+    my $self = shift;
+
+    return $self->{'product_int'} if defined $self->{'product_int'};
+    return [] unless $self->id;
+
+    my $product_ids = Bugzilla->dbh->selectcol_arrayref(
+        qq{SELECT products.id
+             FROM components
+                  INNER JOIN products
+                  ON components.product_id = products.id
+                  LEFT JOIN watch
+                  ON components.initialowner = watch.watched
+            WHERE watch.watcher = ?
+                  OR components.initialowner = ?
+            ORDER BY products.name}, 
+    undef, ($self->id, $self->id));
+
+    $self->{'product_int'} = Bugzilla::Product->new_from_list($product_ids);
+
+    return $self->{'product_int'};
+}
+
+sub is_developer {
+    my ($self, $product) = @_;
+
+    if ($product) {
+        # Given the only use of this is being passed bug.product_obj,
+        # at the moment the performance of this should be fine.
+        my $devs = $product->developers;
+        my $is_dev = grep { $_->id == $self->id } @$devs;
+        return $is_dev ? 1 : 0;
+    }
+    else {
+        return $self->in_group("developers") ? 1 : 0;
+    }
+           
+    return 0; 
+}
 
 1;
 
@@ -2138,6 +2196,11 @@ i.e. if the 'insidergroup' parameter is set and the user belongs to this group.
 Returns true if the user is a global watcher,
 i.e. if the 'globalwatchers' parameter contains the user.
 
+=item C<is_developer>
+
+Returns true if the user is either a developer for the given product specifically
+or simply a developer for any product if no product is given. Otherwise returns false.
+
 =back
 
 =head1 CLASS FUNCTIONS
@@ -2222,6 +2285,10 @@ Untaints C<$passwd1> if successful.
 
 If a second password is passed in, this function also verifies that
 the two passwords match.
+
+=item C<product_interests()>
+
+Returns list of distinct products based on component owners that the user is currently watching.
 
 =back
 

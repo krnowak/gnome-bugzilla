@@ -43,6 +43,15 @@ function setContentTypeDisabledState(form)
     form.contenttypeentry.disabled = isdisabled;
 }
 
+function setStatusDisabledState(form)
+{
+    var isdisabled = false;
+    if (!form.ispatch.checked)
+        isdisabled = true;
+
+    document.getElementById('attachments.status').disabled = isdisabled;
+}
+
 function URLFieldHandler() {
     var field_attachurl = document.getElementById("attachurl");
     var greyfields = new Array("data", "ispatch", "autodetect",

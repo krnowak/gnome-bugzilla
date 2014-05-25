@@ -134,6 +134,7 @@ use File::Basename;
     ERROR_MODE_WEBPAGE
     ERROR_MODE_DIE
     ERROR_MODE_DIE_SOAP_FAULT
+    ERROR_MODE_BUGBUDDY
 
     INSTALLATION_MODE_INTERACTIVE
     INSTALLATION_MODE_NON_INTERACTIVE
@@ -172,7 +173,7 @@ use File::Basename;
 # CONSTANTS
 #
 # Bugzilla version
-use constant BUGZILLA_VERSION => "3.4.14+";
+use constant BUGZILLA_VERSION => "3.4.13";
 
 # These are unique values that are unlikely to match a string or a number,
 # to be used in criteria for match() functions and other things. They start
@@ -262,7 +263,7 @@ use constant MAILTO_GROUP => 1;
 
 # The default list of columns for buglist.cgi
 use constant DEFAULT_COLUMN_LIST => (
-    "bug_severity", "priority", "op_sys","assigned_to",
+    "bug_severity", "priority", "op_sys", "product",
     "bug_status", "resolution", "short_desc"
 );
 
@@ -277,7 +278,7 @@ use constant LIST_OF_BUGS => 1;
 # The column length for displayed (and wrapped) bug comments.
 use constant COMMENT_COLS => 80;
 # Used in _check_comment(). Gives the max length allowed for a comment.
-use constant MAX_COMMENT_LENGTH => 65535;
+use constant MAX_COMMENT_LENGTH => 131072;
 
 # The type of bug comments.
 use constant CMT_NORMAL => 0;
@@ -392,6 +393,7 @@ use constant USAGE_MODE_EMAIL      => 3;
 use constant ERROR_MODE_WEBPAGE        => 0;
 use constant ERROR_MODE_DIE            => 1;
 use constant ERROR_MODE_DIE_SOAP_FAULT => 2;
+use constant ERROR_MODE_BUGBUDDY       => 999;
 
 # The various modes that checksetup.pl can run in.
 use constant INSTALLATION_MODE_INTERACTIVE => 0;

@@ -113,6 +113,7 @@ sub FILESYSTEM {
     my %files = (
         '*'               => { perms => $ws_readable },
         '*.cgi'           => { perms => $ws_executable },
+        'add-version.pl'  => { perms => $owner_executable },
         'whineatnews.pl'  => { perms => $ws_executable },
         'collectstats.pl' => { perms => $ws_executable },
         'checksetup.pl'   => { perms => $owner_executable },

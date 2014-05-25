@@ -224,6 +224,16 @@
             <label for="isprivate">private</label><br>
           [% END %]
           <br>
+
+          [% IF attachment.ispatch %]
+            <b><label for="status">Status</label>:</b>
+            [%+ PROCESS bug/field.html.tmpl field=Bugzilla.get_fields({name =>
+'attachments.status'})
+                                            value=attachment.status
+                                            editable=user.in_group('editbugs')
+                                            no_tds=1 %]
+            <br>
+          [% END %]
         </small>
 
         [% IF attachment.flag_types.size > 0 %]

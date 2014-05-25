@@ -51,6 +51,12 @@ if ($id) {
         ThrowCodeError("bad_page_cgi_id", { "page_id" => $id });
     }
 
+    if ($1 eq 'bug-status') {
+        print $cgi->redirect(-location=>'page.cgi?id=fields.html',
+                             -status=>'301 Permanent Redirect');
+        exit;
+    }
+
     my %vars;
     Bugzilla::Hook::process('page-before_template', 
                             { page_id => $id, vars => \%vars });

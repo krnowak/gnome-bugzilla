@@ -82,10 +82,10 @@ function set_assign_to() {
     // with the default component owner, and the "QA Contact:" field
     // with the default QA Contact. It also selectively enables flags.
     var form = document.Create;
-    var assigned_to = form.assigned_to.value;
+//    var assigned_to = form.assigned_to.value;
 
 [% IF Param("useqacontact") %]
-    var qa_contact = form.qa_contact.value;
+//    var qa_contact = form.qa_contact.value;
 [% END %]
 
     var index = -1;
@@ -96,26 +96,27 @@ function set_assign_to() {
         index = 0;
     }
     if (index != -1) {
-        var owner = initialowners[index];
+//        var owner = initialowners[index];
         var component = components[index];
-        if (assigned_to == last_initialowner
+/*        if (assigned_to == last_initialowner
             || assigned_to == owner
             || assigned_to == '') {
             form.assigned_to.value = owner;
             last_initialowner = owner;
         }
-
+*/
         document.getElementById('initial_cc').innerHTML = initialccs[index];
         document.getElementById('comp_desc').innerHTML = comp_desc[index];
 
         [% IF Param("useqacontact") %]
-            var contact = initialqacontacts[index];
+/*            var contact = initialqacontacts[index];
             if (qa_contact == last_initialqacontact
                 || qa_contact == contact
                 || qa_contact == '') {
                   form.qa_contact.value = contact;
                   last_initialqacontact = contact;
             }
+*/
         [% END %]
 
         // First, we disable all flags. Then we re-enable those
@@ -275,12 +276,6 @@ TUI_hide_default('expert_fields');
   </tr>
 
   <tr>
-    [% INCLUDE bug/field.html.tmpl
-      bug = default, field = select_fields.rep_platform, editable = 1,
-      value = default.rep_platform %]
-  </tr>
-
-  <tr>
     [% INCLUDE bug/field.html.tmpl 
        bug = default, field = select_fields.op_sys, editable = 1, 
        value = default.op_sys %]
@@ -306,19 +301,13 @@ TUI_hide_default('expert_fields');
   </tr>
 </tbody>
 
-[% IF !Param('defaultplatform') || !Param('defaultopsys') %]
+[% IF !Param('defaultopsys') %]
   <tbody>
     <tr>
       <th>&nbsp;</th>
       <td colspan="3" class="comment">
         We've made a guess at your
-        [% IF Param('defaultplatform') %]
           operating system. Please check it
-        [% ELSIF Param('defaultopsys') %]
-          platform. Please check it
-        [% ELSE %]
-          operating system and platform. Please check them
-        [% END %]
         and make any corrections if necessary.
       </td>
     </tr>
@@ -331,21 +320,12 @@ TUI_hide_default('expert_fields');
   </tr>
 
   <tr>
-[% IF bug_status.size <= 1 %]
-  <input type="hidden" name="bug_status" 
-         value="[% default.bug_status FILTER html %]">
-    <th>Initial State:</th>
-    <td>[% get_status(default.bug_status) FILTER html %]</td>
-[% ELSE %]
-    [% sel = { description => 'Initial State', name => 'bug_status' } %]
-    [% INCLUDE select %]
-[% END %]
-
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
     <td>&nbsp;</td>
     [%# Calculate the number of rows we can use for flags %]
-    [% num_rows = 6 + (Param("useqacontact") ? 1 : 0) +
-                      (user.in_group(Param('timetrackinggroup')) ? 3 : 0) +
-                      (Param("usebugaliases") ? 1 : 0)
+    [% num_rows = (user.in_group(Param('timetrackinggroup')) ? 3 : 0) +
+                  (Param("usebugaliases") ? 1 : 0)
     %]
 
     <td rowspan="[% num_rows FILTER html %]">
@@ -369,67 +349,6 @@ TUI_hide_default('expert_fields');
     </td>
   </tr>
 
-  <tr>
-    <th><a href="page.cgi?id=fields.html#assigned_to">Assign To</a>:</th>
-    <td colspan="2">
-      [% INCLUDE global/userselect.html.tmpl
-         name => "assigned_to"
-         value => assigned_to
-         disabled => assigned_to_disabled
-         size => 30
-         emptyok => 1
-         custom_userlist => assignees_list
-       %]
-      <noscript>(Leave blank to assign to component's default assignee)</noscript>
-    </td>
-  </tr>
-  
-[% IF Param("useqacontact") %]
-    <tr>
-      <th>QA Contact:</th>
-      <td colspan="2">
-      [% INCLUDE global/userselect.html.tmpl
-         name => "qa_contact"
-         value => qa_contact
-         disabled => qa_contact_disabled
-         size => 30
-         emptyok => 1
-         custom_userlist => qa_contacts_list
-       %]
-        <noscript>(Leave blank to assign to default qa contact)</noscript>
-      </td>
-    </tr>
-[% END %]
-
-  <tr>
-    <th>CC:</th>
-    <td colspan="2">
-      [% INCLUDE global/userselect.html.tmpl
-         name => "cc"
-         value => cc
-         disabled => cc_disabled
-         size => 30
-         multiple => 5
-       %]
-    </td>
-  </tr>
-
-  <tr>
-    <th>Default CC:</th>
-    <td colspan="2">
-      <div id="initial_cc">
-          <!-- This has to happen after everything above renders,
-               and onload doesn't work. So this is as good a place
-               as any to put it. -->
-          <script type="text/javascript">set_assign_to();</script>
-      </div>
-   </td>
-  </tr>
-  
-  <tr>
-    <td colspan="3">&nbsp;</td>
-  </tr>
-
 [% IF user.in_group(Param('timetrackinggroup')) %]
   <tr>
     <th>Estimated Hours:</th>
@@ -444,10 +363,6 @@ TUI_hide_default('expert_fields');
       <small>(YYYY-MM-DD)</small>
     </td>
   </tr>
-
-  <tr>
-    <td colspan="3">&nbsp;</td>
-  </tr>
 [% END %]
 
 [% IF Param("usebugaliases") %]
@@ -459,13 +374,6 @@ TUI_hide_default('expert_fields');
   </tr>
 [% END %]
 
-  <tr>
-    <th>URL:</th>
-    <td colspan="2">
-      <input name="bug_file_loc" size="40"
-             value="[% bug_file_loc FILTER html %]">
-    </td>
-  </tr>
 </tbody>
 
 <tbody class="expert_fields">
@@ -568,17 +476,17 @@ TUI_hide_default('expert_fields');
 </tbody>
 
 <tbody class="expert_fields">
-  [% IF user.in_group('editbugs', product.id) %]
     [% IF use_keywords %]
       <tr>
         <th><a href="describekeywords.cgi">Keywords</a>:</th>
         <td colspan="3">
           <input id="keywords" name="keywords" size="40"
-                 value="[% keywords FILTER html %]"> (optional)
+                 value="[% keywords FILTER html %]"> 
         </td>
       </tr>
     [% END %]
 
+  [% IF user.in_group('editbugs', product.id) %]
     <tr>
       <th>Depends on:</th>
       <td colspan="3">
@@ -592,6 +500,31 @@ TUI_hide_default('expert_fields');
       </td>
     </tr>
   [% END %]
+
+  <tr>
+    <th>CC:</th>
+    <td colspan="2">
+      [% INCLUDE global/userselect.html.tmpl
+         name => "cc"
+         value => cc
+         disabled => cc_disabled
+         size => 30
+         multiple => 5
+       %]
+    </td>
+  </tr>
+
+  <tr>
+    <th>Default CC:</th>
+    <td colspan="2">
+      <div id="initial_cc">
+          <!-- This has to happen after everything above renders,
+               and onload doesn't work. So this is as good a place
+               as any to put it. -->
+          <script type="text/javascript">set_assign_to();</script>
+      </div>
+   </td>
+  </tr>
 </tbody>
 
 <tbody class="expert_fields">

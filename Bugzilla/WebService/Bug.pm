@@ -310,7 +310,8 @@ sub legal_values {
 
     my $values;
     if (grep($_->name eq $field, @global_selects)) {
-        $values = get_legal_field_values($field);
+        my $field_object = Bugzilla::Field->check($field);
+        $values = [map { $_->name } @{ $field_object->legal_values }];
     }
     elsif (grep($_ eq $field, PRODUCT_SPECIFIC_FIELDS)) {
         my $id = $params->{product_id};

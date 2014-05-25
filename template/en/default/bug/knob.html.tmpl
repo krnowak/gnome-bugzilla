@@ -31,12 +31,14 @@
   [%# These actions are based on the current custom workflow. %]
   [% FOREACH bug_status = bug.status.can_change_to %]
     [% NEXT IF bug.isunconfirmed && bug_status.is_open && !bug.user.canconfirm %]
-    [% NEXT IF bug.isopened && !bug.isunconfirmed && bug_status.is_open && !bug.user.canedit %]
-    [% NEXT IF (!bug_status.is_open || !bug.isopened) && !bug.user.canedit && !bug.user.isreporter %]
+    [% NEXT IF bug_status.name != 'UNCONFIRMED' && bug.isopened && !bug.isunconfirmed && bug_status.is_open && !bug.user.canedit %]
+    [% NEXT IF (!bug_status.is_open || !bug.isopened) && !bug.user.canedit &&
+       !(bug.user.isreporter && bug.resolution != 'WONTFIX') %]
     [%# Special hack to only display UNCO or REOP when reopening, but not both;
       # for compatibility with older versions. %]
     [% NEXT IF !bug.isopened && (bug.everconfirmed && bug_status.name == "UNCONFIRMED"
                                  || !bug.everconfirmed && bug_status.name == "REOPENED") %]
+    [% NEXT IF bug.everconfirmed && bug_status.name == "UNCONFIRMED" %]
     [% IF NOT bug_status_select_displayed %]
       <select name="bug_status" id="bug_status">
       [% bug_status_select_displayed = 1 %]
@@ -54,7 +56,7 @@
   [% END %]
 
   [%# These actions are special and are independent of the workflow. %]
-  [% IF bug.user.canedit || bug.user.isreporter %]
+  [% IF bug.user.canedit || (bug.user.isreporter && bug.resolution != 'WONTFIX') %]
     [% IF NOT bug_status_select_displayed %]
       <select name="bug_status" id="bug_status">
       [% bug_status_select_displayed = 1 %] 
@@ -80,7 +82,7 @@
         [% END %]
       [% END %]
   [% END %]
-  [% IF bug.user.canedit || bug.user.isreporter %]  
+  [% IF bug.user.canedit || (bug.user.isreporter && bug.resolution != 'WONTFIX') %]  
     [% IF show_resolution %]
       <noscript><br>resolved&nbsp;as&nbsp;</noscript>
       <span id="resolution_settings">[% PROCESS select_resolution %]</span>
@@ -145,6 +147,8 @@
   <select name="resolution" id="resolution">
     [% FOREACH r = bug.choices.resolution %]
       [% NEXT IF r == "MOVED" && bug.resolution != "MOVED" %]
+      [% NEXT IF r == "GNOME1.x" && bug.resolution != "GNOME1.x" %]
+      [% NEXT IF r == "NOTXIMIAN" && bug.resolution != "NOTXIMIAN" %]
       <option value="[% r FILTER html %]"
       [% "selected" IF r == bug.resolution %]>
         [% get_resolution(r) FILTER html %]</option>

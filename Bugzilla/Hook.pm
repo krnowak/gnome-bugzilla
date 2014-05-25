@@ -21,12 +21,25 @@
 #
 
 package Bugzilla::Hook;
+use strict;
 
 use Bugzilla::Constants;
 use Bugzilla::Util;
 use Bugzilla::Error;
 
-use strict;
+use Scalar::Util qw(blessed);
+
+BEGIN {
+    if ($ENV{MOD_PERL}) {
+        require ModPerl::Const;
+        import ModPerl::Const -compile => 'EXIT';
+     }
+    else {
+        # Create a fake constant. We have to do this in a string eval,
+        # otherwise this will always be defined.
+        eval('sub ModPerl::EXIT;');
+    }
+}
 
 sub process {
     my ($name, $args) = @_;
@@ -49,8 +62,16 @@ sub process {
             # Allow extensions to load their own libraries.
             local @INC = ("$extension/lib", @INC);
             do($extension.'/code/'.$name.'.pl');
-            ThrowCodeError('extension_invalid', 
-                { errstr => $@, name => $name, extension => $extension }) if $@;
+            if ($@) {
+                if ($ENV{MOD_PERL} and blessed $@ and $@ == ModPerl::EXIT) {
+                    exit;
+                }
+                else {
+                    ThrowCodeError('extension_invalid', 
+                        { errstr => $@, name => $name,
+                          extension => $extension });
+                }
+            }
             # Flush stored data.
             Bugzilla->hook_args({});
         }
@@ -271,6 +292,60 @@ Params:
 
 =item C<columns> - A arrayref containing an array of column names. Push
 your column name(s) onto the array.
+
+=back
+
+=head2 bug-format_comment
+
+Allows you to do custom parsing on comments before they are displayed. You do
+this by returning two regular expressions: one that matches the section you 
+want to replace, and then another that says what you want to replace that 
+match with.
+
+The matching and replacement will be run with the C</g> switch on the regex.
+
+Params:
+
+=over
+
+=item C<regexes>
+
+An arrayref of hashrefs.
+
+You should push a hashref containing two keys (C<match> and C<replace>)
+in to this array. C<match> is the regular expression that matches the
+text you want to replace, C<replace> is what you want to replace that
+text with. (This gets passed into a regular expression like 
+C<s/$match/$replace/>.)
+
+B<You are responsible for HTML-escaping your returned data.> Failing to
+do so could open a security hole in Bugzilla.
+
+=item C<text>
+
+A B<reference> to the exact text that you are parsing.
+
+Generally you should not modify this yourself. Instead you should be 
+returning regular expressions using the C<regexes> array.
+
+The text has already been word-wrapped, but has not been parsed in any way
+otherwise. (So, for example, it is not HTML-escaped. You get "&", not 
+"&amp;".)
+
+=item C<bug>
+
+The L<Bugzilla::Bug> object that this comment is on. Sometimes this is
+C<undef>, meaning that we are parsing text that is not on a bug.
+
+=item C<comment>
+
+A hashref representing the comment you are about to parse, including
+all of the fields that comments contain when they are returned by
+by L<Bugzilla::Bug/longdescs>.
+
+Sometimes this is C<undef>, meaning that we are parsing text that is
+not a bug comment (but could still be some other part of a bug, like
+the summary line).
 
 =back
 

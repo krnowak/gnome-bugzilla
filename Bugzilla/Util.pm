@@ -35,6 +35,7 @@ use base qw(Exporter);
                              detaint_signed
                              html_quote url_quote xml_quote
                              css_class_quote html_light_quote url_decode
+                             email_filter
                              i_am_cgi get_netaddr correct_urlbase
                              lsearch ssl_require_redirect use_attachbase
                              diff_arrays
@@ -172,8 +173,8 @@ sub html_light_quote {
 }
 
 sub email_filter {
-    my ($toencode) = @_;
-    if (!Bugzilla->user->id) {
+    my ($toencode, $force) = @_;
+    if ($force || !Bugzilla->user->id) {
         my @emails = Email::Address->parse($toencode);
         if (scalar @emails) {
             my @hosts = map { quotemeta($_->host) } @emails;
@@ -623,7 +624,7 @@ sub _do_srand {
 sub validate_email_syntax {
     my ($addr) = @_;
     my $match = Bugzilla->params->{'emailregexp'};
-    my $ret = ($addr =~ /$match/ && $addr !~ /[\\\(\)<>&,;:"\[\] \t\r\n\P{ASCII}]/);
+    my $ret = ($addr =~ /$match/ && $addr !~ /[\\\(\)<>&,;:"\[\] \t\r\n]/);
     if ($ret) {
         # We assume these checks to suffice to consider the address untainted.
         trick_taint($_[0]);

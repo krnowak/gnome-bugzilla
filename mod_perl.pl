@@ -45,8 +45,13 @@ use Bugzilla::Template ();
 use Bugzilla::Util ();
 
 # This means that every httpd child will die after processing
-# a CGI if it is taking up more than 70MB of RAM all by itself.
-$Apache2::SizeLimit::MAX_UNSHARED_SIZE = 70000;
+# a CGI if it is taking up more than 350MB of RAM all by itself.
+# This number is so high (GNOME-specifically) because we're on
+# a RHEL server that can't use Linux::Smaps (see:
+# https://bugzilla.redhat.com/show_bug.cgi?id=322881 )
+# and so Apache2::SizeLimit thinks we're always our full virt
+# size instead of just our real unshared size.
+$Apache2::SizeLimit::MAX_UNSHARED_SIZE = 350000;
 
 my $cgi_path = Bugzilla::Constants::bz_locations()->{'cgi_path'};
 
@@ -63,7 +68,7 @@ PerlChildInitHandler "sub { srand(); }"
     PerlCleanupHandler  Apache2::SizeLimit
     PerlOptions +ParseHeaders
     Options +ExecCGI
-    AllowOverride Limit
+    AllowOverride All
     DirectoryIndex index.cgi index.html
 </Directory>
 EOT

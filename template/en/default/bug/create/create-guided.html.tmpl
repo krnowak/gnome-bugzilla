@@ -213,19 +213,6 @@ function PutDescription() {
     </td>
   </tr>
 
-  [%# We override rep_platform and op_sys for simplicity. The values chosen
-      are based on which are most common in the b.m.o database %]
-  [% rep_platform = [ "PC", "Macintosh", "All", "Other" ] %]
-
-  <tr bgcolor="[% tablecolour %]">
-    <td align="right" valign="top">
-      <b>Hardware Platform</b>
-    </td>
-    <td valign="top">
-      [% PROCESS select sel = 'rep_platform' %]
-    </td>
-  </tr>
-
   [% op_sys = [ "Windows 2000", "Windows XP", "Windows Vista", "Windows 7",
                 "Mac OS X", "Linux", "All", "Other" ] %]
 
@@ -263,21 +250,6 @@ function PutDescription() {
         it from.
       </p>
     </td>
-  </tr>
-
-  <tr>
-    <td align="right" valign="top">
-      <b>URL</b>
-    </td>
-    <td valign="top">
-      <input type="text" size="80" name="bug_file_loc" value="http://">
-      <p>
-        URL that demonstrates the problem you are seeing (optional).<br>
-        <b>IMPORTANT</b>: if the problem is with a broken web page, you need
-        to report it
-        <a href="https://bugzilla.mozilla.org/page.cgi?id=broken-website.html">a different way</a>.
-      </p>
-   </td>
   </tr>
 
   <tr bgcolor="[% tablecolour %]">

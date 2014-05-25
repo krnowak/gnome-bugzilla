@@ -30,8 +30,8 @@
 
 
 [% PROCESS global/header.html.tmpl
-   title = "$terms.Bugzilla Main Page"
-   header = "Main Page" 
+   title = "GNOME $terms.Bugzilla"
+   header = "Main Page"
    header_addl_info = "version $constants.BUGZILLA_VERSION"
    style_urls = [ 'skins/standard/index.css' ]
 %]
@@ -126,7 +126,7 @@ YAHOO.util.Event.onDOMReady(onLoadActions);
   <table>
     <tr>
       <td>
-        <h1 id="welcome"> Welcome to [% terms.Bugzilla %]</h1>
+        <h1 id="welcome"> Welcome to GNOME [% terms.Bugzilla %]</h1>
         <div class="intro">[% Hook.process('intro') %]</div>
         <a id="enter_bug" class="bz_common_actions"
            href="enter_bug.cgi"><span>File [% terms.aBug %]</span></a>

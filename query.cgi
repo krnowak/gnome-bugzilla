@@ -268,6 +268,16 @@ $vars->{'op_sys'} = get_legal_field_values('op_sys');
 $vars->{'priority'} = get_legal_field_values('priority');
 $vars->{'bug_severity'} = get_legal_field_values('bug_severity');
 
+# Also need to set up values for custom fields that may want their values
+# This is a bit ugly - rather than having a $vars->{field} be an array
+# (and possibly collide with names used internally), the
+# template should call get_legal_field_values itself (in |BLOCK select|)
+my @custom_select_fields =
+  grep { $_->is_select } Bugzilla->active_custom_fields;
+foreach my $cf (@custom_select_fields) {
+    $vars->{$cf->name} = get_legal_field_values($cf->name);
+}
+
 # Boolean charts
 my @fields = Bugzilla->get_fields({ obsolete => 0 });
 
@@ -370,8 +380,11 @@ $vars->{'query_format'} = $cgi->param('query_format');
 
 # Set default page to "specific" if none provided
 if (!($cgi->param('query_format') || $cgi->param('format'))) {
-    if (defined $cgi->cookie('DEFAULTFORMAT')) {
-        $vars->{'format'} = $cgi->cookie('DEFAULTFORMAT');
+    if (my $cookie_format = $cgi->cookie('DEFAULTFORMAT')) {
+        if ($cookie_format =~ /short/) {
+            $cookie_format = 'specific';
+        }
+        $vars->{'format'} = $cookie_format;
     } else {
         $vars->{'format'} = 'specific';
     }

@@ -57,6 +57,14 @@
         <th align="right"><label for="is_open">Status Type:</label></th>
         <td>[% IF value.is_open %]Open[% ELSE %]Closed[% END %]</td>
       </tr>
+    [% ELSIF field.name == "attachments.status" %]
+      <tr>
+        <th align="right"><label for="description">Description:</label></th>
+        <td>
+          <textarea name="description" cols="64" rows="4">
+            [% value.description FILTER html %]</textarea>
+        </td>
+      </tr>
     [% END %]
     [% IF field.value_field %]
       <tr>

@@ -374,6 +374,11 @@ sub remove_cookie {
 # Redirect to https if required
 sub require_https {
     my ($self, $url) = @_;
+
+    # For GNOME, bugbuddy.cgi is exempted from this forced redirect,
+    # because it does not handle it properly.
+    return if ($ENV{REQUEST_URI} and $ENV{REQUEST_URI} =~ m{^/bugbuddy.cgi});
+
     # Do not create query string if data submitted via XMLRPC
     # since we want the data to be resubmitted over POST method.
     my $query = Bugzilla->usage_mode == USAGE_MODE_WEBSERVICE ? 0 : 1;

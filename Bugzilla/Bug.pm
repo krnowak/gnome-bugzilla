@@ -853,6 +853,7 @@ sub update {
     # Remove obsolete internal variables.
     delete $self->{'_old_assigned_to'};
     delete $self->{'_old_qa_contact'};
+    delete $self->{'_old_resolution'};
 
     # Also flush the visible_bugs cache for this bug as the user's
     # relationship with this bug may have changed.
@@ -1068,26 +1069,15 @@ sub _check_bug_status {
         @valid_statuses = @{Bugzilla::Status->can_change_to()};
     }
 
-    if (!$product->votes_to_confirm) {
-        # UNCONFIRMED becomes an invalid status if votes_to_confirm is 0,
-        # even if you are in editbugs.
-        @valid_statuses = grep {$_->name ne 'UNCONFIRMED'} @valid_statuses;
-    }
-
     # Check permissions for users filing new bugs.
     if (!ref $invocant) {
-        if ($user->in_group('editbugs', $product->id)
-            || $user->in_group('canconfirm', $product->id)) {
-            # If the user with privs hasn't selected another status,
-            # select the first one of the list.
-            unless ($new_status) {
-                if (scalar(@valid_statuses) == 1) {
-                    $new_status = $valid_statuses[0];
-                }
-                else {
-                    $new_status = ($valid_statuses[0]->name ne 'UNCONFIRMED') ?
-                                  $valid_statuses[0] : $valid_statuses[1];
-                }
+        # If a user is a developer in a particular product, he always files bugs as NEW
+        if ($user->is_developer($product)) {
+            if (grep {$_->name eq 'NEW'} @valid_statuses) {
+                $new_status = 'NEW';
+            }
+            else {
+                $new_status = $valid_statuses[0];
             }
         }
         else {
@@ -1182,8 +1172,8 @@ sub _check_comment_type {
 sub _check_component {
     my ($invocant, $name, $product) = @_;
     $name = trim($name);
-    $name || ThrowUserError("require_component");
     ($product = $invocant->product_obj) if ref $invocant;
+    $name || ThrowUserError("require_component", { product => $product });
     my $obj = Bugzilla::Component->check({ product => $product, name => $name });
     return $obj;
 }
@@ -1408,11 +1398,6 @@ sub _check_keywords {
     my ($invocant, $keyword_string, $product) = @_;
     $keyword_string = trim($keyword_string);
     return [] if !$keyword_string;
-    
-    # On creation, only editbugs users can set keywords.
-    if (!ref $invocant) {
-        return [] if !Bugzilla->user->in_group('editbugs', $product->id);
-    }
     
     my %keywords;
     foreach my $keyword (split(/[\s,]+/, $keyword_string)) {
@@ -2069,6 +2054,8 @@ sub set_resolution {
     my ($self, $value, $params) = @_;
     
     my $old_res = $self->resolution;
+    # Store the old resolution. check_can_change_field() needs it.
+    $self->{'_old_resolution'} = $old_res;
     $self->set('resolution', $value);
     my $new_res = $self->resolution;
 
@@ -2105,6 +2092,7 @@ sub clear_resolution {
     if (!$self->status->is_open) {
         ThrowUserError('resolution_cant_clear', { bug_id => $self->id });
     }
+    $self->{'_old_resolution'} = $self->resolution;
     $self->{'resolution'} = ''; 
     $self->_clear_dup_id; 
 }
@@ -2118,7 +2106,9 @@ sub set_status {
     
     if ($new_status->is_open) {
         # Check for the everconfirmed transition
-        $self->_set_everconfirmed($new_status->name eq 'UNCONFIRMED' ? 0 : 1);
+        if ($new_status->name ne 'NEEDINFO') {
+            $self->_set_everconfirmed($new_status->name eq 'UNCONFIRMED' ? 0 : 1);
+        }
         $self->clear_resolution();
     }
     else {
@@ -2588,6 +2578,15 @@ sub classification {
     return $self->{classification};
 }
 
+sub classification_obj {
+    my ($self) = @_;
+    return $self->{classification_obj} if defined $self->{classification_obj};
+    return {} if $self->{error};
+    $self->{classification_obj} =
+        new Bugzilla::Classification($self->classification_id);
+    return $self->{classification_obj};
+}
+
 sub dependson {
     my ($self) = @_;
     return $self->{'dependson'} if exists $self->{'dependson'};
@@ -2736,6 +2735,18 @@ sub show_attachment_flags {
         ($num_attachment_flag_types || $num_attachment_flags);
 
     return $self->{'show_attachment_flags'};
+}
+
+sub show_attachment_status {
+    my ($self) = @_;
+    return $self->{'show_attachment_status'} 
+        if exists $self->{'show_attachment_status'};
+    return 0 if $self->{'error'};
+
+    $self->{'show_attachment_status'} =
+        grep { $_->ispatch } @{$self->attachments};
+
+    return $self->{'show_attachment_status'};
 }
 
 sub use_votes {
@@ -3429,6 +3440,10 @@ sub check_can_change_field {
     if ($field =~ /^longdesc/) {
         return 1;
     }
+    # And keywords
+    if ($field eq 'keywords') {
+        return 1;
+    }
 
     # If the user isn't allowed to change a field, we must tell him who can.
     # We store the required permission set into the $PrivilegesRequired
@@ -3446,6 +3461,12 @@ sub check_can_change_field {
             $$PrivilegesRequired = 3;
             return 0;
         }
+    }
+
+    # GNOME: require loads of priviledges to change the GNOME target field
+    if ($field eq 'cf_gnome_target' && !$user->in_group('editclassifications')) {
+        $$PrivilegesRequired = 3;
+        return 0;
     }
 
     # Allow anyone with (product-specific) "editbugs" privs to change anything.
@@ -3511,6 +3532,20 @@ sub check_can_change_field {
         $$PrivilegesRequired = 2;
         return 0;
     }
+    # - change the status/resolution if the bug is WONTFIX
+    # Note that we have to check against the old resolution
+    # value not the current one, because the order of the fields
+    # passed to this sub is undefined, and if resolution is
+    # checked first then it could be changed to WONTFIX and the
+    # subsequent bug_status check would fail
+    if ($field eq 'bug_status' or $field eq 'resolution') {
+        my $oldres = exists $self->{'_old_resolution'} ?
+            $self->{'_old_resolution'} : $self->resolution;
+        if ($oldres eq 'WONTFIX') {
+            $$PrivilegesRequired = 2;
+            return 0;
+        }
+    }
     # - unconfirm bugs (confirming them is handled above)
     if ($field eq 'everconfirmed') {
         $$PrivilegesRequired = 2;
@@ -3520,8 +3555,11 @@ sub check_can_change_field {
     if ($field eq 'bug_status'
         && is_open_state($oldvalue) && is_open_state($newvalue)) 
     {
-       $$PrivilegesRequired = 2;
-       return 0;
+       # Though they can change from NEEDINFO -> UNCONFIRMED
+       if (!($oldvalue eq 'NEEDINFO' and $newvalue eq 'UNCONFIRMED')) {
+           $$PrivilegesRequired = 2;
+           return 0;
+       }
     }
 
     # The reporter is allowed to change anything else.

@@ -137,8 +137,11 @@ sub Send {
 
     my $product = new Bugzilla::Product($values{product_id});
     $values{product} = $product->name;
+    my $is_gnome = 0;
     if (Bugzilla->params->{'useclassification'}) {
-        $values{classification} = Bugzilla::Classification->new($product->classification_id)->name;
+        my $c = Bugzilla::Classification->new($product->classification_id);
+        $values{classification} = $c->name;
+        $is_gnome = $c->is_gnome;
     }
     my $component = new Bugzilla::Component($values{component_id});
     $values{component} = $component->name;
@@ -257,9 +260,16 @@ sub Send {
     foreach my $ref (@$diffs) {
         my ($who, $whoname, $what, $when, $old, $new, $attachid, $fieldname) = (@$ref);
         my $diffpart = {};
+
+        # Only show these if the bug is a gnome classification
+        next if (!$is_gnome &&
+                 ($fieldname eq 'cf_gnome_target'
+                  || $fieldname eq 'cf_gnome_version'));
+
         if ($who ne $lastwho) {
             $lastwho = $who;
             $fullwho = $whoname ? "$whoname <$who>" : $who;
+            $fullwho = email_filter($fullwho, 'force');
             $diffheader = "\n$fullwho changed:\n\n";
             $diffheader .= three_columns("What    ", "Removed", "Added");
             $diffheader .= ('-' x 76) . "\n";
@@ -627,6 +637,7 @@ sub sendMail {
         severity => $values{'bug_severity'},
         status => $values{'bug_status'},
         priority => $values{'priority'},
+        version => $values{'version'},
         assignedto => $values{'assigned_to'},
         assignedtoname => Bugzilla::User->new({name => $values{'assigned_to'}})->name,
         targetmilestone => $values{'target_milestone'},

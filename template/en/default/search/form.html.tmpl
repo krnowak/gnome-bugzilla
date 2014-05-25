@@ -257,13 +257,12 @@ function doOnSelectProduct(selectmode) {
     </td>
   </tr>
 
-[%# *** Comment URL Whiteboard Keywords *** %]
+[%# URL field disabled %]
+[%# *** Comment Whiteboard Keywords *** %]
 
   [% FOREACH field = [
     { name => "longdesc", description => "A&nbsp;<u>C</u>omment",
       accesskey => 'c' },
-    { name => "bug_file_loc", description => "The&nbsp;<u>U</u>RL",
-      accesskey => 'u' },
     { name => "status_whiteboard", description => "<u>W</u>hiteboard",
       accesskey => 'w' } ] %]
 
@@ -326,7 +325,7 @@ function doOnSelectProduct(selectmode) {
 
 <hr>
 
-[%# *** Status Resolution Severity Priority Hardware OS *** %]
+[%# *** Status Resolution Severity Priority Hardware OS gnome_version gnome_target *** %]
 
 <table>
   <tr>
@@ -386,11 +385,11 @@ function doOnSelectProduct(selectmode) {
       <table>
         <tr>
           <th align="left">
-            <label for="rep_platform" accesskey="h"><u>H</u>ardware</label>:
+            <label for="op_sys" accesskey="o"><u>O</u>S</label>:
           </th>
         </tr>
         <tr valign="top">
-          [% PROCESS select sel = { name => 'rep_platform',
+          [% PROCESS select sel = { name => 'op_sys',
                                     size => 7 } %]
         </tr>
       </table>
@@ -399,11 +398,24 @@ function doOnSelectProduct(selectmode) {
       <table>
         <tr>
           <th align="left">
-            <label for="op_sys" accesskey="o"><u>O</u>S</label>:
+            <label for="gnome_version">GNOME Version</label>:
           </th>
         </tr>
         <tr valign="top">
-          [% PROCESS select sel = { name => 'op_sys',
+          [% PROCESS select sel = { name => 'cf_gnome_version',
+                                    size => 7 } %]
+        </tr>
+      </table>
+    </td>
+    <td>
+      <table>
+        <tr>
+          <th align="left">
+            <label for="gnome_target">GNOME Target</label>:
+          </th>
+        </tr>
+        <tr valign="top">
+          [% PROCESS select sel = { name => 'cf_gnome_target',
                                     size => 7 } %]
         </tr>
       </table>

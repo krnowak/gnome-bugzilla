@@ -229,7 +229,8 @@ if ($cgi->param('repair_creation_date')) {
 if ($cgi->param('repair_everconfirmed')) {
     Status('everconfirmed_start');
 
-    my @confirmed_open_states = grep {$_ ne 'UNCONFIRMED'} BUG_STATE_OPEN;
+    my @confirmed_open_states = grep {$_ ne 'UNCONFIRMED' and $_ ne 'NEEDINFO'}
+                                     BUG_STATE_OPEN;
     my $confirmed_open_states = join(', ', map {$dbh->quote($_)} @confirmed_open_states);
 
     $dbh->do("UPDATE bugs SET everconfirmed = 0 WHERE bug_status = 'UNCONFIRMED'");
@@ -961,7 +962,8 @@ Status('bug_check_status_everconfirmed');
 BugCheck("bugs WHERE bug_status = 'UNCONFIRMED' AND everconfirmed = 1",
          'bug_check_status_everconfirmed_error_text', 'repair_everconfirmed');
 
-my @confirmed_open_states = grep {$_ ne 'UNCONFIRMED'} BUG_STATE_OPEN;
+my @confirmed_open_states = grep {$_ ne 'UNCONFIRMED' and $_ ne 'NEEDINFO'}
+                                 BUG_STATE_OPEN;
 my $confirmed_open_states = join(', ', map {$dbh->quote($_)} @confirmed_open_states);
 
 BugCheck("bugs WHERE bug_status IN ($confirmed_open_states) AND everconfirmed = 0",

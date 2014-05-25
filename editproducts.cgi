@@ -184,9 +184,9 @@ if ($action eq 'new') {
                                  defaultmilestone => scalar $cgi->param('defaultmilestone'),
                                  milestoneurl     => scalar $cgi->param('milestoneurl'),
                                  disallownew      => scalar $cgi->param('disallownew'),
-                                 votesperuser     => scalar $cgi->param('votesperuser'),
-                                 maxvotesperbug   => scalar $cgi->param('maxvotesperbug'),
-                                 votestoconfirm   => scalar $cgi->param('votestoconfirm'),
+                                 #votesperuser     => scalar $cgi->param('votesperuser'),
+                                 #maxvotesperbug   => scalar $cgi->param('maxvotesperbug'),
+                                 #votestoconfirm   => scalar $cgi->param('votestoconfirm'),
                                  create_series    => scalar $cgi->param('createseries')});
 
     delete_token($token);
@@ -296,9 +296,9 @@ if ($action eq 'update') {
     $product->set_default_milestone(scalar $cgi->param('defaultmilestone'));
     $product->set_milestone_url(scalar $cgi->param('milestoneurl'));
     $product->set_disallow_new(scalar $cgi->param('disallownew'));
-    $product->set_votes_per_user(scalar $cgi->param('votesperuser'));
-    $product->set_votes_per_bug(scalar $cgi->param('maxvotesperbug'));
-    $product->set_votes_to_confirm(scalar $cgi->param('votestoconfirm'));
+    #$product->set_votes_per_user(scalar $cgi->param('votesperuser'));
+    #$product->set_votes_per_bug(scalar $cgi->param('maxvotesperbug'));
+    #$product->set_votes_to_confirm(scalar $cgi->param('votestoconfirm'));
 
     my $changes = $product->update();
 

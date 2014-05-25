@@ -162,7 +162,7 @@ use constant DEFAULT_FIELDS => (
     {name => 'version',      desc => 'Version',    in_new_bugmail => 1,
      buglist => 1},
     {name => 'rep_platform', desc => 'Platform',   in_new_bugmail => 1,
-     type => FIELD_TYPE_SINGLE_SELECT, buglist => 1},
+     type => FIELD_TYPE_SINGLE_SELECT, buglist => 1, obsolete => 1},
     {name => 'bug_file_loc', desc => 'URL',        in_new_bugmail => 1},
     {name => 'op_sys',       desc => 'OS/Version', in_new_bugmail => 1,
      type => FIELD_TYPE_SINGLE_SELECT, buglist => 1},
@@ -197,6 +197,8 @@ use constant DEFAULT_FIELDS => (
     {name => 'attachments.ispatch',     desc => 'Attachment is patch'},
     {name => 'attachments.isobsolete',  desc => 'Attachment is obsolete'},
     {name => 'attachments.isprivate',   desc => 'Attachment is private'},
+    {name => 'attachments.status',      desc => 'Attachment status',
+     type => FIELD_TYPE_SINGLE_SELECT},
     {name => 'attachments.submitter',   desc => 'Attachment creator'},
 
     {name => 'target_milestone',      desc => 'Target Milestone',
@@ -906,6 +908,7 @@ sub populate_field_definitions {
             $field->set_description($def->{desc});
             $field->set_in_new_bugmail($def->{in_new_bugmail});
             $field->set_buglist($def->{buglist});
+            $field->set_obsolete($def->{obsolete});
             $field->_set_type($def->{type}) if $def->{type};
             $field->update();
         }

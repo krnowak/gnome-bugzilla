@@ -193,6 +193,9 @@
         [% IF changes.sortkey.defined %]
           <li>Sortkey updated to '[% classification.sortkey FILTER html %]'</li>
         [% END %]
+        [% IF changes.is_gnome.defined %]
+          <li>Classification marked as [%+ "not" IF !classification.is_gnome %] GNOME</li>
+        [% END %]
       </ul>
     [% ELSE %]
       No changes made to <em>[% classification.name FILTER html %]</em>.
@@ -321,6 +324,10 @@
         [% IF changes.sortkey %]
           <li>Sortkey updated to 
             <em>[% changes.sortkey.1 FILTER html %]</em>.</li>
+        [% END %]
+        [% IF changes.description %]
+          <li>Description updated to
+            <em>[% changes.description.1 FILTER html %]</em>.</li>
         [% END %]
         [% IF changes.visibility_value_id %]
           [% IF value.visibility_value.defined %]
@@ -786,16 +793,21 @@
 
   [% ELSIF message_tag == "workflow_updated" %]
     The workflow has been updated.
+  [% END %]
+[% END %]
 
-  [% ELSE %]
-    [%# Give sensible error if error functions are used incorrectly.
-      #%]        
+[% IF !message %]
+  [% message = Hook.process('messages') %]
+[% END %]
+
+[%# Give sensible error if the message function is used incorrectly. #%]
+[% IF !message %]
+  [% message = BLOCK %]
     You are using [% terms.Bugzilla %]'s messaging functions incorrectly. You
     passed in the string '[% message_tag %]'. The correct use is to pass
     in a tag, and define that tag in the file messages.html.tmpl.<br>
     <br>
-    If you are a [% terms.Bugzilla %] end-user seeing this message, please 
+    If you are a [% terms.Bugzilla %] end-user seeing this message, please
     save this page and send it to [% Param('maintainer') %].
-    
   [% END %]
 [% END %]
