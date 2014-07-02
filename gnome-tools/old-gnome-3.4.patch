@@ -1,9 +1,74 @@
+# COMMENT: CHANGES:
+# COMMENT: REQ_50 before REQ_3
+# COMMENT: CHECKSETUP_AND_UPGRADE_SPEEDUP before REQ_28
+# COMMENT: CHECKSETUP_AND_UPGRADE_SPEEDUP before REQ_54
 From f39373e61601802fdd60bea7f36329f4fdf9344f Mon Sep 17 00:00:00 2001
 From: Krzesimir Nowak <qdlacz@gmail.com>
 Date: Sun, 25 May 2014 21:38:46 +0200
 Subject: [PATCH] gnome
 
 ---
+# SECTION: REQ_1_403_PAGE - Requirement 1: 403 Page
+# SECTION: REQ_2_ADD_VERSION_SCRIPTS - Requirement 2: add-version.cgi and add-version.pl
+# SECTION: REQ_9_REDIRECT_BUG_HELP_HTML - Requirement 9: redirect bug-HOWTO.html and bugwritinghelp.html
+# SECTION: REQ_12_NO_CHANGER_COMMENTER - Requirement 12: No changer/commenter email in bugmails
+# SECTION: REQ_13_SELF_GLOBALWATCHING - Requirement 13: Self-globalwatching
+# SECTION: REQ_14_DISABLE_MAIL_FOR_AT_GNOME_BUGS - Requirement 14: Disable mail for @gnome.bugs users
+# SECTION: REQ_15_CHANGE_CONSTANTS - Requirement 15: Change MAX_COMMENT_LENGTH and DEFAULT_COLUMN_LIST.
+# SECTION: REQ_24_USER_IS_REPORTER - Requirement 24: Note that a user is the reporter in comments
+# SECTION: REQ_46_REMOVE_BUG_FILE_LOC - Requirement 46: Remove bug_file_loc from the UI
+# SECTION: REQ_63_KEYWORDS_FIELD_FOR_ANYBODY - Requirement 63: Anybody can set the Keywords field
+# SECTION: REQ_53_REPORTER_CANNOT_UNWONTFIX - Requirement 53: Reporter can't un-WONTFIX
+# SECTION: REQ_47_REMOVE_REP_PLATFORM - Requirement 47: Remove rep_platform
+# SECTION: REQ_57_ADD_PRIORITY_TO_ICAL - Requirement 57: Add PRIORITY to the iCal buglist
+# SECTION: REQ_36_LINK_TO_LISTS_IN_ERRORS - Requirement 36: Link to correct lists in errors
+# SECTION: REQ_16_GNOME_VERSION_AND_TARGET - Requirement 16: gnome_version and gnome_target
+# SECTION: REQ_50_FLOAT_RIGHT_INFO_BOX - Requirement 50: Float-right info box (and re-arrange show_bug).
+# SECTION: CHECKSETUP_AND_UPGRADE_SPEEDUP - Further speed up checksetup by changing certain queries.
+# SECTION: REQ_3_ATTACHMENT_STATUS - Requirement 3: Attachment Status
+# SECTION: REQ_3_ATTACHMENT_STATUS_MODULE - Requirement 3: Attachment Status (add Bugzilla/AttachmentStatus.pm)
+# SECTION: REQ_19_CLASSIFICATION_GNOME - Requirement 19: classification.is_gnome
+# SECTION: REQ_8_BUG_BUDDY_CGI - Requirement 8: bugbuddy.cgi
+# SECTION: REQ_28_NEEDINFO - Requirement 28: NEEDINFO status
+# SECTION: REQ_34_MILESTONE_URL_TO_HOME_PAGE - Requirement 34: Milestone URL -> Home Page
+# SECTION: REQ_35_PATCH_EQUALS_ATTACHMENT - Requirement 35: "patch" == "attachment"
+# SECTION: REQ_44_X_COMPRESSED_TAR - Requirement 44: x-compressed-tar in attachment type list
+# SECTION: REQ_59_CHANGE_COLUMN_LENGTHS - Requirement 59: Change buglist column lengths
+# SECTION: REQ_64_NO_GNOME_1_X_AND_NOTXIMIAN - Requirement 64: GNOME1.x and NOTXIMIAN resolutions are obsolete
+# SECTION: REQ_43_EXTRA_TEXT - Requirement 43: Extra text in certain templates
+# SECTION: REQ_40_PORT_FORWARD - Requirement 40: Port forward various pages/
+# SECTION: REQ_39_GNOME_SKIN - Requirement 39: GNOME Skin
+# SECTION: REQ_54_REMOVE_CLOSED - Requirement 54: Remove the CLOSED status
+# SECTION: REQ_31_MIGRATE_BUG_STATUS_HTML - Requirement 31: Migrate bug-status.html.tmpl
+# SECTION: REQ_19_B_DISPLAY_STUFF_FOR_GNOME_ONLY - Requirement 19b: Only display gnome version/target fields for is_gnome classifications
+# SECTION: REQ_20_DEVELOPERS_SYSTEM - Requirement 20: "Developers" system
+# SECTION: REQ_23_NOTE_DEVELOPER - Requirement 23: Note that somebody is a Developer
+# SECTION: BRAND_HEADER_AND_FRONT_PAGE - "Brand" the header and front page a bit with the term "GNOME".
+# SECTION: REQ_4_BROWSE_CGI - Requirement 4: browse.cgi
+# SECTION: REQ_48_REARRANGE_ENTER_BUG_CGI - Requirement 48: Re-arrange enter_bug.cgi
+# SECTION: REQ_25_UNCONFIRMED_ENABLED - Requirement 25: Set products' vote fields so UNCONFIRMED is enabled in every product
+# SECTION: CLEANUP_OLD_INDEXES - Clean up old, unused indexes when upgrading.
+# SECTION: MOD_PERL_GNOME - Various mod_perl changes for GNOME.
+# SECTION: BUG_FORMAT_COMMENT_HOOK -  Bug format comment hook.
+# SECTION: TRACEPARSER_SPEEDUP - Speeding up traceparser.
+# SECTION: MESSAGES_HOOK_BACKPORT - Backport the hook for messages.html.tmpl.
+# SECTION: BACKWARD_COMPAT_QUERY - Implement backwards-compat for "query=" in buglist.cgi.
+# SECTION: SAVED_SEARCHES - On upgrade, convert "query=" saved searches into standard saved searches.
+# SECTION: DEFAULTFORMAT_SHORT_TO_SPECIFIC - The old GNOME Bugzilla had a "short" query.cgi format that isn't valid in the new Bugzilla, and so loading query.cgi with a DEFAULTFORMAT cookie set to "short" was throwing an error.
+# SECTION: SHOW_PRODUCT_NAME_IN_MAIL - Make newchangedmail show product name.
+# SECTION: NO_HYPHEN_ESCAPE - Hyphens in product names were being replaced by &8209; on enter_bug.cgi, making it hard to do find-as-you-type for them.
+# SECTION: FIX_DESCRIPTION_UPDATING - Component description wasn't updating because the JS was looking for the assigned_to and qa_contact fields, which weren't there.
+# SECTION: ADD_RESOLUTION_BACK - Add Resolution back into the bug summary box on show_bug.cgi.
+# SECTION: SERVER_CONFIG_REWRITES_TO_HTACCESS - Move the rewrites that were in the server config to the .htaccess.
+# SECTION: PATCH_REPORT_EXTENSION - Port custom report: reports/patch-report.cgi
+# SECTION: STOCK_ANSWERS - Stock Responses
+# SECTION: DESCRIBE_USER - Bring back describeuser.cgi (user home page)
+# SECTION: WEEKLY_BUG_SUMMARY - Port custom report: reports/weekly-bug-summary.cgi
+# SECTION: NO_LARGE_DATA_RETRIEVAL_WARNING - Add warnings regarding automatic data retrieval
+# SECTION: XSS_IN_SHOW_BUG_CGI - (CVE-2013-0785) [SECURITY] XSS in show_bug.cgi when using an invalid page format
+# SECTION: ESCAPE_LDAP_USERNAME - (CVE-2012-3981) [SECURITY] Missing escaping of the username can lead to LDAP injection
+# SECTION: JS_TEMPLATE_SEE_ALL_BUGS - (CVE-2012-0466) [SECURITY] The JS template for buglists permits attackers to access all bugs that the victim can see
+# SECTION: MISC - Miscellaneous changes
  .bzrignore.moved                                   |  44 ++
  .htaccess                                          |  26 +
  Bugzilla/Attachment.pm                             |  59 +-
@@ -241,6 +306,7 @@ index 0000000..ba141d1
 --- /dev/null
 +++ b/.htaccess
 @@ -0,0 +1,26 @@
+# SECTION: REQ_1_403_PAGE
 +# Don't allow people to retrieve non-cgi executable files or our private data
 +<FilesMatch ^(.*\.pm|.*\.pl|.*localconfig.*)$>
 +  deny from all
@@ -249,12 +315,16 @@ index 0000000..ba141d1
 +<FilesMatch "\.cgi$">
 +  ErrorDocument 403 /page.cgi?id=403.html
 +</FilesMatch>
+# SECTION: REQ_9_REDIRECT_BUG_HELP_HTML
 +
 +RewriteEngine On
 +RewriteRule bug-HOWTO.html$ /page.cgi?id=bug-writing.html [R=301,L]
 +RewriteRule bugwritinghelp.html$ /page.cgi?id=bug-writing.html [R=301,L]
+# SECTION: REQ_3_ATTACHMENT_STATUS
 +RewriteRule describeflagtypes.cgi$ /page.cgi?id=fields.html#attachments.status [NE,R=301,L]
+# SECTION: REQ_8_BUG_BUDDY_CGI
 +RewriteRule bugbuddy.cgi /xmlrpc.cgi [PT,L]
+# SECTION: SERVER_CONFIG_REWRITES_TO_HTACCESS
 +
 +# 15 Jul 2006: ovitters: prevent some common names from being interpreted
 +# as aliases
@@ -272,6 +342,7 @@ index 4aa74dc..7cecb1e 100644
 --- a/Bugzilla/Attachment.pm
 +++ b/Bugzilla/Attachment.pm
 @@ -81,6 +81,7 @@ sub DB_COLUMNS {
+# SECTION: REQ_3_ATTACHMENT_STATUS
          isprivate
          isurl
          mimetype
@@ -280,6 +351,7 @@ index 4aa74dc..7cecb1e 100644
          submitter_id),
          $dbh->sql_date_format('attachments.creation_ts', '%Y.%m.%d %H:%i') . ' AS creation_ts';
 @@ -281,6 +282,22 @@ sub isprivate {
+# SECTION: REQ_3_ATTACHMENT_STATUS
  
  =over
  
@@ -303,6 +375,7 @@ index 4aa74dc..7cecb1e 100644
  
  Returns 1 if the attachment has a content-type viewable in this browser.
 @@ -765,6 +782,27 @@ sub validate_obsolete {
+# SECTION: REQ_3_ATTACHMENT_STATUS
      return @obsolete_attachments;
  }
  
@@ -331,6 +404,7 @@ index 4aa74dc..7cecb1e 100644
  ####     Constructors     #####
  ###############################
 @@ -862,6 +900,17 @@ sub create {
+# SECTION: REQ_3_ATTACHMENT_STATUS
          $hr_vars->{'message'} = 'user_match_multiple';
      }
  
@@ -349,6 +423,7 @@ index 4aa74dc..7cecb1e 100644
      my $description = $cgi->param('description');
      trick_taint($description);
 @@ -871,9 +920,9 @@ sub create {
+# SECTION: REQ_3_ATTACHMENT_STATUS
      my $sth = $dbh->do(
          "INSERT INTO attachments
              (bug_id, creation_ts, modification_time, filename, description,
@@ -362,6 +437,7 @@ index 4aa74dc..7cecb1e 100644
      # Retrieve the ID of the newly created attachment record.
      my $attachid = $dbh->bz_last_key('attachments', 'attach_id');
 @@ -980,8 +1029,8 @@ sub remove_from_db {
+# SECTION: REQ_3_ATTACHMENT_STATUS
      $dbh->bz_start_transaction();
      $dbh->do('DELETE FROM flags WHERE attach_id = ?', undef, $self->id);
      $dbh->do('DELETE FROM attach_data WHERE id = ?', undef, $self->id);
@@ -378,6 +454,7 @@ index 0000000..4ea5157
 --- /dev/null
 +++ b/Bugzilla/AttachmentStatus.pm
 @@ -0,0 +1,118 @@
+# SECTION: REQ_3_ATTACHMENT_STATUS_MODULE
 +# -*- Mode: perl; indent-tabs-mode: nil -*-
 +#
 +# The contents of this file are subject to the Mozilla Public
@@ -501,6 +578,7 @@ index b590430..cad7d5d 100644
 --- a/Bugzilla/Auth/Verify/LDAP.pm
 +++ b/Bugzilla/Auth/Verify/LDAP.pm
 @@ -41,6 +41,7 @@ use Bugzilla::User;
+# SECTION: ESCAPE_LDAP_USERNAME
  use Bugzilla::Util;
  
  use Net::LDAP;
@@ -509,6 +587,7 @@ index b590430..cad7d5d 100644
  use constant admin_can_create_account => 0;
  use constant user_can_create_account  => 0;
 @@ -121,6 +122,7 @@ sub check_credentials {
+# SECTION: ESCAPE_LDAP_USERNAME
  
  sub _bz_search_params {
      my ($username) = @_;
@@ -522,6 +601,7 @@ index 0000000..b8bafbb
 --- /dev/null
 +++ b/Bugzilla/Browse.pm
 @@ -0,0 +1,334 @@
+# SECTION: REQ_4_BROWSE_CGI
 +# -*- Mode: perl; indent-tabs-mode: nil -*-
 +#
 +# The contents of this file are subject to the Mozilla Public
@@ -861,6 +941,7 @@ index 57094c9..6a88182 100644
 --- a/Bugzilla/Bug.pm
 +++ b/Bugzilla/Bug.pm
 @@ -853,6 +853,7 @@ sub update {
+# SECTION: REQ_53_REPORTER_CANNOT_UNWONTFIX
      # Remove obsolete internal variables.
      delete $self->{'_old_assigned_to'};
      delete $self->{'_old_qa_contact'};
@@ -869,6 +950,7 @@ index 57094c9..6a88182 100644
      # Also flush the visible_bugs cache for this bug as the user's
      # relationship with this bug may have changed.
 @@ -1068,26 +1069,15 @@ sub _check_bug_status {
+# SECTION: REQ_48_REARRANGE_ENTER_BUG_CGI
          @valid_statuses = @{Bugzilla::Status->can_change_to()};
      }
  
@@ -903,6 +985,7 @@ index 57094c9..6a88182 100644
          }
          else {
 @@ -1182,8 +1172,8 @@ sub _check_comment_type {
+# SECTION: REQ_36_LINK_TO_LISTS_IN_ERRORS
  sub _check_component {
      my ($invocant, $name, $product) = @_;
      $name = trim($name);
@@ -913,6 +996,7 @@ index 57094c9..6a88182 100644
      return $obj;
  }
 @@ -1409,11 +1399,6 @@ sub _check_keywords {
+# SECTION: REQ_63_KEYWORDS_FIELD_FOR_ANYBODY
      $keyword_string = trim($keyword_string);
      return [] if !$keyword_string;
      
@@ -925,6 +1009,7 @@ index 57094c9..6a88182 100644
      foreach my $keyword (split(/[\s,]+/, $keyword_string)) {
          next unless $keyword;
 @@ -2069,6 +2054,8 @@ sub set_resolution {
+# SECTION: REQ_53_REPORTER_CANNOT_UNWONTFIX
      my ($self, $value, $params) = @_;
      
      my $old_res = $self->resolution;
@@ -934,6 +1019,7 @@ index 57094c9..6a88182 100644
      my $new_res = $self->resolution;
  
 @@ -2105,6 +2092,7 @@ sub clear_resolution {
+# SECTION: REQ_53_REPORTER_CANNOT_UNWONTFIX
      if (!$self->status->is_open) {
          ThrowUserError('resolution_cant_clear', { bug_id => $self->id });
      }
@@ -942,6 +1028,7 @@ index 57094c9..6a88182 100644
      $self->_clear_dup_id; 
  }
 @@ -2118,7 +2106,9 @@ sub set_status {
+# SECTION: REQ_28_NEEDINFO
      
      if ($new_status->is_open) {
          # Check for the everconfirmed transition
@@ -953,6 +1040,7 @@ index 57094c9..6a88182 100644
      }
      else {
 @@ -2588,6 +2578,15 @@ sub classification {
+# SECTION: REQ_19_B_DISPLAY_STUFF_FOR_GNOME_ONLY
      return $self->{classification};
  }
  
@@ -969,6 +1057,7 @@ index 57094c9..6a88182 100644
      my ($self) = @_;
      return $self->{'dependson'} if exists $self->{'dependson'};
 @@ -2738,6 +2737,18 @@ sub show_attachment_flags {
+# SECTION: REQ_3_ATTACHMENT_STATUS
      return $self->{'show_attachment_flags'};
  }
  
@@ -988,6 +1077,7 @@ index 57094c9..6a88182 100644
      my ($self) = @_;
      return 0 if $self->{'error'};
 @@ -3429,6 +3440,10 @@ sub check_can_change_field {
+# SECTION: REQ_63_KEYWORDS_FIELD_FOR_ANYBODY
      if ($field =~ /^longdesc/) {
          return 1;
      }
@@ -999,6 +1089,7 @@ index 57094c9..6a88182 100644
      # If the user isn't allowed to change a field, we must tell him who can.
      # We store the required permission set into the $PrivilegesRequired
 @@ -3448,6 +3463,12 @@ sub check_can_change_field {
+# SECTION: REQ_16_GNOME_VERSION_AND_TARGET
          }
      }
  
@@ -1012,6 +1103,7 @@ index 57094c9..6a88182 100644
      if ($user->in_group('editbugs', $self->{'product_id'})) {
          return 1;
 @@ -3511,6 +3532,20 @@ sub check_can_change_field {
+# SECTION: REQ_53_REPORTER_CANNOT_UNWONTFIX
          $$PrivilegesRequired = 2;
          return 0;
      }
@@ -1033,6 +1125,7 @@ index 57094c9..6a88182 100644
      if ($field eq 'everconfirmed') {
          $$PrivilegesRequired = 2;
 @@ -3520,8 +3555,11 @@ sub check_can_change_field {
+# SECTION: REQ_28_NEEDINFO
      if ($field eq 'bug_status'
          && is_open_state($oldvalue) && is_open_state($newvalue)) 
      {
@@ -1051,6 +1144,7 @@ index 55a9598..a96f18c 100644
 --- a/Bugzilla/BugMail.pm
 +++ b/Bugzilla/BugMail.pm
 @@ -137,8 +137,11 @@ sub Send {
+# SECTION: REQ_19_B_DISPLAY_STUFF_FOR_GNOME_ONLY
  
      my $product = new Bugzilla::Product($values{product_id});
      $values{product} = $product->name;
@@ -1064,6 +1158,7 @@ index 55a9598..a96f18c 100644
      my $component = new Bugzilla::Component($values{component_id});
      $values{component} = $component->name;
 @@ -257,9 +260,16 @@ sub Send {
+# SECTION: REQ_19_B_DISPLAY_STUFF_FOR_GNOME_ONLY
      foreach my $ref (@$diffs) {
          my ($who, $whoname, $what, $when, $old, $new, $attachid, $fieldname) = (@$ref);
          my $diffpart = {};
@@ -1073,6 +1168,7 @@ index 55a9598..a96f18c 100644
 +                 ($fieldname eq 'cf_gnome_target'
 +                  || $fieldname eq 'cf_gnome_version'));
 +
+# SECTION: REQ_12_NO_CHANGER_COMMENTER
          if ($who ne $lastwho) {
              $lastwho = $who;
              $fullwho = $whoname ? "$whoname <$who>" : $who;
@@ -1081,6 +1177,7 @@ index 55a9598..a96f18c 100644
              $diffheader .= three_columns("What    ", "Removed", "Added");
              $diffheader .= ('-' x 76) . "\n";
 @@ -627,6 +637,7 @@ sub sendMail {
+# SECTION: SHOW_PRODUCT_NAME_IN_MAIL
          severity => $values{'bug_severity'},
          status => $values{'bug_status'},
          priority => $values{'priority'},
@@ -1093,6 +1190,7 @@ index 5f81a5b..356214f 100644
 --- a/Bugzilla/CGI.pm
 +++ b/Bugzilla/CGI.pm
 @@ -374,6 +374,11 @@ sub remove_cookie {
+# SECTION: REQ_8_BUG_BUDDY_CGI
  # Redirect to https if required
  sub require_https {
      my ($self, $url) = @_;
@@ -1109,6 +1207,7 @@ index a7f59b4..39c94ba 100644
 --- a/Bugzilla/Classification.pm
 +++ b/Bugzilla/Classification.pm
 @@ -38,6 +38,7 @@ use constant DB_COLUMNS => qw(
+# SECTION: REQ_19_CLASSIFICATION_GNOME
      name
      description
      sortkey
@@ -1117,6 +1216,7 @@ index a7f59b4..39c94ba 100644
  
  use constant REQUIRED_CREATE_FIELDS => qw(
 @@ -48,12 +49,14 @@ use constant UPDATE_COLUMNS => qw(
+# SECTION: REQ_19_CLASSIFICATION_GNOME
      name
      description
      sortkey
@@ -1132,6 +1232,7 @@ index a7f59b4..39c94ba 100644
  
  ###############################
 @@ -122,6 +125,7 @@ sub _check_sortkey {
+# SECTION: REQ_19_CLASSIFICATION_GNOME
  sub set_name        { $_[0]->set('name', $_[1]); }
  sub set_description { $_[0]->set('description', $_[1]); }
  sub set_sortkey     { $_[0]->set('sortkey', $_[1]); }
@@ -1140,6 +1241,7 @@ index a7f59b4..39c94ba 100644
  sub product_count {
      my $self = shift;
 @@ -156,6 +160,7 @@ sub products {
+# SECTION: REQ_19_CLASSIFICATION_GNOME
  
  sub description { return $_[0]->{'description'}; }
  sub sortkey     { return $_[0]->{'sortkey'};     }
@@ -1152,6 +1254,7 @@ index fbfdb4c..0abf308 100644
 --- a/Bugzilla/Config/Query.pm
 +++ b/Bugzilla/Config/Query.pm
 @@ -58,7 +58,7 @@ sub get_param_list {
+# SECTION: DESCRIBE_USER
    {
     name => 'mybugstemplate',
     type => 't',
@@ -1165,6 +1268,7 @@ index 2083e9f..fc397d7 100644
 --- a/Bugzilla/Constants.pm
 +++ b/Bugzilla/Constants.pm
 @@ -134,6 +134,7 @@ use File::Basename;
+# SECTION: REQ_8_BUG_BUDDY_CGI
      ERROR_MODE_WEBPAGE
      ERROR_MODE_DIE
      ERROR_MODE_DIE_SOAP_FAULT
@@ -1182,6 +1286,7 @@ index 2083e9f..fc397d7 100644
  # These are unique values that are unlikely to match a string or a number,
  # to be used in criteria for match() functions and other things. They start
 @@ -262,7 +263,7 @@ use constant MAILTO_GROUP => 1;
+# SECTION: REQ_15_CHANGE_CONSTANTS
  
  # The default list of columns for buglist.cgi
  use constant DEFAULT_COLUMN_LIST => (
@@ -1191,6 +1296,7 @@ index 2083e9f..fc397d7 100644
  );
  
 @@ -277,7 +278,7 @@ use constant LIST_OF_BUGS => 1;
+# SECTION: REQ_15_CHANGE_CONSTANTS
  # The column length for displayed (and wrapped) bug comments.
  use constant COMMENT_COLS => 80;
  # Used in _check_comment(). Gives the max length allowed for a comment.
@@ -1200,6 +1306,7 @@ index 2083e9f..fc397d7 100644
  # The type of bug comments.
  use constant CMT_NORMAL => 0;
 @@ -392,6 +393,7 @@ use constant USAGE_MODE_EMAIL      => 3;
+# SECTION: REQ_8_BUG_BUDDY_CGI
  use constant ERROR_MODE_WEBPAGE        => 0;
  use constant ERROR_MODE_DIE            => 1;
  use constant ERROR_MODE_DIE_SOAP_FAULT => 2;
@@ -1212,6 +1319,7 @@ index 9ede5bd..d873e15 100644
 --- a/Bugzilla/DB.pm
 +++ b/Bugzilla/DB.pm
 @@ -444,6 +444,7 @@ sub bz_setup_foreign_keys {
+# SECTION: CHECKSETUP_AND_UPGRADE_SPEEDUP
      # items from _bz_real_schema.
      my @tables = $self->_bz_schema->get_table_list();
      foreach my $table (@tables) {
@@ -1224,6 +1332,7 @@ index 3a1c4ae..5a8dfd9 100644
 --- a/Bugzilla/DB/Mysql.pm
 +++ b/Bugzilla/DB/Mysql.pm
 @@ -348,6 +348,34 @@ EOT
+# SECTION: CHECKSETUP_AND_UPGRADE_SPEEDUP
  
      my ($sd_index_deleted, $longdescs_index_deleted);
      my @tables = $self->bz_table_list_real();
@@ -1259,6 +1368,7 @@ index 3a1c4ae..5a8dfd9 100644
      # fulltext indexes on them, and conversion will fail unless we remove
      # the indexes.
 @@ -680,7 +708,9 @@ EOT
+# SECTION: CHECKSETUP_AND_UPGRADE_SPEEDUP
      $self->_after_table_status([map($_->{Name}, @$utf_table_status)]);
      my @non_utf8_tables = grep(defined($_->{Collation}) && $_->{Collation} !~ /^utf8/, @$utf_table_status);
      
@@ -1270,6 +1380,7 @@ index 3a1c4ae..5a8dfd9 100644
  
  WARNING: We are about to convert your table storage format to UTF8. This
 @@ -721,6 +751,7 @@ EOT
+# SECTION: CHECKSETUP_AND_UPGRADE_SPEEDUP
          foreach my $table ($self->bz_table_list_real) {
              my $info_sth = $self->prepare("SHOW FULL COLUMNS FROM $table");
              $info_sth->execute();
@@ -1278,6 +1389,7 @@ index 3a1c4ae..5a8dfd9 100644
                  # Our conversion code doesn't work on enum fields, but they
                  # all go away later in checksetup anyway.
 @@ -733,31 +764,13 @@ EOT
+# SECTION: CHECKSETUP_AND_UPGRADE_SPEEDUP
                  {
                      my $name = $column->{Field};
  
@@ -1312,6 +1424,7 @@ index 3a1c4ae..5a8dfd9 100644
                      delete $col_info->{PRIMARYKEY};
                      my $sql_def = $self->_bz_schema->get_type_ddl($col_info);
 @@ -771,21 +784,38 @@ EOT
+# SECTION: CHECKSETUP_AND_UPGRADE_SPEEDUP
                      my $type = $self->_bz_schema->convert_type($col_info->{TYPE});
                      $binary =~ s/(\Q$type\E)/$1 CHARACTER SET binary/;
                      $utf8   =~ s/(\Q$type\E)/$1 CHARACTER SET utf8/;
@@ -1363,6 +1476,7 @@ index 3a1c4ae..5a8dfd9 100644
          } # foreach my $table (@tables)
  
 @@ -826,22 +856,40 @@ sub _fix_defaults {
+# SECTION: CHECKSETUP_AND_UPGRADE_SPEEDUP
      # a default.
      return unless (defined $assi_default && $assi_default ne '');
  
@@ -1412,6 +1526,7 @@ index 680f754..2b09efb 100644
 --- a/Bugzilla/DB/Schema.pm
 +++ b/Bugzilla/DB/Schema.pm
 @@ -454,12 +454,17 @@ use constant ABSTRACT_SCHEMA => {
+# SECTION: REQ_3_ATTACHMENT_STATUS
                               DEFAULT => 'FALSE'},
              isurl        => {TYPE => 'BOOLEAN', NOTNULL => 1,
                               DEFAULT => 'FALSE'},
@@ -1430,6 +1545,7 @@ index 680f754..2b09efb 100644
      },
      attach_data => {
 @@ -472,6 +477,18 @@ use constant ABSTRACT_SCHEMA => {
+# SECTION: REQ_3_ATTACHMENT_STATUS
              thedata => {TYPE => 'LONGBLOB', NOTNULL => 1},
          ],
      },
@@ -1449,6 +1565,7 @@ index 680f754..2b09efb 100644
      duplicates => {
          FIELDS => [
 @@ -1152,6 +1169,7 @@ use constant ABSTRACT_SCHEMA => {
+# SECTION: REQ_19_CLASSIFICATION_GNOME
              name        => {TYPE => 'varchar(64)', NOTNULL => 1},
              description => {TYPE => 'MEDIUMTEXT'},
              sortkey     => {TYPE => 'INT2', NOTNULL => 1, DEFAULT => '0'},
@@ -1457,6 +1574,7 @@ index 680f754..2b09efb 100644
          INDEXES => [
              classifications_name_idx => {FIELDS => ['name'],
 @@ -1176,7 +1194,7 @@ use constant ABSTRACT_SCHEMA => {
+# SECTION: REQ_25_UNCONFIRMED_ENABLED
              maxvotesperbug    => {TYPE => 'INT2', NOTNULL => 1,
                                    DEFAULT => '10000'},
              votestoconfirm    => {TYPE => 'INT2', NOTNULL => 1,
@@ -1470,6 +1588,7 @@ index 6277169..49e6add 100644
 --- a/Bugzilla/DB/Schema/Mysql.pm
 +++ b/Bugzilla/DB/Schema/Mysql.pm
 @@ -178,13 +178,33 @@ sub get_alter_column_ddl {
+# SECTION: CHECKSETUP_AND_UPGRADE_SPEEDUP
          delete $new_def_copy{PRIMARYKEY};
      }
  
@@ -1510,6 +1629,7 @@ index d15336a..1f38c08 100644
 --- a/Bugzilla/Error.pm
 +++ b/Bugzilla/Error.pm
 @@ -113,6 +113,9 @@ sub _throw_error {
+# SECTION: REQ_8_BUG_BUDDY_CGI
                  $code = ERROR_UNKNOWN_TRANSIENT if $name =~ /user/i;
              }
              die SOAP::Fault->faultcode($code)->faultstring($message);
@@ -1524,6 +1644,7 @@ index bd9a4e1..d62562e 100644
 --- a/Bugzilla/Field.pm
 +++ b/Bugzilla/Field.pm
 @@ -162,7 +162,7 @@ use constant DEFAULT_FIELDS => (
+# SECTION: REQ_47_REMOVE_REP_PLATFORM
      {name => 'version',      desc => 'Version',    in_new_bugmail => 1,
       buglist => 1},
      {name => 'rep_platform', desc => 'Platform',   in_new_bugmail => 1,
@@ -1533,6 +1654,7 @@ index bd9a4e1..d62562e 100644
      {name => 'op_sys',       desc => 'OS/Version', in_new_bugmail => 1,
       type => FIELD_TYPE_SINGLE_SELECT, buglist => 1},
 @@ -197,6 +197,8 @@ use constant DEFAULT_FIELDS => (
+# SECTION: REQ_3_ATTACHMENT_STATUS
      {name => 'attachments.ispatch',     desc => 'Attachment is patch'},
      {name => 'attachments.isobsolete',  desc => 'Attachment is obsolete'},
      {name => 'attachments.isprivate',   desc => 'Attachment is private'},
@@ -1542,6 +1664,7 @@ index bd9a4e1..d62562e 100644
  
      {name => 'target_milestone',      desc => 'Target Milestone',
 @@ -906,6 +908,7 @@ sub populate_field_definitions {
+# SECTION: REQ_47_REMOVE_REP_PLATFORM
              $field->set_description($def->{desc});
              $field->set_in_new_bugmail($def->{in_new_bugmail});
              $field->set_buglist($def->{buglist});
@@ -1554,6 +1677,7 @@ index cfb9117..f0ca625 100644
 --- a/Bugzilla/Field/Choice.pm
 +++ b/Bugzilla/Field/Choice.pm
 @@ -49,6 +49,8 @@ use constant UPDATE_COLUMNS => qw(
+# SECTION: REQ_3_ATTACHMENT_STATUS
      visibility_value_id
  );
  
@@ -1563,6 +1687,7 @@ index cfb9117..f0ca625 100644
  use constant LIST_ORDER => 'sortkey, value';
  
 @@ -63,6 +65,7 @@ use constant VALIDATORS => {
+# SECTION: REQ_3_ATTACHMENT_STATUS
  use constant CLASS_MAP => {
      bug_status => 'Bugzilla::Status',
      product    => 'Bugzilla::Product',
@@ -1571,6 +1696,7 @@ index cfb9117..f0ca625 100644
  
  use constant DEFAULT_MAP => {
 @@ -87,7 +90,10 @@ sub type {
+# SECTION: REQ_3_ATTACHMENT_STATUS
      my $field_name = $field_obj->name;
  
      if ($class->CLASS_MAP->{$field_name}) {
@@ -1583,6 +1709,7 @@ index cfb9117..f0ca625 100644
  
      # For generic classes, we use a lowercase class name, so as
 @@ -159,7 +165,7 @@ sub update {
+# SECTION: REQ_3_ATTACHMENT_STATUS
                       undef, $new, $old);
          }
          else {
@@ -1596,6 +1723,7 @@ index 4833f44..a80256c 100644
 --- a/Bugzilla/Hook.pm
 +++ b/Bugzilla/Hook.pm
 @@ -21,12 +21,25 @@
+# SECTION: MOD_PERL_GNOME
  #
  
  package Bugzilla::Hook;
@@ -1623,6 +1751,7 @@ index 4833f44..a80256c 100644
  sub process {
      my ($name, $args) = @_;
 @@ -49,8 +62,16 @@ sub process {
+# SECTION: MOD_PERL_GNOME
              # Allow extensions to load their own libraries.
              local @INC = ("$extension/lib", @INC);
              do($extension.'/code/'.$name.'.pl');
@@ -1642,6 +1771,7 @@ index 4833f44..a80256c 100644
              Bugzilla->hook_args({});
          }
 @@ -274,6 +295,60 @@ your column name(s) onto the array.
+# SECTION: BUG_FORMAT_COMMENT_HOOK
  
  =back
  
@@ -1707,6 +1837,7 @@ index 0a1f0e9..09de779 100644
 --- a/Bugzilla/Install.pm
 +++ b/Bugzilla/Install.pm
 @@ -56,7 +56,7 @@ sub SETTINGS {
+# SECTION: REQ_39_GNOME_SKIN
      state_addselfcc    => { options => ['always', 'never',  'cc_unless_role'],
                              default => 'cc_unless_role' },
      # 2006-08-04 wurblzap@gmail.com -- Bug 322693
@@ -1716,6 +1847,7 @@ index 0a1f0e9..09de779 100644
      lang               => { subclass => 'Lang',
                              default => ${Bugzilla->languages}[0] },
 @@ -181,36 +181,6 @@ sub update_system_groups {
+# SECTION: CHECKSETUP_AND_UPGRADE_SPEEDUP
          $dbh->do('INSERT INTO group_group_map (grantor_id, member_id) 
                         VALUES (?,?)', undef, $sudo_protect->id, $sudo->id);
      }
@@ -1757,6 +1889,7 @@ index 8636a58..4995fb8 100644
 --- a/Bugzilla/Install/DB.pm
 +++ b/Bugzilla/Install/DB.pm
 @@ -26,6 +26,7 @@ use Bugzilla::Constants;
+# SECTION: SAVED_SEARCHES
  use Bugzilla::Hook;
  use Bugzilla::Install::Util qw(indicate_progress install_string);
  use Bugzilla::Util;
@@ -1765,6 +1898,7 @@ index 8636a58..4995fb8 100644
  
  use Date::Parse;
 @@ -414,11 +415,12 @@ sub update_table_definitions {
+# SECTION: CHECKSETUP_AND_UPGRADE_SPEEDUP
      _fix_attachments_submitter_id_idx();
      _copy_attachments_thedata_to_attach_data();
      _fix_broken_all_closed_series();
@@ -1781,6 +1915,7 @@ index 8636a58..4995fb8 100644
      # PUBLIC is a reserved word in Oracle.
      $dbh->bz_rename_column('series', 'public', 'is_public');
 @@ -463,13 +465,23 @@ sub update_table_definitions {
+# SECTION: REQ_25_UNCONFIRMED_ENABLED
                            {TYPE => 'BOOLEAN', NOTNULL => 1,  DEFAULT => 0});
      $dbh->bz_alter_column('products', 'votesperuser', 
                            {TYPE => 'INT2', NOTNULL => 1, DEFAULT => 0});
@@ -1791,6 +1926,7 @@ index 8636a58..4995fb8 100644
 +        $dbh->bz_alter_column('products', 'votestoconfirm',
 +                              {TYPE => 'INT2', NOTNULL => 1, DEFAULT => 0});
 +    }
+# SECTION: REQ_3_ATTACHMENT_STATUS
  
      # 2006-08-04 LpSolit@gmail.com - Bug 305941
      $dbh->bz_drop_column('profiles', 'refreshed_when');
@@ -1807,6 +1943,7 @@ index 8636a58..4995fb8 100644
      $dbh->bz_alter_column('flagtypes', 'id',
            {TYPE => 'SMALLSERIAL', NOTNULL => 1, PRIMARYKEY => 1});
 @@ -518,6 +530,7 @@ sub update_table_definitions {
+# SECTION: CHECKSETUP_AND_UPGRADE_SPEEDUP
  
      # 2007-05-17 LpSolit@gmail.com - Bug 344965
      _initialize_workflow($old_params);
@@ -1815,6 +1952,7 @@ index 8636a58..4995fb8 100644
      # 2007-08-08 LpSolit@gmail.com - Bug 332149
      $dbh->bz_add_column('groups', 'icon_url', {TYPE => 'TINYTEXT'});
 @@ -556,7 +569,68 @@ sub update_table_definitions {
+# SECTION: REQ_16_GNOME_VERSION_AND_TARGET
  
      # 2009-03-02 arbingersys@gmail.com - Bug 423613
      _add_extern_id_index();
@@ -1850,6 +1988,7 @@ index 8636a58..4995fb8 100644
 +        });
 +        _port_gnome_cf('gnome_target', 'cf_gnome_target');
 +    }
+# SECTION: REQ_3_ATTACHMENT_STATUS
   
 +    # 2009-05-07 bbaetz@everythingsolved.com.au
 +    # Migrate attachment statuses from flagtypes to their own table
@@ -1858,6 +1997,7 @@ index 8636a58..4995fb8 100644
 +    # We need at least one attachment status, so if there was nothing to
 +    # migrate make sure that we have the 'none' entry
 +    _populate_gnome_attachment_status();
+# SECTION: REQ_19_CLASSIFICATION_GNOME
 +
 +    if (!$dbh->bz_column_info('classifications', 'is_gnome')) {
 +        $dbh->bz_add_column('classifications', 'is_gnome',
@@ -1867,23 +2007,29 @@ index 8636a58..4995fb8 100644
 +                     SET is_gnome = 1
 +                   WHERE name IN ('Desktop', 'Platform', 'Bindings')");
 +    }
+# SECTION: REQ_20_DEVELOPERS_SYSTEM
 +        
 +    # 2009-05-31 dlawrence@everythingsolved.com
 +    # Migrate developers table to new group based system
 +    _migrate_gnome_developers();
 +
+# SECTION: REQ_54_REMOVE_CLOSED
 +    _gnome_remove_closed_status();
 +
+# SECTION: REQ_25_UNCONFIRMED_ENABLED
 +    _set_vote_fields();
 +
+# SECTION: CLEANUP_OLD_INDEXES
 +    _cleanup_old_gnome_db();
 +
+# SECTION: SAVED_SEARCHES
 +    _fix_saved_searches();
 +
      ################################################################
      # New --TABLE-- changes should go *** A B O V E *** this point #
      ################################################################
 @@ -2200,17 +2274,9 @@ sub _clone_email_event {
+# SECTION: CHECKSETUP_AND_UPGRADE_SPEEDUP
      my ($source, $target) = @_;
      my $dbh = Bugzilla->dbh;
  
@@ -1905,6 +2051,7 @@ index 8636a58..4995fb8 100644
  
  sub _migrate_email_prefs_to_new_table {
 @@ -2326,15 +2392,15 @@ sub _initialize_dependency_tree_changes_email_pref {
+# SECTION: CHECKSETUP_AND_UPGRADE_SPEEDUP
  
      foreach my $desc (keys %events) {
          my $event = $events{$desc};
@@ -1930,6 +2077,7 @@ index 8636a58..4995fb8 100644
  }
  
 @@ -2593,6 +2659,54 @@ EOT
+# SECTION: CHECKSETUP_AND_UPGRADE_SPEEDUP
      } # if (@$broken_nonopen_series)
  }
  
@@ -1985,6 +2133,7 @@ index 8636a58..4995fb8 100644
      my $dbh = Bugzilla->dbh;
  
 @@ -2833,10 +2947,12 @@ sub _initialize_workflow {
+# SECTION: CHECKSETUP_AND_UPGRADE_SPEEDUP
      $dbh->bz_add_column('bug_status', 'is_open',
                          {TYPE => 'BOOLEAN', NOTNULL => 1, DEFAULT => 'TRUE'});
  
@@ -2002,6 +2151,7 @@ index 8636a58..4995fb8 100644
      # are left as 'open'.
      my @closed_statuses =
 @@ -2862,67 +2978,74 @@ sub _initialize_workflow {
+# SECTION: CHECKSETUP_AND_UPGRADE_SPEEDUP
                    join(', ', @closed_statuses) . ')');
      }
  
@@ -2076,7 +2226,9 @@ index 8636a58..4995fb8 100644
 +    # This was till recently the only way to get back to NEW for
 +    # confirmed bugs, so we use this parameter here.
 +    my $reassign = $old_params->{'commentonreassign'} || 0;
+# SECTION: REQ_28_NEEDINFO
 +    my $needinfo = 0;
+# SECTION: CHECKSETUP_AND_UPGRADE_SPEEDUP
 +
 +    # This is the default workflow.
 +    my @workflow = ([undef, 'UNCONFIRMED', $create],
@@ -2084,22 +2236,32 @@ index 8636a58..4995fb8 100644
 +                    [undef, 'ASSIGNED', $create],
 +                    ['UNCONFIRMED', 'NEW', $confirm],
 +                    ['UNCONFIRMED', 'ASSIGNED', $accept],
+# SECTION: REQ_28_NEEDINFO
 +                    ['UNCONFIRMED', 'NEEDINFO', $needinfo],
+# SECTION: CHECKSETUP_AND_UPGRADE_SPEEDUP
 +                    ['UNCONFIRMED', 'RESOLVED', $resolve],
 +                    ['NEW', 'ASSIGNED', $accept],
+# SECTION: REQ_28_NEEDINFO
 +                    ['NEW', 'NEEDINFO', $needinfo],
+# SECTION: CHECKSETUP_AND_UPGRADE_SPEEDUP
 +                    ['NEW', 'RESOLVED', $resolve],
 +                    ['ASSIGNED', 'NEW', $reassign],
+# SECTION: REQ_28_NEEDINFO
 +                    ['ASSIGNED', 'NEEDINFO', $needinfo],
+# SECTION: CHECKSETUP_AND_UPGRADE_SPEEDUP
 +                    ['ASSIGNED', 'RESOLVED', $resolve],
 +                    ['REOPENED', 'NEW', $reassign],
 +                    ['REOPENED', 'ASSIGNED', $accept],
+# SECTION: REQ_28_NEEDINFO
 +                    ['REOPENED', 'NEEDINFO', $needinfo],
+# SECTION: CHECKSETUP_AND_UPGRADE_SPEEDUP
 +                    ['REOPENED', 'RESOLVED', $resolve],
+# SECTION: REQ_28_NEEDINFO
 +                    ['NEEDINFO', 'UNCONFIRMED', $reassign],
 +                    ['NEEDINFO', 'NEW', $reassign],
 +                    ['NEEDINFO', 'ASSIGNED', $accept],
 +                    ['NEEDINFO', 'RESOLVED', $resolve],
+# SECTION: CHECKSETUP_AND_UPGRADE_SPEEDUP
 +                    ['RESOLVED', 'UNCONFIRMED', $reopen],
 +                    ['RESOLVED', 'REOPENED', $reopen],
 +                    ['RESOLVED', 'VERIFIED', $verify],
@@ -2108,7 +2270,9 @@ index 8636a58..4995fb8 100644
 +                    ['VERIFIED', 'REOPENED', $reopen],
 +                    ['VERIFIED', 'CLOSED', $close],
 +                    ['CLOSED', 'UNCONFIRMED', $reopen],
+# SECTION: REQ_54_REMOVE_CLOSED
 +                    ['CLOSED', 'VERIFIED', 0],
+# SECTION: CHECKSETUP_AND_UPGRADE_SPEEDUP
 +                    ['CLOSED', 'REOPENED', $reopen]);
 +
 +    print "Now filling the 'status_workflow' table with valid bug status transitions...\n";
@@ -2136,6 +2300,7 @@ index 8636a58..4995fb8 100644
      # parameter has all the required transitions set.
      my $dup_status = Bugzilla->params->{'duplicate_or_move_bug_status'};
 @@ -3077,6 +3200,10 @@ sub _populate_bugs_fulltext {
+# SECTION: CHECKSETUP_AND_UPGRADE_SPEEDUP
          if (UNIVERSAL::can($dbh, 'sql_group_concat')) {
              print "Populating bugs_fulltext...";
              print " (this can take a long time.)\n";
@@ -2147,6 +2312,7 @@ index 8636a58..4995fb8 100644
                  q{INSERT INTO bugs_fulltext (bug_id, short_desc, comments, 
                                               comments_noprivate)
 @@ -3143,6 +3270,256 @@ sub _add_visiblity_value_to_value_tables {
+# SECTION: REQ_16_GNOME_VERSION_AND_TARGET
      }
  }
  
@@ -2190,6 +2356,7 @@ index 8636a58..4995fb8 100644
 +    }
 +}
 +
+# SECTION: REQ_3_ATTACHMENT_STATUS
 +sub _migrate_gnome_attachment_status {
 +    my $dbh = Bugzilla->dbh;
 +
@@ -2248,6 +2415,7 @@ index 8636a58..4995fb8 100644
 +    }
 +}
 +
+# SECTION: REQ_20_DEVELOPERS_SYSTEM
 +sub _migrate_gnome_developers {
 +    my $dbh = Bugzilla->dbh;
 +    if ($dbh->bz_table_info("developers")) {
@@ -2304,6 +2472,7 @@ index 8636a58..4995fb8 100644
 +    }
 +}
 +
+# SECTION: REQ_54_REMOVE_CLOSED
 +sub _gnome_remove_closed_status {
 +    my $dbh = Bugzilla->dbh;
 +
@@ -2352,6 +2521,7 @@ index 8636a58..4995fb8 100644
 +    }
 +}
 +
+# SECTION: REQ_25_UNCONFIRMED_ENABLED
 +sub _set_vote_fields {
 +    my $dbh = Bugzilla->dbh;
 +
@@ -2365,6 +2535,7 @@ index 8636a58..4995fb8 100644
 +    }
 +}
 +
+# SECTION: CLEANUP_OLD_INDEXES
 +sub _cleanup_old_gnome_db {
 +    my $dbh = Bugzilla->dbh;
 +    # The GNOME Bugzilla had extra indexes
@@ -2372,6 +2543,7 @@ index 8636a58..4995fb8 100644
 +    $dbh->bz_drop_index('longdescs', 'comment_text');
 +}
 +
+# SECTION: SAVED_SEARCHES
 +# In the old GNOME Bugzilla, you could save searches with the 
 +# "query=" string literally in the search. Now we have to translate them
 +# into QuickSearch queries.
@@ -2408,6 +2580,7 @@ index 38927ad..45a16f7 100644
 --- a/Bugzilla/Install/Filesystem.pm
 +++ b/Bugzilla/Install/Filesystem.pm
 @@ -113,6 +113,7 @@ sub FILESYSTEM {
+# SECTION: REQ_2_ADD_VERSION_SCRIPTS
      my %files = (
          '*'               => { perms => $ws_readable },
          '*.cgi'           => { perms => $ws_executable },
@@ -2420,6 +2593,7 @@ index b118d4b..ace4f82 100644
 --- a/Bugzilla/Product.pm
 +++ b/Bugzilla/Product.pm
 @@ -119,6 +119,9 @@ sub create {
+# SECTION: REQ_20_DEVELOPERS_SYSTEM
      $product->_create_bug_group() if Bugzilla->params->{'makeproductgroups'};
      $product->_create_series() if $create_series;
  
@@ -2430,6 +2604,7 @@ index b118d4b..ace4f82 100644
      return $product;
  }
 @@ -358,6 +361,20 @@ sub update {
+# SECTION: REQ_20_DEVELOPERS_SYSTEM
              }
          }
      }
@@ -2451,6 +2626,7 @@ index b118d4b..ace4f82 100644
      # Changes have been committed.
      delete $self->{check_group_controls};
 @@ -394,6 +411,22 @@ sub remove_from_db {
+# SECTION: REQ_20_DEVELOPERS_SYSTEM
          }
      }
  
@@ -2474,6 +2650,7 @@ index b118d4b..ace4f82 100644
      $dbh->do("DELETE FROM group_control_map WHERE product_id = ?", undef, $self->id);
      $dbh->do("DELETE FROM products WHERE id = ?", undef, $self->id);
 @@ -597,6 +630,54 @@ sub _create_series {
+# SECTION: REQ_20_DEVELOPERS_SYSTEM
      }
  }
  
@@ -2529,6 +2706,7 @@ index b118d4b..ace4f82 100644
  sub set_description { $_[0]->set('description', $_[1]); }
  sub set_default_milestone { $_[0]->set('defaultmilestone', $_[1]); }
 @@ -852,6 +933,19 @@ sub flag_types {
+# SECTION: REQ_20_DEVELOPERS_SYSTEM
      return $self->{'flag_types'};
  }
  
@@ -2549,6 +2727,7 @@ index b118d4b..ace4f82 100644
  ####      Accessors      ######
  ###############################
 @@ -865,6 +959,10 @@ sub votes_to_confirm  { return $_[0]->{'votestoconfirm'};    }
+# SECTION: REQ_19_B_DISPLAY_STUFF_FOR_GNOME_ONLY
  sub default_milestone { return $_[0]->{'defaultmilestone'};  }
  sub classification_id { return $_[0]->{'classification_id'}; }
  
@@ -2560,6 +2739,7 @@ index b118d4b..ace4f82 100644
  ####      Subroutines    ######
  ###############################
 @@ -1050,6 +1148,15 @@ groups, in this product.
+# SECTION: REQ_20_DEVELOPERS_SYSTEM
  
   Returns:     Two references to an array of flagtype objects.
  
@@ -2580,6 +2760,7 @@ index 51f611a..2c15c24 100644
 --- a/Bugzilla/Search.pm
 +++ b/Bugzilla/Search.pm
 @@ -290,6 +290,20 @@ sub init {
+# SECTION: REQ_16_GNOME_VERSION_AND_TARGET
          push(@specialchart, ["bug_id", $type, join(',', $params->param('bug_id'))]);
      }
  
@@ -2601,6 +2782,7 @@ index 51f611a..2c15c24 100644
      # selecting none. This is functionally equivalent, but quite a lot faster.
      # Also, if the status is __open__ or __closed__, translate those
 @@ -811,11 +825,22 @@ sub init {
+# SECTION: REQ_16_GNOME_VERSION_AND_TARGET
                   $params->param("field$chart-$row-$col") ;
                   $col++) {
                  $f = $params->param("field$chart-$row-$col") || "noop";
@@ -2629,6 +2811,7 @@ index 54f6c93..38e1ec4 100644
 --- a/Bugzilla/Search/Quicksearch.pm
 +++ b/Bugzilla/Search/Quicksearch.pm
 @@ -112,7 +112,7 @@ use constant COMPONENT_EXCEPTIONS => (
+# SECTION: SAVED_SEARCHES
  our ($chart, $and, $or);
  
  sub quicksearch {
@@ -2638,6 +2821,7 @@ index 54f6c93..38e1ec4 100644
      my $urlbase = correct_urlbase();
  
 @@ -130,7 +130,7 @@ sub quicksearch {
+# SECTION: SAVED_SEARCHES
          # Allow separation by comma or whitespace.
          $searchstring =~ s/[,\s]+/,/g;
  
@@ -2647,6 +2831,7 @@ index 54f6c93..38e1ec4 100644
              print $cgi->redirect(-uri => "${urlbase}show_bug.cgi?id=$searchstring");
              exit;
 @@ -145,7 +145,7 @@ sub quicksearch {
+# SECTION: SAVED_SEARCHES
      else {
          # It's not just a bug number or a list of bug numbers.
          # Maybe it's an alias?
@@ -2656,6 +2841,7 @@ index 54f6c93..38e1ec4 100644
                                                     FROM bugs
                                                    WHERE alias = ?},
 @@ -397,13 +397,13 @@ sub quicksearch {
+# SECTION: SAVED_SEARCHES
          } # foreach (@words)
  
          # Inform user about any unknown fields
@@ -2676,6 +2862,7 @@ index 289e172..8fc9d3c 100644
 --- a/Bugzilla/Status.pm
 +++ b/Bugzilla/Status.pm
 @@ -66,6 +66,7 @@ sub VALIDATORS {
+# SECTION: TRACEPARSER_SPEEDUP
  sub create {
      my $class = shift;
      my $self = $class->SUPER::create(@_);
@@ -2684,6 +2871,7 @@ index 289e172..8fc9d3c 100644
      return $self;
  }
 @@ -120,9 +121,12 @@ sub _check_value {
+# SECTION: TRACEPARSER_SPEEDUP
  ###############################
  
  sub BUG_STATE_OPEN {
@@ -2703,6 +2891,7 @@ index 5630fc2..77deb88 100644
 --- a/Bugzilla/Template.pm
 +++ b/Bugzilla/Template.pm
 @@ -34,6 +34,7 @@ package Bugzilla::Template;
+# SECTION: TRACEPARSER_SPEEDUP
  
  use strict;
  
@@ -2711,6 +2900,7 @@ index 5630fc2..77deb88 100644
  use Bugzilla::Install::Requirements;
  use Bugzilla::Install::Util qw(install_string template_include_path include_languages);
 @@ -51,6 +52,7 @@ use File::Find;
+# SECTION: TRACEPARSER_SPEEDUP
  use File::Path qw(rmtree mkpath);
  use File::Spec;
  use IO::Dir;
@@ -2719,6 +2909,7 @@ index 5630fc2..77deb88 100644
  use base qw(Template);
  
 @@ -123,6 +125,7 @@ sub get_format {
+# SECTION: XSS_IN_SHOW_BUG_CGI
      return
      {
          'template'    => $template,
@@ -2727,6 +2918,7 @@ index 5630fc2..77deb88 100644
          'ctype'       => Bugzilla::Constants::contenttypes->{$ctype}
      };
 @@ -136,7 +139,7 @@ sub get_format {
+# SECTION: BUG_FORMAT_COMMENT_HOOK
  # If you want to modify this routine, read the comments carefully
  
  sub quoteUrls {
@@ -2736,6 +2928,7 @@ index 5630fc2..77deb88 100644
  
      # We use /g for speed, but uris can have other things inside them
 @@ -164,6 +167,17 @@ sub quoteUrls {
+# SECTION: BUG_FORMAT_COMMENT_HOOK
      my $count = 0;
      my $tmp;
  
@@ -2754,11 +2947,13 @@ index 5630fc2..77deb88 100644
      my $urlbase_re = '(' . join('|',
          map { qr/$_/ } grep($_, Bugzilla->params->{'urlbase'}, 
 @@ -205,13 +219,13 @@ sub quoteUrls {
+# SECTION: REQ_35_PATCH_EQUALS_ATTACHMENT
                 ("\0\0" . ($count-1) . "\0\0")
                ~egmx;
  
 -    $text =~ s~\b(attachment\s*\#?\s*(\d+))
 +    $text =~ s~\b((?:attachment|patch)\s*\#?\s*(\d+))
+# SECTION: BUG_FORMAT_COMMENT_HOOK
                ~($things[$count++] = get_attachment_link($2, $1)) &&
                 ("\0\0" . ($count-1) . "\0\0")
                ~egmxi;
@@ -2770,6 +2965,7 @@ index 5630fc2..77deb88 100644
      # This is a hack to speed up displaying comments for the Bugzilla 3.4
      # branch.
 @@ -296,20 +310,22 @@ sub get_attachment_link {
+# SECTION: TRACEPARSER_SPEEDUP
  #    comment in the bug
  
  sub get_bug_link {
@@ -2800,6 +2996,7 @@ index 5630fc2..77deb88 100644
      # This is a hack to speed up displaying comments for the Bugzilla 3.4
      # branch.
 @@ -317,44 +333,36 @@ sub get_bug_link {
+# SECTION: TRACEPARSER_SPEEDUP
      Bugzilla->template_inner; # populates request_cache->{language}
      my $lang = Bugzilla->request_cache->{language} || '';
  
@@ -2871,6 +3068,7 @@ index 5630fc2..77deb88 100644
  
  ###############################################################################
 @@ -558,10 +566,10 @@ sub create {
+# SECTION: BUG_FORMAT_COMMENT_HOOK
              clean_text => \&Bugzilla::Util::clean_text ,
  
              quoteUrls => [ sub {
@@ -2888,6 +3086,7 @@ index 4aee056..1e7d4ff 100644
 --- a/Bugzilla/Token.pm
 +++ b/Bugzilla/Token.pm
 @@ -126,6 +126,15 @@ sub IssueEmailChangeToken {
+# SECTION: REQ_8_BUG_BUDDY_CGI
      MessageToMTA($message);
  }
  
@@ -2904,6 +3103,7 @@ index 4aee056..1e7d4ff 100644
  # to the user with instructions for using it to change their password.
  sub IssuePasswordToken {
 @@ -142,7 +151,7 @@ sub IssuePasswordToken {
+# SECTION: REQ_8_BUG_BUDDY_CGI
  
      ThrowUserError('too_soon_for_new_token', {'type' => 'password'}) if $too_soon;
  
@@ -2913,6 +3113,7 @@ index 4aee056..1e7d4ff 100644
      # Mail the user the token along with instructions for using it.
      my $template = Bugzilla->template_inner($user->settings->{'lang'}->{'value'});
 @@ -150,7 +159,7 @@ sub IssuePasswordToken {
+# SECTION: REQ_8_BUG_BUDDY_CGI
  
      $vars->{'token'} = $token;
      $vars->{'emailaddress'} = $user->email;
@@ -2926,6 +3127,7 @@ index ad7ff5c..7612bb2 100644
 --- a/Bugzilla/User.pm
 +++ b/Bugzilla/User.pm
 @@ -694,6 +694,23 @@ sub get_selectable_classifications {
+# SECTION: REQ_19_B_DISPLAY_STUFF_FOR_GNOME_ONLY
      return $self->{selectable_classifications};
  }
  
@@ -2950,6 +3152,7 @@ index ad7ff5c..7612bb2 100644
      my ($self, $product_name, $warn) = @_;
      my $dbh = Bugzilla->dbh;
 @@ -1489,6 +1506,9 @@ sub wants_mail {
+# SECTION: REQ_14_DISABLE_MAIL_FOR_AT_GNOME_BUGS
      # No mail if there are no events
      return 0 if !scalar(@$events);
  
@@ -2960,6 +3163,7 @@ index ad7ff5c..7612bb2 100644
      if (!defined($relationship)) {
          $relationship = REL_ANY;
 @@ -1536,10 +1556,9 @@ sub is_insider {
+# SECTION: REQ_13_SELF_GLOBALWATCHING
  sub is_global_watcher {
      my $self = shift;
  
@@ -2974,6 +3178,7 @@ index ad7ff5c..7612bb2 100644
  }
  
 @@ -1750,6 +1769,45 @@ sub validate_password {
+# SECTION: REQ_4_BROWSE_CGI
      return 1;
  }
  
@@ -3000,6 +3205,7 @@ index ad7ff5c..7612bb2 100644
 +    return $self->{'product_int'};
 +}
 +
+# SECTION: REQ_23_NOTE_DEVELOPER
 +sub is_developer {
 +    my ($self, $product) = @_;
 +
@@ -3020,6 +3226,7 @@ index ad7ff5c..7612bb2 100644
  1;
  
 @@ -2138,6 +2196,11 @@ i.e. if the 'insidergroup' parameter is set and the user belongs to this group.
+# SECTION: REQ_23_NOTE_DEVELOPER
  Returns true if the user is a global watcher,
  i.e. if the 'globalwatchers' parameter contains the user.
  
@@ -3032,6 +3239,7 @@ index ad7ff5c..7612bb2 100644
  
  =head1 CLASS FUNCTIONS
 @@ -2223,6 +2286,10 @@ Untaints C<$passwd1> if successful.
+# SECTION: REQ_4_BROWSE_CGI
  If a second password is passed in, this function also verifies that
  the two passwords match.
  
@@ -3047,6 +3255,7 @@ index 5d75343..d1bdaf0 100644
 --- a/Bugzilla/Util.pm
 +++ b/Bugzilla/Util.pm
 @@ -35,6 +35,7 @@ use base qw(Exporter);
+# SECTION: REQ_12_NO_CHANGER_COMMENTER
                               detaint_signed
                               html_quote url_quote xml_quote
                               css_class_quote html_light_quote url_decode
@@ -3055,6 +3264,7 @@ index 5d75343..d1bdaf0 100644
                               lsearch ssl_require_redirect use_attachbase
                               diff_arrays
 @@ -172,8 +173,8 @@ sub html_light_quote {
+# SECTION: REQ_12_NO_CHANGER_COMMENTER
  }
  
  sub email_filter {
@@ -3079,6 +3289,7 @@ index 9ea5477..813162c 100644
 --- a/Bugzilla/WebService/Bug.pm
 +++ b/Bugzilla/WebService/Bug.pm
 @@ -310,7 +310,8 @@ sub legal_values {
+# SECTION: REQ_3_ATTACHMENT_STATUS
  
      my $values;
      if (grep($_->name eq $field, @global_selects)) {
@@ -3094,6 +3305,7 @@ index 0000000..a38f734
 --- /dev/null
 +++ b/add-version.c
 @@ -0,0 +1,25 @@
+# SECTION: REQ_2_ADD_VERSION_SCRIPTS
 +/*
 + * See http://www.perl.com/doc/manual/html/pod/perlsec.html, section
 + * "Security Bugs" for an explanation of this file (and to find out where I
@@ -3125,6 +3337,7 @@ index 0000000..647cfc4
 --- /dev/null
 +++ b/add-version.cgi
 @@ -0,0 +1,101 @@
+# SECTION: REQ_2_ADD_VERSION_SCRIPTS
 +#!/usr/bin/perl -wT
 +
 +use strict;
@@ -3232,6 +3445,7 @@ index 0000000..2f794be
 --- /dev/null
 +++ b/add-version.pl
 @@ -0,0 +1,7 @@
+# SECTION: REQ_2_ADD_VERSION_SCRIPTS
 +#!/usr/bin/perl -w
 +
 +use strict;
@@ -3244,6 +3458,7 @@ index f39fa56..b1ed302 100755
 --- a/attachment.cgi
 +++ b/attachment.cgi
 @@ -633,6 +633,13 @@ sub update {
+# SECTION: REQ_3_ATTACHMENT_STATUS
      Bugzilla::Attachment->validate_description(THROW_ERROR);
      Bugzilla::Attachment->validate_is_patch(THROW_ERROR);
      Bugzilla::Attachment->validate_content_type(THROW_ERROR) unless $cgi->param('ispatch');
@@ -3258,6 +3473,7 @@ index f39fa56..b1ed302 100755
      $cgi->param('isprivate', $cgi->param('isprivate') ? 1 : 0);
  
 @@ -703,10 +710,12 @@ sub update {
+# SECTION: REQ_3_ATTACHMENT_STATUS
    my $description = $cgi->param('description');
    my $contenttype = $cgi->param('contenttype');
    my $filename = $cgi->param('filename');
@@ -3271,6 +3487,7 @@ index f39fa56..b1ed302 100755
    # Figure out when the changes were made.
    my ($timestamp) = $dbh->selectrow_array("SELECT NOW()");
 @@ -725,11 +734,12 @@ sub update {
+# SECTION: REQ_3_ATTACHMENT_STATUS
                      ispatch     = ?,
                      isobsolete  = ?,
                      isprivate   = ?,
@@ -3285,6 +3502,7 @@ index f39fa56..b1ed302 100755
    my $updated_attachment = new Bugzilla::Attachment($attachment->id);
    # Record changes in the activity table.
 @@ -775,6 +785,12 @@ sub update {
+# SECTION: REQ_3_ATTACHMENT_STATUS
                    $attachment->isprivate, $updated_attachment->isprivate);
      $updated = 1;
    }
@@ -3303,6 +3521,7 @@ index 0000000..44867c0
 --- /dev/null
 +++ b/browse.cgi
 @@ -0,0 +1,236 @@
+# SECTION: REQ_4_BROWSE_CGI
 +#!/usr/bin/perl -wT
 +# -*- Mode: perl; indent-tabs-mode: nil -*-
 +#
@@ -3544,6 +3763,7 @@ index 5c7b676..6e619a2 100755
 --- a/buglist.cgi
 +++ b/buglist.cgi
 @@ -92,6 +92,11 @@ if ($cgi->request_method() eq 'POST') {
+# SECTION: BACKWARD_COMPAT_QUERY
      }
  }
  
@@ -3556,6 +3776,7 @@ index 5c7b676..6e619a2 100755
  my $searchstring = $cgi->param('quicksearch');
  if (defined($searchstring)) {
 @@ -134,16 +139,6 @@ if (defined $cgi->param('ctype') && $cgi->param('ctype') eq "rss") {
+# SECTION: JS_TEMPLATE_SEE_ALL_BUGS
      $cgi->param('ctype', "atom");
  }
  
@@ -3573,6 +3794,7 @@ index 5c7b676..6e619a2 100755
  # on its user's behalf.  If this request comes from an agent, we turn off
  # various aspects of bug list functionality so agent requests succeed
 @@ -1091,6 +1086,17 @@ $vars->{'displaycolumns'} = \@displaycolumns;
+# SECTION: REQ_57_ADD_PRIORITY_TO_ICAL
  $vars->{'openstates'} = [BUG_STATE_OPEN];
  $vars->{'closedstates'} = [map {$_->name} closed_bug_statuses()];
  
@@ -3595,6 +3817,7 @@ index a521ee1..1b9015f 100755
 --- a/colchange.cgi
 +++ b/colchange.cgi
 @@ -45,7 +45,7 @@ my $vars = {};
+# SECTION: REQ_47_REMOVE_REP_PLATFORM
  # The master list not only says what fields are possible, but what order
  # they get displayed in.
  my @masterlist = ("opendate", "changeddate", "bug_severity", "priority",
@@ -3608,6 +3831,7 @@ index f7ba034..750eec7 100755
 --- a/contrib/recode.pl
 +++ b/contrib/recode.pl
 @@ -284,7 +284,7 @@ foreach my $table ($dbh->bz_table_list_real) {
+# SECTION: TRACEPARSER_SPEEDUP
  
                  # We only fix it if it's not ASCII or UTF-8 already.
                  if ($encoding && !grep($_ eq $encoding, IGNORE_ENCODINGS)) {
@@ -3761,6 +3985,7 @@ index e26de42..316eb95 100644
 --- a/docs/en/xml/using.xml
 +++ b/docs/en/xml/using.xml
 @@ -661,16 +661,6 @@
+# SECTION: JS_TEMPLATE_SEE_ALL_BUGS
          </member>
        </simplelist>
        </para>
@@ -3782,6 +4007,7 @@ index 61b014c..20075e1 100755
 --- a/editclassifications.cgi
 +++ b/editclassifications.cgi
 @@ -103,7 +103,9 @@ if ($action eq 'new') {
+# SECTION: REQ_19_CLASSIFICATION_GNOME
      my $classification =
        Bugzilla::Classification->create({name        => $class_name,
                                          description => scalar $cgi->param('description'),
@@ -3793,6 +4019,7 @@ index 61b014c..20075e1 100755
      delete_token($token);
  
 @@ -182,6 +184,7 @@ if ($action eq 'update') {
+# SECTION: REQ_19_CLASSIFICATION_GNOME
      $classification->set_name($class_name);
      $classification->set_description(scalar $cgi->param('description'));
      $classification->set_sortkey(scalar $cgi->param('sortkey'));
@@ -3818,6 +4045,7 @@ index adbe974..2711e70 100755
 --- a/editproducts.cgi
 +++ b/editproducts.cgi
 @@ -184,9 +184,9 @@ if ($action eq 'new') {
+# SECTION: REQ_25_UNCONFIRMED_ENABLED
                                   defaultmilestone => scalar $cgi->param('defaultmilestone'),
                                   milestoneurl     => scalar $cgi->param('milestoneurl'),
                                   disallownew      => scalar $cgi->param('disallownew'),
@@ -3831,6 +4059,7 @@ index adbe974..2711e70 100755
  
      delete_token($token);
 @@ -296,9 +296,9 @@ if ($action eq 'update') {
+# SECTION: REQ_25_UNCONFIRMED_ENABLED
      $product->set_default_milestone(scalar $cgi->param('defaultmilestone'));
      $product->set_milestone_url(scalar $cgi->param('milestoneurl'));
      $product->set_disallow_new(scalar $cgi->param('disallownew'));
@@ -3848,6 +4077,7 @@ index 3c553c8..64bc4be 100755
 --- a/editvalues.cgi
 +++ b/editvalues.cgi
 @@ -188,6 +188,8 @@ if ($action eq 'update') {
+# SECTION: REQ_3_ATTACHMENT_STATUS
      $value->set_name($cgi->param('value_new'));
      $value->set_sortkey($cgi->param('sortkey'));
      $value->set_visibility_value($cgi->param('visibility_value_id'));
@@ -3861,6 +4091,7 @@ index 9ea093c..08c38cd 100755
 --- a/enter_bug.cgi
 +++ b/enter_bug.cgi
 @@ -410,6 +410,7 @@ foreach my $field (@enter_bug_fields) {
+# SECTION: REQ_19_B_DISPLAY_STUFF_FOR_GNOME_ONLY
  # This allows the Field visibility and value controls to work with the
  # Product field as a parent.
  $default{'product'} = $product->name;
@@ -3874,6 +4105,7 @@ index 0000000..eefd54c
 --- /dev/null
 +++ b/extensions/bugbuddy/code/config-add_panels.pl
 @@ -0,0 +1,25 @@
+# SECTION: REQ_8_BUG_BUDDY_CGI
 +# -*- Mode: perl; indent-tabs-mode: nil -*-
 +#
 +# The contents of this file are subject to the Mozilla Public
@@ -3905,6 +4137,7 @@ index 0000000..fa24234
 --- /dev/null
 +++ b/extensions/bugbuddy/code/webservice.pl
 @@ -0,0 +1,25 @@
+# SECTION: REQ_8_BUG_BUDDY_CGI
 +# -*- Mode: perl; indent-tabs-mode: nil -*-
 +#
 +# The contents of this file are subject to the Mozilla Public
@@ -3936,6 +4169,7 @@ index 0000000..6a6b450
 --- /dev/null
 +++ b/extensions/bugbuddy/info.pl
 @@ -0,0 +1,26 @@
+# SECTION: REQ_8_BUG_BUDDY_CGI
 +# -*- Mode: perl; indent-tabs-mode: nil -*-
 +#
 +# The contents of this file are subject to the Mozilla Public
@@ -3968,6 +4202,7 @@ index 0000000..b88f43c
 --- /dev/null
 +++ b/extensions/bugbuddy/lib/ConfigBugBuddy.pm
 @@ -0,0 +1,54 @@
+# SECTION: REQ_8_BUG_BUDDY_CGI
 +# -*- Mode: perl; indent-tabs-mode: nil -*-
 +#
 +# The contents of this file are subject to the Mozilla Public
@@ -4028,6 +4263,7 @@ index 0000000..dacc277
 --- /dev/null
 +++ b/extensions/bugbuddy/lib/WSBugBuddy.pm
 @@ -0,0 +1,212 @@
+# SECTION: REQ_8_BUG_BUDDY_CGI
 +# -*- Mode: perl; indent-tabs-mode: nil -*-
 +#
 +# The contents of this file are subject to the Mozilla Public
@@ -4246,6 +4482,7 @@ index 0000000..060304b
 --- /dev/null
 +++ b/extensions/bugbuddy/template/en/default/admin/params/bugbuddy.html.tmpl
 @@ -0,0 +1,23 @@
+# SECTION: REQ_8_BUG_BUDDY_CGI
 +[%#
 +  # The contents of this file are subject to the Mozilla Public
 +  # License Version 1.1 (the "License"); you may not use this file
@@ -4275,6 +4512,7 @@ index 0000000..d012aac
 --- /dev/null
 +++ b/extensions/bugbuddy/template/en/default/email/bug-buddy-account-created.txt.tmpl
 @@ -0,0 +1,50 @@
+# SECTION: REQ_8_BUG_BUDDY_CGI
 +[%# The contents of this file are subject to the Mozilla Public
 +  # License Version 1.1 (the "License"); you may not use this file
 +  # except in compliance with the License. You may obtain a copy of
@@ -4331,6 +4569,7 @@ index 0000000..4b5ca72
 --- /dev/null
 +++ b/extensions/describe-user/code/page-before_template.pl
 @@ -0,0 +1,7 @@
+# SECTION: DESCRIBE_USER
 +use strict;
 +use warnings;
 +use Bugzilla;
@@ -4344,6 +4583,7 @@ index 0000000..1993505
 --- /dev/null
 +++ b/extensions/describe-user/lib/DescribeUser/Hooks.pm
 @@ -0,0 +1,316 @@
+# SECTION: DESCRIBE_USER
 +# -*- Mode: perl; indent-tabs-mode: nil -*-
 +#
 +# The contents of this file are subject to the Mozilla Public
@@ -4666,6 +4906,7 @@ index 0000000..e463aa7
 --- /dev/null
 +++ b/extensions/describe-user/template/en/default/global/user.html.tmpl
 @@ -0,0 +1,42 @@
+# SECTION: DESCRIBE_USER
 +[%# The contents of this file are subject to the Mozilla Public
 +  # License Version 1.1 (the "License"); you may not use this file
 +  # except in compliance with the License. You may obtain a copy of
@@ -4714,6 +4955,7 @@ index 0000000..7a5dd06
 --- /dev/null
 +++ b/extensions/describe-user/template/en/default/pages/describeuser.html.tmpl
 @@ -0,0 +1,377 @@
+# SECTION: DESCRIBE_USER
 +[%# 1.0@bugzilla.org %]
 +[%# The contents of this file are subject to the Mozilla Public
 +  # License Version 1.1 (the "License"); you may not use this file
@@ -5097,6 +5339,7 @@ index 0000000..5ed22c5
 --- /dev/null
 +++ b/extensions/example/code/bug-format_comment.pl
 @@ -0,0 +1,31 @@
+# SECTION: BUG_FORMAT_COMMENT_HOOK
 +# -*- Mode: perl; indent-tabs-mode: nil -*-
 +#
 +# The contents of this file are subject to the Mozilla Public
@@ -5134,6 +5377,7 @@ index 0000000..fe66798
 --- /dev/null
 +++ b/extensions/patch-report/code/page-before_template.pl
 @@ -0,0 +1,7 @@
+# SECTION: PATCH_REPORT_EXTENSION
 +use strict;
 +use warnings;
 +use Bugzilla;
@@ -5147,6 +5391,7 @@ index 0000000..c7f3cc1
 --- /dev/null
 +++ b/extensions/patch-report/lib/PatchReport/Hooks.pm
 @@ -0,0 +1,271 @@
+# SECTION: PATCH_REPORT_EXTENSION
 +# (c) Copyright Elijah Newren 2005
 +# (c) Copyright Frederic Peters 2009
 +# Licensed under whatever Free/Open Source license is necessary to
@@ -5424,6 +5669,7 @@ index 0000000..8fc1b20
 --- /dev/null
 +++ b/extensions/patch-report/template/en/default/pages/patchreport.html.tmpl
 @@ -0,0 +1,77 @@
+# SECTION: PATCH_REPORT_EXTENSION
 +[%# 1.0@bugzilla.org %]
 +[%# -*- mode: html -*- %]
 +[%# The contents of this file are subject to the Mozilla Public
@@ -5507,6 +5753,7 @@ index 0000000..ee560f3
 --- /dev/null
 +++ b/extensions/stock-answers/template/en/bug/edit-after_comment_textarea.html.tmpl
 @@ -0,0 +1,97 @@
+# SECTION: STOCK_ANSWERS
 +  [% IF bug.user.canedit %]
 +  <script type="text/javascript">
 +  <!--
@@ -5610,6 +5857,7 @@ index 0000000..05dabed
 --- /dev/null
 +++ b/extensions/weekly-bug-summary/code/page-before_template.pl
 @@ -0,0 +1,7 @@
+# SECTION: WEEKLY_BUG_SUMMARY
 +use strict;
 +use warnings;
 +use Bugzilla;
@@ -5623,6 +5871,7 @@ index 0000000..c3aecad
 --- /dev/null
 +++ b/extensions/weekly-bug-summary/lib/WeeklyBugSummary/Hooks.pm
 @@ -0,0 +1,790 @@
+# SECTION: WEEKLY_BUG_SUMMARY
 +# The contents of this file are subject to the Mozilla Public
 +# License Version 1.1 (the "License"); you may not use this file
 +# except in compliance with the License. You may obtain a copy of
@@ -6419,6 +6668,7 @@ index 0000000..a3714ec
 --- /dev/null
 +++ b/extensions/weekly-bug-summary/template/en/default/pages/weekly-bug-summary.html.tmpl
 @@ -0,0 +1,163 @@
+# SECTION: WEEKLY_BUG_SUMMARY
 +[%# 1.0@bugzilla.org %]
 +[%# -*- mode: html -*- %]
 +[%# The contents of this file are subject to the Mozilla Public
@@ -6586,6 +6836,7 @@ diff --git a/images/gnome-16.png b/images/gnome-16.png
 new file mode 100644
 index 0000000000000000000000000000000000000000..95c4ff6e89151914b61f0995ccccca642b0b6e33
 GIT binary patch
+# SECTION: BRAND_HEADER_AND_FRONT_PAGE
 literal 650
 zcmV;50(Jd~P)<h;3K|Lk000e1NJLTq000mG000mO1^@s6AM^iV00009a7bBm000XS
 z000XS0e@s)kpKVy2XskIMF-Lb8W1xPp*yo}0006hNkl<Zc${NkpcUZd<749C<@Ms>
@@ -6609,6 +6860,7 @@ index 2543316..8271473 100644
 --- a/js/attachment.js
 +++ b/js/attachment.js
 @@ -43,6 +43,15 @@ function setContentTypeDisabledState(form)
+# SECTION: REQ_3_ATTACHMENT_STATUS
      form.contenttypeentry.disabled = isdisabled;
  }
  
@@ -6630,6 +6882,7 @@ index 0000000..8d47a38
 --- /dev/null
 +++ b/js/browse.js
 @@ -0,0 +1,116 @@
+# SECTION: REQ_4_BROWSE_CGI
 +function setCaretToEnd (control) {
 +  if (control.createTextRange) {
 +    var range = control.createTextRange();
@@ -6751,6 +7004,7 @@ index 62ca7e4..a2cf17e 100644
 --- a/js/field.js
 +++ b/js/field.js
 @@ -375,15 +375,15 @@ function updateCommentTagControl(checkbox, form) {
+# SECTION: REQ_19_B_DISPLAY_STUFF_FOR_GNOME_ONLY
  
  /**
   * Says that a field should only be displayed when another field has
@@ -6770,6 +7024,7 @@ index 62ca7e4..a2cf17e 100644
  
  /**
 @@ -393,13 +393,13 @@ function showFieldWhen(controlled_id, controller_id, value) {
+# SECTION: REQ_19_B_DISPLAY_STUFF_FOR_GNOME_ONLY
  function handleVisControllerValueChange(e, args) {
      var controlled_id = args[0];
      var controller = args[1];
@@ -6790,6 +7045,7 @@ index 666f266..18fc995 100644
 --- a/js/util.js
 +++ b/js/util.js
 @@ -207,12 +207,18 @@ function bz_populateSelectFromArray(aSelect, aArray) {
+# SECTION: REQ_19_B_DISPLAY_STUFF_FOR_GNOME_ONLY
   * case-sensitive.
   *
   * @param aSelect        The select you're checking.
@@ -6815,6 +7071,7 @@ index 207430d..c3161fb 100644
 --- a/mod_perl.pl
 +++ b/mod_perl.pl
 @@ -45,8 +45,13 @@ use Bugzilla::Template ();
+# SECTION: MOD_PERL_GNOME
  use Bugzilla::Util ();
  
  # This means that every httpd child will die after processing
@@ -6831,6 +7088,7 @@ index 207430d..c3161fb 100644
  my $cgi_path = Bugzilla::Constants::bz_locations()->{'cgi_path'};
  
 @@ -63,7 +68,7 @@ PerlChildInitHandler "sub { srand(); }"
+# SECTION: MOD_PERL_GNOME
      PerlCleanupHandler  Apache2::SizeLimit
      PerlOptions +ParseHeaders
      Options +ExecCGI
@@ -6844,6 +7102,7 @@ index 914ba3f..a179357 100755
 --- a/page.cgi
 +++ b/page.cgi
 @@ -51,6 +51,12 @@ if ($id) {
+# SECTION: REQ_31_MIGRATE_BUG_STATUS_HTML
          ThrowCodeError("bad_page_cgi_id", { "page_id" => $id });
      }
  
@@ -6861,6 +7120,7 @@ index 71748a1..c0126ac 100755
 --- a/query.cgi
 +++ b/query.cgi
 @@ -268,6 +268,16 @@ $vars->{'op_sys'} = get_legal_field_values('op_sys');
+# SECTION: REQ_16_GNOME_VERSION_AND_TARGET
  $vars->{'priority'} = get_legal_field_values('priority');
  $vars->{'bug_severity'} = get_legal_field_values('bug_severity');
  
@@ -6878,6 +7138,7 @@ index 71748a1..c0126ac 100755
  my @fields = Bugzilla->get_fields({ obsolete => 0 });
  
 @@ -370,8 +380,11 @@ $vars->{'query_format'} = $cgi->param('query_format');
+# SECTION: DEFAULTFORMAT_SHORT_TO_SPECIFIC
  
  # Set default page to "specific" if none provided
  if (!($cgi->param('query_format') || $cgi->param('format'))) {
@@ -6896,6 +7157,7 @@ index 0f823cb..c5d4d59 100644
 --- a/robots.txt
 +++ b/robots.txt
 @@ -1,3 +1,8 @@
+# SECTION: NO_LARGE_DATA_RETRIEVAL_WARNING
  User-agent: *
  Allow: /index.cgi
  Disallow: /
@@ -6909,6 +7171,7 @@ index 0bb965c..c0e8344 100755
 --- a/sanitycheck.cgi
 +++ b/sanitycheck.cgi
 @@ -229,7 +229,8 @@ if ($cgi->param('repair_creation_date')) {
+# SECTION: REQ_28_NEEDINFO
  if ($cgi->param('repair_everconfirmed')) {
      Status('everconfirmed_start');
  
@@ -6919,6 +7182,7 @@ index 0bb965c..c0e8344 100755
  
      $dbh->do("UPDATE bugs SET everconfirmed = 0 WHERE bug_status = 'UNCONFIRMED'");
 @@ -961,7 +962,8 @@ Status('bug_check_status_everconfirmed');
+# SECTION: REQ_28_NEEDINFO
  BugCheck("bugs WHERE bug_status = 'UNCONFIRMED' AND everconfirmed = 1",
           'bug_check_status_everconfirmed_error_text', 'repair_everconfirmed');
  
@@ -6933,6 +7197,7 @@ index 4dfe8fa..62483f4 100755
 --- a/search_plugin.cgi
 +++ b/search_plugin.cgi
 @@ -32,7 +32,7 @@ my $vars = {};
+# SECTION: BRAND_HEADER_AND_FRONT_PAGE
  print $cgi->header('application/xml');
  
  # Get the contents of favicon.ico
@@ -6946,6 +7211,7 @@ index 42fad71..0767f83 100755
 --- a/show_bug.cgi
 +++ b/show_bug.cgi
 @@ -37,9 +37,11 @@ my $vars = {};
+# SECTION: XSS_IN_SHOW_BUG_CGI
  
  my $user = Bugzilla->login();
  
@@ -6960,6 +7226,7 @@ index 42fad71..0767f83 100755
  # If we don't have an ID, _AND_ we're only doing a single bug, then prompt
  if (!$cgi->param('id') && $single) {
 @@ -49,9 +51,6 @@ if (!$cgi->param('id') && $single) {
+# SECTION: XSS_IN_SHOW_BUG_CGI
      exit;
  }
  
@@ -6970,6 +7237,7 @@ index 42fad71..0767f83 100755
  my %marks;
  
 @@ -140,5 +139,5 @@ $vars->{'displayfields'} = \%displayfields;
+# SECTION: XSS_IN_SHOW_BUG_CGI
  
  print $cgi->header($format->{'ctype'});
  
@@ -6982,6 +7250,7 @@ index 0000000..c0e7f8f
 --- /dev/null
 +++ b/skins/contrib/Dusk/show_bug.css
 @@ -0,0 +1,4 @@
+# SECTION: REQ_50_FLOAT_RIGHT_INFO_BOX
 +#bug_summary table {
 +    background-color: #ffffff;
 +}
@@ -6992,6 +7261,7 @@ index 0000000..e6b1ab6
 --- /dev/null
 +++ b/skins/contrib/GNOME/buglist.css
 @@ -0,0 +1,3 @@
+# SECTION: REQ_39_GNOME_SKIN
 +.bz_enhancement {
 +    color: #6c6e6a;
 +}
@@ -7001,6 +7271,7 @@ index 0000000..e93a653
 --- /dev/null
 +++ b/skins/contrib/GNOME/global.css
 @@ -0,0 +1,141 @@
+# SECTION: REQ_39_GNOME_SKIN
 +/* global (begin) */
 +    body {
 +	margin: 0px;
@@ -7148,6 +7419,7 @@ index 0000000..693b2cc
 --- /dev/null
 +++ b/skins/standard/browse.css
 @@ -0,0 +1,35 @@
+# SECTION: REQ_4_BROWSE_CGI
 +#product_summary {
 +    float: right; 
 +    -moz-border-radius-topleft: 20px;
@@ -7188,6 +7460,7 @@ index 3a91e8c..7473757 100644
 --- a/skins/standard/show_bug.css
 +++ b/skins/standard/show_bug.css
 @@ -7,9 +7,6 @@
+# SECTION: REQ_50_FLOAT_RIGHT_INFO_BOX
      font-weight: bold;
  }
  
@@ -7198,6 +7471,7 @@ index 3a91e8c..7473757 100644
    width: 100%;
  }
 @@ -91,3 +88,25 @@ table#flags {
+# SECTION: REQ_50_FLOAT_RIGHT_INFO_BOX
  .knob-buttons {
      float: right;
  }
@@ -7229,6 +7503,7 @@ index 0000000..bc6fabe
 --- /dev/null
 +++ b/template/en/custom/pages/email.html.tmpl
 @@ -0,0 +1,124 @@
+# SECTION: REQ_40_PORT_FORWARD
 +[%# -*- mode: html -*- %]
 +[%# The contents of this file are subject to the Mozilla Public
 +  # License Version 1.1 (the "License"); you may not use this file
@@ -7359,6 +7634,7 @@ index 0000000..54bcabf
 --- /dev/null
 +++ b/template/en/custom/pages/points.html.tmpl
 @@ -0,0 +1,78 @@
+# SECTION: REQ_40_PORT_FORWARD
 +[%# -*- mode: html -*- %]
 +[%# The contents of this file are subject to the Mozilla Public
 +  # License Version 1.1 (the "License"); you may not use this file
@@ -7443,6 +7719,7 @@ index 0000000..25384a9
 --- /dev/null
 +++ b/template/en/custom/pages/reports.html.tmpl
 @@ -0,0 +1,180 @@
+# SECTION: REQ_40_PORT_FORWARD
 +[%# -*- mode: html -*- %]
 +[%# The contents of this file are subject to the Mozilla Public
 +  # License Version 1.1 (the "License"); you may not use this file
@@ -7484,10 +7761,12 @@ index 0000000..25384a9
 +
 +<h2>Generic Gnome reports<a name="generic"></a></h2>
 +  <ul>
+# SECTION: WEEKLY_BUG_SUMMARY
 +    <li>
 +      <a href="page.cgi?id=weekly-bug-summary.html">Summary of [%
 +      terms.bug %] activity for the last week</a>.
 +    </li>
+# SECTION: REQ_40_PORT_FORWARD
 +    <li>
 +      <a href="duplicates.cgi">Frequently (and recently)
 +      duplicated [% terms.bugs %]</a>
@@ -7628,6 +7907,7 @@ index a4d22db..07fe289 100644
 --- a/template/en/default/account/prefs/email.html.tmpl
 +++ b/template/en/default/account/prefs/email.html.tmpl
 @@ -77,6 +77,18 @@ document.write('<input type="button" value="Disable All Mail" onclick="SetCheckb
+# SECTION: REQ_13_SELF_GLOBALWATCHING
    <tr>
      <td width="150"></td>
      <td>
@@ -7647,6 +7927,7 @@ index a4d22db..07fe289 100644
        <input type="checkbox" name="[% prefname %]" id="[% prefname %]" 
          value="1"
 @@ -98,16 +110,6 @@ document.write('<input type="button" value="Disable All Mail" onclick="SetCheckb
+# SECTION: REQ_13_SELF_GLOBALWATCHING
        <br>
      </td>
    </tr>
@@ -7664,6 +7945,7 @@ index a4d22db..07fe289 100644
  
  <hr>
 @@ -274,6 +276,13 @@ preferences for <u>their</u> relationship to the [% terms.bug %]
+# SECTION: REQ_43_EXTRA_TEXT
  </p>
  
  <p>
@@ -7682,6 +7964,7 @@ index 7254779..707289b 100644
 --- a/template/en/default/admin/classifications/add.html.tmpl
 +++ b/template/en/default/admin/classifications/add.html.tmpl
 @@ -44,6 +44,10 @@
+# SECTION: REQ_19_CLASSIFICATION_GNOME
        <td><input id="sortkey" size="20" maxlength="20" name="sortkey" 
                   value=""></td>
      </tr>
@@ -7697,6 +7980,7 @@ index 8e48768..7177d53 100644
 --- a/template/en/default/admin/classifications/del.html.tmpl
 +++ b/template/en/default/admin/classifications/del.html.tmpl
 @@ -45,6 +45,10 @@
+# SECTION: REQ_19_CLASSIFICATION_GNOME
    <td valign="top">Sortkey:</td>
    <td valign="top">[% classification.sortkey FILTER html %]</td>
  
@@ -7712,6 +7996,7 @@ index b3ef22b..7d8cbd0 100644
 --- a/template/en/default/admin/classifications/edit.html.tmpl
 +++ b/template/en/default/admin/classifications/edit.html.tmpl
 @@ -45,6 +45,13 @@
+# SECTION: REQ_19_CLASSIFICATION_GNOME
        <td><input id="sortkey" size="20" maxlength="20" name="sortkey" value="
        [%- classification.sortkey FILTER html %]"></td>
      </tr>
@@ -7730,6 +8015,7 @@ index d6b352d..660715c 100644
 --- a/template/en/default/admin/classifications/select.html.tmpl
 +++ b/template/en/default/admin/classifications/select.html.tmpl
 @@ -27,6 +27,7 @@
+# SECTION: REQ_19_CLASSIFICATION_GNOME
      <th align="left">Edit Classification ...</th>
      <th align="left">Description</th>
      <th align="left">Sortkey</th>
@@ -7738,6 +8024,7 @@ index d6b352d..660715c 100644
      <th align="left">Action</th>
    </tr>
 @@ -42,6 +43,7 @@
+# SECTION: REQ_19_CLASSIFICATION_GNOME
        [% END %]
        </td>
        <td valign="top">[% cl.sortkey FILTER html %]</td>
@@ -7746,6 +8033,7 @@ index d6b352d..660715c 100644
          <td valign="top">[% cl.product_count FILTER html %]</td>
        [% ELSE %]
 @@ -58,7 +60,7 @@
+# SECTION: REQ_19_CLASSIFICATION_GNOME
    [% END %]
  
    <tr>
@@ -7759,6 +8047,7 @@ index 53bba1e..4e5cf87 100644
 --- a/template/en/default/admin/components/confirm-delete.html.tmpl
 +++ b/template/en/default/admin/components/confirm-delete.html.tmpl
 @@ -72,7 +72,7 @@ from '[% product.name FILTER html %]' product
+# SECTION: REQ_34_MILESTONE_URL_TO_HOME_PAGE
  [% IF Param('usetargetmilestone') %]
  </tr>
  <tr>
@@ -7772,6 +8061,7 @@ index f1eec1a..1ad63f4 100644
 --- a/template/en/default/admin/fieldvalues/create.html.tmpl
 +++ b/template/en/default/admin/fieldvalues/create.html.tmpl
 @@ -61,6 +61,13 @@
+# SECTION: REQ_3_ATTACHMENT_STATUS
            the status. It cannot be edited later.
          </td>
        </tr>
@@ -7790,6 +8080,7 @@ index b014155..7bef4ab 100644
 --- a/template/en/default/admin/fieldvalues/edit.html.tmpl
 +++ b/template/en/default/admin/fieldvalues/edit.html.tmpl
 @@ -57,6 +57,14 @@
+# SECTION: REQ_3_ATTACHMENT_STATUS
          <th align="right"><label for="is_open">Status Type:</label></th>
          <td>[% IF value.is_open %]Open[% ELSE %]Closed[% END %]</td>
        </tr>
@@ -7809,6 +8100,7 @@ index e5d6aa0..386121c 100644
 --- a/template/en/default/admin/keywords/create.html.tmpl
 +++ b/template/en/default/admin/keywords/create.html.tmpl
 @@ -28,6 +28,30 @@
+# SECTION: REQ_43_EXTRA_TEXT
    subheader = "This page allows you to add a new keyword."
  %]
  
@@ -7844,6 +8136,7 @@ index 5166721..198a329 100644
 --- a/template/en/default/admin/products/confirm-delete.html.tmpl
 +++ b/template/en/default/admin/products/confirm-delete.html.tmpl
 @@ -77,7 +77,7 @@
+# SECTION: REQ_34_MILESTONE_URL_TO_HOME_PAGE
  
    [% IF Param('usetargetmilestone') %]
      <tr>
@@ -7857,6 +8150,7 @@ index c05a878..3c87383 100644
 --- a/template/en/default/admin/products/edit-common.html.tmpl
 +++ b/template/en/default/admin/products/edit-common.html.tmpl
 @@ -77,6 +77,7 @@
+# SECTION: REQ_25_UNCONFIRMED_ENABLED
    </td>
  </tr>
  
@@ -7865,6 +8159,7 @@ index c05a878..3c87383 100644
  <tr class="param_disabled">
    <td colspan="2"
 @@ -112,3 +113,4 @@
+# SECTION: REQ_25_UNCONFIRMED_ENABLED
             value="[% product.votestoconfirm FILTER html %]">
    </td>
  </tr>
@@ -7874,6 +8169,7 @@ index b04fa46..2fd36e9 100644
 --- a/template/en/default/admin/products/updated.html.tmpl
 +++ b/template/en/default/admin/products/updated.html.tmpl
 @@ -69,7 +69,7 @@
+# SECTION: REQ_34_MILESTONE_URL_TO_HOME_PAGE
  
  [% IF changes.milestoneurl.defined %]
    <p>
@@ -7887,6 +8183,7 @@ index 471222a..4d29fee 100644
 --- a/template/en/default/attachment/content-types.html.tmpl
 +++ b/template/en/default/attachment/content-types.html.tmpl
 @@ -25,3 +25,4 @@
+# SECTION: REQ_44_X_COMPRESSED_TAR
            <option value="image/jpeg">JPEG image (image/jpeg)</option>
            <option value="image/png">PNG image (image/png)</option>
            <option value="application/octet-stream">binary file (application/octet-stream)</option>
@@ -7896,6 +8193,7 @@ index 687cd7c..009a893 100644
 --- a/template/en/default/attachment/create.html.tmpl
 +++ b/template/en/default/attachment/create.html.tmpl
 @@ -34,7 +34,7 @@
+# SECTION: REQ_3_ATTACHMENT_STATUS
    header = header
    subheader = subheader
    style_urls = [ 'skins/standard/create_attachment.css' ]
@@ -7909,6 +8207,7 @@ index 2cef632..0451734 100644
 --- a/template/en/default/attachment/createformcontents.html.tmpl
 +++ b/template/en/default/attachment/createformcontents.html.tmpl
 @@ -68,8 +68,8 @@
+# SECTION: REQ_3_ATTACHMENT_STATUS
    <td>
      <em>If the attachment is a patch, check the box below.</em><br>
      <input type="checkbox" id="ispatch" name="ispatch" value="1"
@@ -7920,6 +8219,7 @@ index 2cef632..0451734 100644
      <script type="text/javascript">
        YAHOO.util.Event.onDOMReady(function() {
 @@ -77,6 +77,13 @@
+# SECTION: REQ_3_ATTACHMENT_STATUS
        });
      </script>
  
@@ -7938,6 +8238,7 @@ index 95c9087..b5f1905 100644
 --- a/template/en/default/attachment/edit.html.tmpl
 +++ b/template/en/default/attachment/edit.html.tmpl
 @@ -224,6 +224,16 @@
+# SECTION: REQ_3_ATTACHMENT_STATUS
              <label for="isprivate">private</label><br>
            [% END %]
            <br>
@@ -7959,6 +8260,7 @@ index 04894ff..5b8520b 100644
 --- a/template/en/default/attachment/list.html.tmpl
 +++ b/template/en/default/attachment/list.html.tmpl
 @@ -51,7 +51,11 @@ function toggle_display(link) {
+# SECTION: REQ_3_ATTACHMENT_STATUS
  <br>
  <table id="attachment_table" cellspacing="0" cellpadding="4">
    <tr>
@@ -7972,6 +8274,7 @@ index 04894ff..5b8520b 100644
      </th>
    </tr>
 @@ -99,6 +103,16 @@ function toggle_display(link) {
+# SECTION: REQ_3_ATTACHMENT_STATUS
            </span>
          </td>
  
@@ -7989,6 +8292,7 @@ index 04894ff..5b8520b 100644
            <td class="bz_attach_flags" valign="top">
              [% IF attachment.flags.size == 0 %]
 @@ -127,7 +141,7 @@ function toggle_display(link) {
+# SECTION: REQ_3_ATTACHMENT_STATUS
    [% END %]
  
    <tr class="bz_attach_footer">
@@ -8002,6 +8306,7 @@ index 36088c9..357a899 100644
 --- a/template/en/default/attachment/show-multiple.html.tmpl
 +++ b/template/en/default/attachment/show-multiple.html.tmpl
 @@ -51,7 +51,7 @@
+# SECTION: REQ_3_ATTACHMENT_STATUS
  
        <td valign="top">
          [% IF a.ispatch %]
@@ -8016,6 +8321,7 @@ index 0000000..3b0a3ff
 --- /dev/null
 +++ b/template/en/default/browse/main.html.tmpl
 @@ -0,0 +1,457 @@
+# SECTION: REQ_4_BROWSE_CGI
 +[%# The contents of this file are subject to the Mozilla Public
 +  # License Version 1.1 (the "License"); you may not use this file
 +  # except in compliance with the License. You may obtain a copy of
@@ -8486,6 +8792,7 @@ index 3166e13..7eb9477 100644
  [% IF sort_order == "oldest_to_newest" %]
      [% count = 0 %]
 @@ -124,7 +123,6 @@
+# SECTION: REQ_50_FLOAT_RIGHT_INFO_BOX
  [% IF mode == "edit" %]
    <a href="#" onclick="toggle_all_comments('collapse'); return false;">Collapse All Comments</a> -
    <a href="#" onclick="toggle_all_comments('expand'); return false;">Expand All Comments</a>
@@ -8494,12 +8801,14 @@ index 3166e13..7eb9477 100644
  
  [% FOREACH comment = comments %]
 @@ -189,6 +187,14 @@
+# SECTION: REQ_24_USER_IS_REPORTER
  
          <span class="bz_comment_user">
            [% INCLUDE global/user.html.tmpl who = comment.author %]
 +          [% IF comment.author.id == bug.reporter.id %]
 +            <span class="comment_reporter_tag">[reporter]</span>
 +          [% END %]
+# SECTION: REQ_23_NOTE_DEVELOPER
 +          [% IF comment.author.is_developer %]
 +            <span class="comment_developer_tag">
 +              [[% IF comment.author.is_developer(bug.product_obj) %][% bug.product FILTER html %]&nbsp;[% END %]developer]
@@ -8509,6 +8818,7 @@ index 3166e13..7eb9477 100644
  
          <span class="bz_comment_user_images">
 @@ -222,7 +228,7 @@
+# SECTION: BUG_FORMAT_COMMENT_HOOK
  [% END %]
  <pre class="bz_comment_text" 
       [% ' id="comment_text_' _ count _ '"' IF mode == "edit" %]>
@@ -8522,6 +8832,7 @@ index 9f2a21b..e316a8e 100644
 --- a/template/en/default/bug/create/create-guided.html.tmpl
 +++ b/template/en/default/bug/create/create-guided.html.tmpl
 @@ -213,19 +213,6 @@ function PutDescription() {
+# SECTION: REQ_47_REMOVE_REP_PLATFORM
      </td>
    </tr>
  
@@ -8542,6 +8853,7 @@ index 9f2a21b..e316a8e 100644
                  "Mac OS X", "Linux", "All", "Other" ] %]
  
 @@ -265,21 +252,6 @@ function PutDescription() {
+# SECTION: REQ_46_REMOVE_BUG_FILE_LOC
      </td>
    </tr>
  
@@ -8568,6 +8880,7 @@ index 2cee5c9..9ff979b 100644
 --- a/template/en/default/bug/create/create.html.tmpl
 +++ b/template/en/default/bug/create/create.html.tmpl
 @@ -82,10 +82,10 @@ function set_assign_to() {
+# SECTION: FIX_DESCRIPTION_UPDATING
      // with the default component owner, and the "QA Contact:" field
      // with the default QA Contact. It also selectively enables flags.
      var form = document.Create;
@@ -8581,6 +8894,7 @@ index 2cee5c9..9ff979b 100644
  
      var index = -1;
 @@ -96,26 +96,27 @@ function set_assign_to() {
+# SECTION: FIX_DESCRIPTION_UPDATING
          index = 0;
      }
      if (index != -1) {
@@ -8613,6 +8927,7 @@ index 2cee5c9..9ff979b 100644
  
          // First, we disable all flags. Then we re-enable those
 @@ -275,12 +276,6 @@ TUI_hide_default('expert_fields');
+# SECTION: REQ_47_REMOVE_REP_PLATFORM
    </tr>
  
    <tr>
@@ -8626,6 +8941,7 @@ index 2cee5c9..9ff979b 100644
         bug = default, field = select_fields.op_sys, editable = 1, 
         value = default.op_sys %]
 @@ -306,19 +301,13 @@ TUI_hide_default('expert_fields');
+# SECTION: REQ_47_REMOVE_REP_PLATFORM
    </tr>
  </tbody>
  
@@ -8647,6 +8963,7 @@ index 2cee5c9..9ff979b 100644
        </td>
      </tr>
 @@ -331,21 +320,12 @@ TUI_hide_default('expert_fields');
+# SECTION: REQ_48_REARRANGE_ENTER_BUG_CGI
    </tr>
  
    <tr>
@@ -8673,6 +8990,7 @@ index 2cee5c9..9ff979b 100644
  
      <td rowspan="[% num_rows FILTER html %]">
 @@ -369,67 +349,6 @@ TUI_hide_default('expert_fields');
+# SECTION: REQ_48_REARRANGE_ENTER_BUG_CGI
      </td>
    </tr>
  
@@ -8741,6 +9059,7 @@ index 2cee5c9..9ff979b 100644
    <tr>
      <th>Estimated Hours:</th>
 @@ -444,10 +363,6 @@ TUI_hide_default('expert_fields');
+# SECTION: REQ_48_REARRANGE_ENTER_BUG_CGI
        <small>(YYYY-MM-DD)</small>
      </td>
    </tr>
@@ -8752,6 +9071,7 @@ index 2cee5c9..9ff979b 100644
  
  [% IF Param("usebugaliases") %]
 @@ -459,13 +374,6 @@ TUI_hide_default('expert_fields');
+# SECTION: REQ_46_REMOVE_BUG_FILE_LOC
    </tr>
  [% END %]
  
@@ -8766,6 +9086,7 @@ index 2cee5c9..9ff979b 100644
  
  <tbody class="expert_fields">
 @@ -568,17 +476,17 @@ TUI_hide_default('expert_fields');
+# SECTION: REQ_63_KEYWORDS_FIELD_FOR_ANYBODY
  </tbody>
  
  <tbody class="expert_fields">
@@ -8775,8 +9096,10 @@ index 2cee5c9..9ff979b 100644
          <th><a href="describekeywords.cgi">Keywords</a>:</th>
          <td colspan="3">
            <input id="keywords" name="keywords" size="40"
+# SECTION: REQ_48_REARRANGE_ENTER_BUG_CGI
 -                 value="[% keywords FILTER html %]"> (optional)
 +                 value="[% keywords FILTER html %]"> 
+# SECTION: REQ_63_KEYWORDS_FIELD_FOR_ANYBODY
          </td>
        </tr>
      [% END %]
@@ -8786,6 +9109,7 @@ index 2cee5c9..9ff979b 100644
        <th>Depends on:</th>
        <td colspan="3">
 @@ -592,6 +500,31 @@ TUI_hide_default('expert_fields');
+# SECTION: REQ_48_REARRANGE_ENTER_BUG_CGI
        </td>
      </tr>
    [% END %]
@@ -8822,6 +9146,7 @@ index ac2cc29..ec7bd81 100644
 --- a/template/en/default/bug/create/user-message.html.tmpl
 +++ b/template/en/default/bug/create/user-message.html.tmpl
 @@ -33,4 +33,6 @@ Before reporting [% terms.abug %], please read the
+# SECTION: REQ_4_BROWSE_CGI
  <a href="page.cgi?id=bug-writing.html">
  [% terms.bug %] writing guidelines</a>, please look at the list of
  <a href="duplicates.cgi">most frequently reported [% terms.bugs %]</a>, and please
@@ -8834,6 +9159,7 @@ index 0e1c4da..847c7a9 100644
 --- a/template/en/default/bug/edit.html.tmpl
 +++ b/template/en/default/bug/edit.html.tmpl
 @@ -147,94 +147,63 @@
+# SECTION: REQ_50_FLOAT_RIGHT_INFO_BOX
    <input type="hidden" name="token" value="[% issue_hash_token([bug.id, bug.delta_ts]) FILTER html %]">
  
    [% PROCESS section_title %]
@@ -8936,6 +9262,7 @@ index 0e1c4da..847c7a9 100644
 +      <td><b>Status:</b></td>
 +      <td>[% bug.bug_status FILTER html %]</td>
 +    </tr>
+# SECTION: ADD_RESOLUTION_BACK
 +    [% IF bug.resolution %]
 +      <tr>
 +        <td><b>Resolution:</b></td>
@@ -8945,6 +9272,7 @@ index 0e1c4da..847c7a9 100644
 +          [% END %]
 +      </tr>
 +    [% END %]
+# SECTION: REQ_50_FLOAT_RIGHT_INFO_BOX
 +    <tr>
 +      <td><b>Priority:</b></td>
 +      <td>[% bug.priority FILTER html %]</td>
@@ -8975,6 +9303,7 @@ index 0e1c4da..847c7a9 100644
          <a name="add_comment"></a>
          [% IF user.id %]
 @@ -279,18 +248,89 @@
+# SECTION: REQ_50_FLOAT_RIGHT_INFO_BOX
              </p>
            </fieldset>
          [% END %]
@@ -9004,7 +9333,9 @@ index 0e1c4da..847c7a9 100644
 +             bugid       = bug.bug_id
 +             num_attachment_flag_types = bug.num_attachment_flag_types
 +             show_attachment_flags = bug.show_attachment_flags
+# SECTION: REQ_3_ATTACHMENT_STATUS
 +             show_attachment_status = bug.show_attachment_status
+# SECTION: REQ_50_FLOAT_RIGHT_INFO_BOX
 +   %]
 +
 +  <table class="edit_form">
@@ -9074,6 +9405,7 @@ index 0e1c4da..847c7a9 100644
  
  [%############################################################################%]
 @@ -410,14 +450,10 @@
+# SECTION: REQ_47_REMOVE_REP_PLATFORM
      [%############%]    
      <tr>
        <td class="field_label">
@@ -9091,6 +9423,7 @@ index 0e1c4da..847c7a9 100644
              no_tds = 1, value = bug.op_sys
              editable = bug.check_can_change_field('op_sys', 0, 1) %]
 @@ -449,7 +485,7 @@
+# SECTION: REQ_53_REPORTER_CANNOT_UNWONTFIX
              of [% "${terms.bug} ${bug.dup_id}" FILTER bug_link(bug.dup_id) FILTER none %]
            [% END %]
          [% END %]
@@ -9100,6 +9433,7 @@ index 0e1c4da..847c7a9 100644
                onclick="window.setTimeout(function() { document.getElementById('bug_status').focus(); }, 10)">edit</a>)
          [% END %]
 @@ -504,10 +540,8 @@
+# SECTION: REQ_34_MILESTONE_URL_TO_HOME_PAGE
        <tr>
          <td class="field_label">
            <label for="target_milestone"><b>
@@ -9113,6 +9447,7 @@ index 0e1c4da..847c7a9 100644
          </td>
          [% PROCESS select selname = "target_milestone" %]
 @@ -609,50 +643,8 @@
+# SECTION: REQ_46_REMOVE_BUG_FILE_LOC
  [%# Block for URL Keyword and Whiteboard                                     #%]
  [%############################################################################%]
  [% BLOCK section_url_keyword_whiteboard %]
@@ -9166,6 +9501,7 @@ index 0e1c4da..847c7a9 100644
      <tr>
        <td class="field_label">
 @@ -957,6 +949,11 @@
+# SECTION: REQ_50_FLOAT_RIGHT_INFO_BOX
        </td>
      </tr>
    [% END %]
@@ -9182,6 +9518,7 @@ index 06fba12..af1305b 100644
 --- a/template/en/default/bug/field-events.js.tmpl
 +++ b/template/en/default/bug/field-events.js.tmpl
 @@ -26,6 +26,21 @@
+# SECTION: REQ_19_B_DISPLAY_STUFF_FOR_GNOME_ONLY
                  '[% field.name FILTER js %]',
                  '[% controlled_field.visibility_value.name FILTER js %]');
  [% END %]
@@ -9208,6 +9545,7 @@ index b406c21..8ea18b9 100644
 --- a/template/en/default/bug/field.html.tmpl
 +++ b/template/en/default/bug/field.html.tmpl
 @@ -47,6 +47,9 @@
+# SECTION: REQ_19_B_DISPLAY_STUFF_FOR_GNOME_ONLY
      [% SET hidden = 1 %]
    [% END %]
  [% END %]
@@ -9222,14 +9560,19 @@ index 49eb254..5de49bf 100644
 --- a/template/en/default/bug/knob.html.tmpl
 +++ b/template/en/default/bug/knob.html.tmpl
 @@ -31,12 +31,14 @@
+# SECTION: REQ_28_NEEDINFO
    [%# These actions are based on the current custom workflow. %]
    [% FOREACH bug_status = bug.status.can_change_to %]
      [% NEXT IF bug.isunconfirmed && bug_status.is_open && !bug.user.canconfirm %]
 -    [% NEXT IF bug.isopened && !bug.isunconfirmed && bug_status.is_open && !bug.user.canedit %]
+# SECTION: REQ_53_REPORTER_CANNOT_UNWONTFIX
 -    [% NEXT IF (!bug_status.is_open || !bug.isopened) && !bug.user.canedit && !bug.user.isreporter %]
+# SECTION: REQ_28_NEEDINFO
 +    [% NEXT IF bug_status.name != 'UNCONFIRMED' && bug.isopened && !bug.isunconfirmed && bug_status.is_open && !bug.user.canedit %]
+# SECTION: REQ_53_REPORTER_CANNOT_UNWONTFIX
 +    [% NEXT IF (!bug_status.is_open || !bug.isopened) && !bug.user.canedit &&
 +       !(bug.user.isreporter && bug.resolution != 'WONTFIX') %]
+# SECTION: REQ_28_NEEDINFO
      [%# Special hack to only display UNCO or REOP when reopening, but not both;
        # for compatibility with older versions. %]
      [% NEXT IF !bug.isopened && (bug.everconfirmed && bug_status.name == "UNCONFIRMED"
@@ -9239,6 +9582,7 @@ index 49eb254..5de49bf 100644
        <select name="bug_status" id="bug_status">
        [% bug_status_select_displayed = 1 %]
 @@ -54,7 +56,7 @@
+# SECTION: REQ_53_REPORTER_CANNOT_UNWONTFIX
    [% END %]
  
    [%# These actions are special and are independent of the workflow. %]
@@ -9248,6 +9592,7 @@ index 49eb254..5de49bf 100644
        <select name="bug_status" id="bug_status">
        [% bug_status_select_displayed = 1 %] 
 @@ -80,7 +82,7 @@
+# SECTION: REQ_53_REPORTER_CANNOT_UNWONTFIX
          [% END %]
        [% END %]
    [% END %]
@@ -9257,6 +9602,7 @@ index 49eb254..5de49bf 100644
        <noscript><br>resolved&nbsp;as&nbsp;</noscript>
        <span id="resolution_settings">[% PROCESS select_resolution %]</span>
 @@ -145,6 +147,8 @@
+# SECTION: REQ_64_NO_GNOME_1_X_AND_NOTXIMIAN
    <select name="resolution" id="resolution">
      [% FOREACH r = bug.choices.resolution %]
        [% NEXT IF r == "MOVED" && bug.resolution != "MOVED" %]
@@ -9270,12 +9616,14 @@ index a0e01e4..dd88a58 100644
 --- a/template/en/default/bug/show-multiple.html.tmpl
 +++ b/template/en/default/bug/show-multiple.html.tmpl
 @@ -156,23 +156,8 @@
+# SECTION: REQ_47_REMOVE_REP_PLATFORM
  
      [% PROCESS row cell = "version" %]
      [% PROCESS row cell = "target_milestone"  IF Param('usetargetmilestone') %]
 -    [% PROCESS row cell = "rep_platform" %]
      [% PROCESS row cell = "op_sys"  %]
  
+# SECTION: REQ_46_REMOVE_BUG_FILE_LOC
 -    [% IF bug.bug_file_loc %]
 -      <tr>
 -        <th>[% field_descs.bug_file_loc FILTER html %]:</th>
@@ -9298,6 +9646,7 @@ index 858ee1b..b80b3e7 100644
 --- a/template/en/default/bug/show.xml.tmpl
 +++ b/template/en/default/bug/show.xml.tmpl
 @@ -22,7 +22,16 @@
+# SECTION: NO_LARGE_DATA_RETRIEVAL_WARNING
  [% PROCESS bug/time.html.tmpl %]
  <?xml version="1.0" [% IF Param('utf8') %]encoding="UTF-8" [% END %]standalone="yes" ?>
  <!DOCTYPE bugzilla SYSTEM "[% urlbase FILTER html %]bugzilla.dtd">
@@ -9315,6 +9664,7 @@ index 858ee1b..b80b3e7 100644
            urlbase="[% urlbase FILTER xml %]"
            [%# Note that the maintainer's email is not filtered, 
 @@ -106,6 +115,7 @@
+# SECTION: REQ_3_ATTACHMENT_STATUS
              <type>[% a.contenttype FILTER xml %]</type>
              <size>[% a.datasize FILTER xml %]</size>
              <attacher>[% a.attacher.email FILTER email FILTER xml %]</attacher>
@@ -9327,6 +9677,7 @@ index a9779c6..3c983c2 100644
 --- a/template/en/default/email/newchangedmail.txt.tmpl
 +++ b/template/en/default/email/newchangedmail.txt.tmpl
 @@ -19,7 +19,7 @@
+# SECTION: SHOW_PRODUCT_NAME_IN_MAIL
    #%]
  
  [% PROCESS "global/variables.none.tmpl" %]
@@ -9336,6 +9687,7 @@ index a9779c6..3c983c2 100644
  Subject: [[% terms.Bug %] [%+ bugid %]] [% 'New: ' IF isnew %][%+ summary %]
  X-Bugzilla-Reason: [% reasonsheader %]
 @@ -41,6 +41,7 @@ X-Bugzilla-Changed-Fields: [% changedfields %]
+# SECTION: SHOW_PRODUCT_NAME_IN_MAIL
  [%+ threadingmarker %]
  
  [%+ urlbase %]show_bug.cgi?id=[% bugid %]
@@ -9357,6 +9709,7 @@ index 0a38db6..a159a63 100644
 --- a/template/en/default/global/choose-product.html.tmpl
 +++ b/template/en/default/global/choose-product.html.tmpl
 @@ -56,7 +56,7 @@
+# SECTION: NO_HYPHEN_ESCAPE
          <a href="[% target %]?product=[% p.name FILTER url_quote -%]
                [%- IF cloned_bug_id %]&amp;cloned_bug_id=[% cloned_bug_id FILTER url_quote %][% END -%] 
                [%- IF format %]&amp;format=[% format FILTER url_quote %][% END %]">
@@ -9384,6 +9737,7 @@ index d817c4d..3ef7dd3 100644
 --- a/template/en/default/global/common-links.html.tmpl
 +++ b/template/en/default/global/common-links.html.tmpl
 @@ -25,6 +25,7 @@
+# SECTION: REQ_4_BROWSE_CGI
  <ul class="links">
    <li><a href="./">Home</a></li>
    <li><span class="separator">| </span><a href="enter_bug.cgi">New</a></li>
@@ -9392,6 +9746,7 @@ index d817c4d..3ef7dd3 100644
  
    <li class="form">
 @@ -37,7 +38,7 @@
+# SECTION: REQ_40_PORT_FORWARD
      <input class="btn" type="submit" value="Find" id="find[% qs_suffix FILTER html %]">
      [%-# Work around FF bug: keep this on one line %]</form></li>
  
@@ -9405,6 +9760,7 @@ index 2c70b11..49f66ad 100644
 --- a/template/en/default/global/field-descs.none.tmpl
 +++ b/template/en/default/global/field-descs.none.tmpl
 @@ -37,7 +37,6 @@
+# SECTION: REQ_46_REMOVE_BUG_FILE_LOC
                     "attachments.isurl"       => "Attachment is a URL",
                     "attachments.submitter"   => "Attachment creator",
                     "blocked"                 => "Blocks",
@@ -9413,6 +9769,7 @@ index 2c70b11..49f66ad 100644
                     "bug_id"                  => "$terms.Bug ID",
                     "bug_severity"            => "Severity",
 @@ -71,7 +70,6 @@
+# SECTION: REQ_47_REMOVE_REP_PLATFORM
                     "product"                 => "Product",
                     "qa_contact"              => "QA Contact",
                     "remaining_time"          => "Hours Left",
@@ -9425,6 +9782,7 @@ index 3116f00..9b5a14e 100644
 --- a/template/en/default/global/header.html.tmpl
 +++ b/template/en/default/global/header.html.tmpl
 @@ -229,8 +229,9 @@
+# SECTION: BRAND_HEADER_AND_FRONT_PAGE
  
      [%# Required for the 'Autodiscovery' feature in Firefox 2 and IE 7. %]
      <link rel="search" type="application/opensearchdescription+xml"
@@ -9437,6 +9795,7 @@ index 3116f00..9b5a14e 100644
    </head>
  
 @@ -255,7 +256,7 @@
+# SECTION: BRAND_HEADER_AND_FRONT_PAGE
  <table border="0" cellspacing="0" cellpadding="0" id="titles">
  <tr>
      <td id="title">
@@ -9450,6 +9809,7 @@ index 372a57f..163b1ef 100644
 --- a/template/en/default/global/messages.html.tmpl
 +++ b/template/en/default/global/messages.html.tmpl
 @@ -193,6 +193,9 @@
+# SECTION: REQ_19_CLASSIFICATION_GNOME
          [% IF changes.sortkey.defined %]
            <li>Sortkey updated to '[% classification.sortkey FILTER html %]'</li>
          [% END %]
@@ -9460,6 +9820,8 @@ index 372a57f..163b1ef 100644
      [% ELSE %]
        No changes made to <em>[% classification.name FILTER html %]</em>.
 @@ -322,6 +325,10 @@
+# SECTION: REQ_3_ATTACHMENT_STATUS
+# COMMENT: TODO: Eh? Looks unrelated...
            <li>Sortkey updated to 
              <em>[% changes.sortkey.1 FILTER html %]</em>.</li>
          [% END %]
@@ -9471,6 +9833,7 @@ index 372a57f..163b1ef 100644
            [% IF value.visibility_value.defined %]
              <li>It only appears when 
 @@ -786,16 +793,21 @@
+# SECTION: MESSAGES_HOOK_BACKPORT
  
    [% ELSIF message_tag == "workflow_updated" %]
      The workflow has been updated.
@@ -9502,6 +9865,7 @@ index a3bb7c8..c28314a 100644
 --- a/template/en/default/global/user-error.html.tmpl
 +++ b/template/en/default/global/user-error.html.tmpl
 @@ -427,6 +427,7 @@
+# SECTION: REQ_36_LINK_TO_LISTS_IN_ERRORS
      Sorry, either the product <em>[% product FILTER html %]</em>
      does not exist or you aren't authorized to
      enter [% terms.abug %] into it.
@@ -9522,6 +9886,7 @@ index a3bb7c8..c28314a 100644
      [% title = "Too Frequent" %]
      Unless you are an administrator, you may not create series which are 
 @@ -922,6 +924,7 @@
+# SECTION: REQ_36_LINK_TO_LISTS_IN_ERRORS
    [% ELSIF error == "invalid_product_name" %]
      [% title = "Invalid Product Name" %]
      The product name '[% product FILTER html %]' is invalid or does not exist.
@@ -9530,6 +9895,7 @@ index a3bb7c8..c28314a 100644
    [% ELSIF error == "invalid_regexp" %]
      [% title = "Invalid regular expression" %]
 @@ -1030,6 +1033,10 @@
+# SECTION: REQ_3_ATTACHMENT_STATUS
    [% ELSIF error == "missing_attachment_description" %]
      [% title = "Missing Attachment Description" %]
      You must enter a description for the attachment.
@@ -9541,6 +9907,7 @@ index a3bb7c8..c28314a 100644
    [% ELSIF error == "missing_category" %]
      [% title = "Missing Category" %]
 @@ -1254,6 +1261,10 @@
+# SECTION: REQ_36_LINK_TO_LISTS_IN_ERRORS
      [% IF class == "Bugzilla::User" %]
        Either you mis-typed the name or that user has not yet registered
        for a [% terms.Bugzilla %] account.
@@ -9552,6 +9919,7 @@ index a3bb7c8..c28314a 100644
  
    [% ELSIF error == "old_password_incorrect" %]
 @@ -1292,10 +1303,12 @@
+# SECTION: REQ_36_LINK_TO_LISTS_IN_ERRORS
    [% ELSIF error == "product_access_denied" %]
      Either the product '[% product FILTER html %]' does not exist or
      you don't have access to it.
@@ -9565,6 +9933,7 @@ index a3bb7c8..c28314a 100644
    [% ELSIF error == "product_illegal_group" %]
      [% title = "Illegal Group" %]
 @@ -1354,6 +1367,7 @@
+# SECTION: REQ_36_LINK_TO_LISTS_IN_ERRORS
      [% admindocslinks = {'products.html' => 'Administering products'} %]
      Sorry, entering [% terms.abug %] into the
      product <em>[% product.name FILTER html %]</em> has been disabled.
@@ -9573,6 +9942,7 @@ index a3bb7c8..c28314a 100644
    [% ELSIF error == "product_edit_denied" %]
      [% title = "Product Edit Access Denied" %]
 @@ -1361,6 +1375,7 @@
+# SECTION: REQ_36_LINK_TO_LISTS_IN_ERRORS
                           'groups.html'   => 'Group security'} %]
      You are not permitted to edit [% terms.bugs %] in product 
      [%+ product FILTER html %].
@@ -9581,6 +9951,7 @@ index a3bb7c8..c28314a 100644
    [% ELSIF error == "product_has_bugs" %]
      [% title = BLOCK %]Product has [% terms.Bugs %][% END %]
 @@ -1388,6 +1403,7 @@
+# SECTION: REQ_36_LINK_TO_LISTS_IN_ERRORS
                           'versions.html'   => 'Administering versions'} %]
      No product specified when trying to edit components, milestones, versions
      or product.
@@ -9589,6 +9960,7 @@ index a3bb7c8..c28314a 100644
    [% ELSIF error == "query_name_exists" %]
      [% title = "Search Name Already In Use" %]
 @@ -1429,8 +1445,9 @@
+# SECTION: REQ_36_LINK_TO_LISTS_IN_ERRORS
  
    [% ELSIF error == "require_component" %]
      [% title = "Component Needed" %]
@@ -9605,6 +9977,7 @@ index 6231baa..3b061e0 100644
 --- a/template/en/default/index.html.tmpl
 +++ b/template/en/default/index.html.tmpl
 @@ -30,8 +30,8 @@
+# SECTION: BRAND_HEADER_AND_FRONT_PAGE
  
  
  [% PROCESS global/header.html.tmpl
@@ -9616,6 +9989,7 @@ index 6231baa..3b061e0 100644
     style_urls = [ 'skins/standard/index.css' ]
  %]
 @@ -126,7 +126,7 @@ YAHOO.util.Event.onDOMReady(onLoadActions);
+# SECTION: BRAND_HEADER_AND_FRONT_PAGE
    <table>
      <tr>
        <td>
@@ -9629,6 +10003,7 @@ index 46130ef..dcfd75f 100644
 --- a/template/en/default/list/edit-multiple.html.tmpl
 +++ b/template/en/default/list/edit-multiple.html.tmpl
 @@ -92,13 +92,13 @@
+# SECTION: REQ_47_REMOVE_REP_PLATFORM
    <tr>
  
      <th>
@@ -9647,6 +10022,7 @@ index 46130ef..dcfd75f 100644
  
      <th>
 @@ -113,25 +113,15 @@
+# SECTION: REQ_47_REMOVE_REP_PLATFORM
  
    </tr>
  
@@ -9677,6 +10053,7 @@ index 46130ef..dcfd75f 100644
    <tr>
      <th><label for="bug_status">Status:</label></th>
 @@ -401,7 +391,8 @@
+# SECTION: REQ_64_NO_GNOME_1_X_AND_NOTXIMIAN
        <option value="[% dontchange FILTER html %]" selected >[% dontchange FILTER html %]</option>
      [% FOREACH r = resolutions %]
        [% NEXT IF !r %]
@@ -9691,6 +10068,7 @@ index d30b065..3f9e2b8 100644
 --- a/template/en/default/list/list.ics.tmpl
 +++ b/template/en/default/list/list.ics.tmpl
 @@ -30,6 +30,7 @@ BEGIN:VTODO
+# SECTION: REQ_57_ADD_PRIORITY_TO_ICAL
  [%+ PROCESS ics_url base_url=urlbase bug_id=bug.bug_id +%]
  [%+ PROCESS ics_status bug_status = bug.bug_status +%]
  [%+ PROCESS ics_dtstamp +%]
@@ -9704,6 +10082,7 @@ index 7e9664c..0000000
 --- a/template/en/default/list/list.js.tmpl
 +++ /dev/null
 @@ -1,37 +0,0 @@
+# SECTION: JS_TEMPLATE_SEE_ALL_BUGS
 -[%# The contents of this file are subject to the Mozilla Public
 -  # License Version 1.1 (the "License"); you may not use this file
 -  # except in compliance with the License. You may obtain a copy of
@@ -9746,6 +10125,7 @@ index fcbba3a..3a0a9c5 100644
 --- a/template/en/default/list/table.html.tmpl
 +++ b/template/en/default/list/table.html.tmpl
 @@ -41,7 +41,6 @@
+# SECTION: REQ_47_REMOVE_REP_PLATFORM
    {
      "bug_severity"         => { maxlength => 3 , title => "Sev" } , 
      "priority"             => { maxlength => 3 , title => "Pri" } , 
@@ -9754,6 +10134,7 @@ index fcbba3a..3a0a9c5 100644
      "assigned_to"          => { maxlength => 30 , ellipsis => "..." } , 
      "assigned_to_realname" => { maxlength => 20 , ellipsis => "..." } , 
 @@ -55,8 +54,8 @@
+# SECTION: REQ_59_CHANGE_COLUMN_LENGTHS
      "status_whiteboard" => { title => "Whiteboard" , wrap => 1 } , 
      "keywords"          => { wrap => 1 } ,
      "component"         => { maxlength => 8 , title => "Comp" } , 
@@ -9770,6 +10151,7 @@ index 0000000..09786f2
 --- /dev/null
 +++ b/template/en/default/pages/403.html.tmpl
 @@ -0,0 +1,11 @@
+# SECTION: REQ_1_403_PAGE
 +[% PROCESS global/header.html.tmpl %]
 +
 +<h1>Either your network or ip address has been banned from Bugzilla</h1>
@@ -9786,6 +10168,7 @@ index eed8646..6e0d4fc 100644
 --- a/template/en/default/pages/fields.html.tmpl
 +++ b/template/en/default/pages/fields.html.tmpl
 @@ -43,8 +43,8 @@ cycle of [% terms.abug %].
+# SECTION: REQ_31_MIGRATE_BUG_STATUS_HTML
    </tr>
  
    <tr valign="top">
@@ -9797,6 +10180,7 @@ index eed8646..6e0d4fc 100644
      <td>The <b>resolution</b> field indicates what happened to this
      [%+ terms.bug %].</td>
 @@ -59,9 +59,13 @@ cycle of [% terms.abug %].
+# SECTION: REQ_31_MIGRATE_BUG_STATUS_HTML
          <dd>
            This [% terms.bug %] has recently been added to the database. 
            Nobody has validated that this [% terms.bug %] is true. Users
@@ -9814,6 +10198,7 @@ index eed8646..6e0d4fc 100644
  
          <dt>
 @@ -86,6 +90,18 @@ cycle of [% terms.abug %].
+# SECTION: REQ_31_MIGRATE_BUG_STATUS_HTML
          </dd>
  
          <dt>
@@ -9833,6 +10218,7 @@ index eed8646..6e0d4fc 100644
          </dt>
          <dd>
 @@ -126,23 +142,15 @@ cycle of [% terms.abug %].
+# SECTION: REQ_31_MIGRATE_BUG_STATUS_HTML
          </dd>
  
          <dt>
@@ -9863,6 +10249,7 @@ index eed8646..6e0d4fc 100644
        </dl>
      </td>
 @@ -158,10 +166,13 @@ cycle of [% terms.abug %].
+# SECTION: REQ_31_MIGRATE_BUG_STATUS_HTML
          </dd>
  
          <dt>
@@ -9879,6 +10266,7 @@ index eed8646..6e0d4fc 100644
  
          <dt>
 @@ -173,33 +184,46 @@ cycle of [% terms.abug %].
+# SECTION: REQ_31_MIGRATE_BUG_STATUS_HTML
          </dd>
  
          <dt>
@@ -9941,6 +10329,7 @@ index eed8646..6e0d4fc 100644
        </dl>
      </td>
 @@ -213,10 +237,59 @@ as described below.
+# SECTION: REQ_31_MIGRATE_BUG_STATUS_HTML
  
  <h2><a name="priority">Priority</a></h2>
  This field describes the importance and order in which [% terms.abug %]
@@ -10005,6 +10394,7 @@ index eed8646..6e0d4fc 100644
  <h2><a name="bug_severity">Severity</a></h2>
  This field describes the impact of [% terms.abug %]. 
 @@ -231,75 +304,49 @@ This field describes the impact of [% terms.abug %].
+# SECTION: REQ_31_MIGRATE_BUG_STATUS_HTML
    <tr>
      <th>Critical</th>
  
@@ -10052,6 +10442,7 @@ index eed8646..6e0d4fc 100644
  
 -    <td>Request for enhancement</td>
 +    <td>Request for a new feature or functionality.</td>
+# SECTION: REQ_47_REMOVE_REP_PLATFORM
  </table>
  
 -<h2><a name="rep_platform">Platform</a></h2>
@@ -10070,6 +10461,7 @@ index eed8646..6e0d4fc 100644
 -assigned against any platform. It merely selects [% terms.bugs %] that are
 -marked as occurring on all platforms, i.e. are designated "All". 
 -
+# SECTION: REQ_31_MIGRATE_BUG_STATUS_HTML
  <h2><a name="op_sys">Operating System</a></h2>
 -This is the operating system against which the [% terms.bug %] was
 -reported. Legal operating systems include: 
@@ -10094,6 +10486,7 @@ index eed8646..6e0d4fc 100644
  <h2><a name="assigned_to">Assigned To</a></h2>
  
 @@ -315,11 +362,73 @@ When searching for [% terms.bugs %] that have been resolved or
+# SECTION: REQ_31_MIGRATE_BUG_STATUS_HTML
  verified, remember to set the status field appropriately. 
  </p>
  
@@ -10169,6 +10562,7 @@ index eed8646..6e0d4fc 100644
      enter multiple URLs at once by separating them with a comma.</p>
  
 @@ -329,4 +438,21 @@ verified, remember to set the status field appropriately.
+# SECTION: REQ_3_ATTACHMENT_STATUS
      fields.</p>
  [% END %]
  
@@ -10195,6 +10589,7 @@ index 4d96f5d..549add5 100644
 --- a/template/en/default/pages/quicksearchhack.html.tmpl
 +++ b/template/en/default/pages/quicksearchhack.html.tmpl
 @@ -94,16 +94,6 @@
+# SECTION: REQ_47_REMOVE_REP_PLATFORM
  </tr>
  <tr>
    <td>&nbsp;</td>
@@ -10212,6 +10607,7 @@ index 4d96f5d..549add5 100644
    <td><tt>os</tt></td>
    <td><tt>opsys</tt></td>
 @@ -216,13 +206,6 @@
+# SECTION: REQ_46_REMOVE_BUG_FILE_LOC
    <td>[% terms.Bug %] Description / Comments (long text)</td>
  </tr>
  <tr>
@@ -10247,6 +10643,7 @@ index eb08a35..2ff3d5c 100644
 --- a/template/en/default/reports/components.html.tmpl
 +++ b/template/en/default/reports/components.html.tmpl
 @@ -25,8 +25,11 @@
+# SECTION: REQ_4_BROWSE_CGI
  [% title = BLOCK %]
    Components for [% product.name FILTER html %]
  [% END %]
@@ -10264,6 +10661,7 @@ index 060e373..1936418 100644
 --- a/template/en/default/search/form.html.tmpl
 +++ b/template/en/default/search/form.html.tmpl
 @@ -257,13 +257,12 @@ function doOnSelectProduct(selectmode) {
+# SECTION: REQ_46_REMOVE_BUG_FILE_LOC
      </td>
    </tr>
  
@@ -10280,6 +10678,7 @@ index 060e373..1936418 100644
        accesskey => 'w' } ] %]
  
 @@ -326,7 +325,7 @@ function doOnSelectProduct(selectmode) {
+# SECTION: REQ_16_GNOME_VERSION_AND_TARGET
  
  <hr>
  
@@ -10289,6 +10688,7 @@ index 060e373..1936418 100644
  <table>
    <tr>
 @@ -386,11 +385,11 @@ function doOnSelectProduct(selectmode) {
+# SECTION: REQ_47_REMOVE_REP_PLATFORM
        <table>
          <tr>
            <th align="left">
@@ -10303,6 +10703,7 @@ index 060e373..1936418 100644
          </tr>
        </table>
 @@ -399,11 +398,24 @@ function doOnSelectProduct(selectmode) {
+# SECTION: REQ_16_GNOME_VERSION_AND_TARGET
        <table>
          <tr>
            <th align="left">
@@ -10334,6 +10735,7 @@ index 12e82ba..4e2c299 100644
 --- a/template/en/default/search/search-help.html.tmpl
 +++ b/template/en/default/search/search-help.html.tmpl
 @@ -46,11 +46,6 @@
+# SECTION: REQ_46_REMOVE_BUG_FILE_LOC
             You can<br>search for some text in those comments." },   
  { id => "longdesc_type",
    html => "The type of comment search you would like" },   
@@ -10346,6 +10748,7 @@ index 12e82ba..4e2c299 100644
    html => "Each $terms.bug has a free-form single line text entry box for 
             adding<br>tags and status information." },   
 @@ -70,8 +65,6 @@
+# SECTION: REQ_47_REMOVE_REP_PLATFORM
    html => "How severe the $terms.bug is, or whether it's an enhancement." },   
  { id => "priority", 
    html => "Engineers prioritize their $terms.bugs using this field." },   
@@ -10359,6 +10762,7 @@ index 8564dca..be95654 100644
 --- a/template/en/default/search/search-plugin.xml.tmpl
 +++ b/template/en/default/search/search-plugin.xml.tmpl
 @@ -16,11 +16,11 @@
+# SECTION: BRAND_HEADER_AND_FRONT_PAGE
  [% PROCESS global/variables.none.tmpl %]
  <?xml version="1.0" encoding="UTF-8"?>
  <OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
@@ -10378,6 +10782,7 @@ index de64787..4710d0f 100644
 --- a/template/en/default/search/search-report-select.html.tmpl
 +++ b/template/en/default/search/search-report-select.html.tmpl
 @@ -26,7 +26,7 @@
+# SECTION: REQ_47_REMOVE_REP_PLATFORM
  [% PROCESS "global/field-descs.none.tmpl" %]
  
  [% BLOCK select %]
@@ -10391,6 +10796,7 @@ index 44795a5..706b0b0 100644
 --- a/template/en/default/whine/mail.html.tmpl
 +++ b/template/en/default/whine/mail.html.tmpl
 @@ -63,7 +63,6 @@
+# SECTION: REQ_47_REMOVE_REP_PLATFORM
        <th align="left">ID</th>
        <th align="left">Sev</th>
        <th align="left">Pri</th>
@@ -10403,6 +10809,7 @@ index 57bfcca..bc4bf78 100755
 --- a/userprefs.cgi
 +++ b/userprefs.cgi
 @@ -27,6 +27,7 @@ use strict;
+# SECTION: REQ_13_SELF_GLOBALWATCHING
  use lib qw(. lib);
  
  use Bugzilla;
@@ -10411,6 +10818,7 @@ index 57bfcca..bc4bf78 100755
  use Bugzilla::Search;
  use Bugzilla::Util;
 @@ -301,6 +302,16 @@ sub SaveEmail {
+# SECTION: REQ_13_SELF_GLOBALWATCHING
  
      $dbh->bz_commit_transaction();
  
