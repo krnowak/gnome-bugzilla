@@ -1769,6 +1769,22 @@ sub validate_password {
     return 1;
 }
 
+sub is_developer {
+    my ($self, $product) = @_;
+
+    if ($product) {
+        # Given the only use of this is being passed bug.product_obj,
+        # at the moment the performance of this should be fine.
+        my $devs = $product->developers;
+        my $is_dev = grep { $_->id == $self->id } @$devs;
+        return $is_dev ? 1 : 0;
+    }
+    else {
+        return $self->in_group("developers") ? 1 : 0;
+    }
+           
+    return 0; 
+}
 
 1;
 
@@ -2156,6 +2172,11 @@ i.e. if the 'insidergroup' parameter is set and the user belongs to this group.
 
 Returns true if the user is a global watcher,
 i.e. if the 'globalwatchers' parameter contains the user.
+
+=item C<is_developer>
+
+Returns true if the user is either a developer for the given product specifically
+or simply a developer for any product if no product is given. Otherwise returns false.
 
 =back
 

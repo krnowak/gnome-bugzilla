@@ -191,6 +191,11 @@
           [% IF comment.author.id == bug.reporter.id %]
             <span class="comment_reporter_tag">[reporter]</span>
           [% END %]
+          [% IF comment.author.is_developer %]
+            <span class="comment_developer_tag">
+              [[% IF comment.author.is_developer(bug.product_obj) %][% bug.product FILTER html %]&nbsp;[% END %]developer]
+            </span>
+          [% END %]
         </span>
 
         <span class="bz_comment_user_images">
