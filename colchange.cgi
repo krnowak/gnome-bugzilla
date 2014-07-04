@@ -45,7 +45,7 @@ my $vars = {};
 # The master list not only says what fields are possible, but what order
 # they get displayed in.
 my @masterlist = ("opendate", "changeddate", "bug_severity", "priority",
-                  "rep_platform", "assigned_to", "assigned_to_realname",
+                  "assigned_to", "assigned_to_realname",
                   "reporter", "reporter_realname", "bug_status",
                   "resolution");
 

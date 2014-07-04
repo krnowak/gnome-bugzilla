@@ -213,19 +213,6 @@ function PutDescription() {
     </td>
   </tr>
 
-  [%# We override rep_platform and op_sys for simplicity. The values chosen
-      are based on which are most common in the b.m.o database %]
-  [% rep_platform = [ "PC", "Macintosh", "All", "Other" ] %]
-
-  <tr bgcolor="[% tablecolour %]">
-    <td align="right" valign="top">
-      <b>Hardware Platform</b>
-    </td>
-    <td valign="top">
-      [% PROCESS select sel = 'rep_platform' %]
-    </td>
-  </tr>
-
   [% op_sys = [ "Windows 2000", "Windows XP", "Windows Vista", "Windows 7",
                 "Mac OS X", "Linux", "All", "Other" ] %]
 

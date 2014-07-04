@@ -410,14 +410,10 @@
     [%############%]    
     <tr>
       <td class="field_label">
-        <label for="rep_platform" accesskey="h"><b>Platform</b></label>:
+        <label for="op_sys" accesskey="h"><b>OS</b></label>:
       </td>
       <td class="field_value">
-       [% INCLUDE bug/field.html.tmpl
-            bug = bug, field = select_fields.rep_platform,
-            no_tds = 1, value = bug.rep_platform
-            editable = bug.check_can_change_field('rep_platform', 0, 1) %]
-       [%+ INCLUDE bug/field.html.tmpl 
+       [% INCLUDE bug/field.html.tmpl 
             bug = bug, field = select_fields.op_sys, 
             no_tds = 1, value = bug.op_sys
             editable = bug.check_can_change_field('op_sys', 0, 1) %]
