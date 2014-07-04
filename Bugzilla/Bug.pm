@@ -1069,26 +1069,15 @@ sub _check_bug_status {
         @valid_statuses = @{Bugzilla::Status->can_change_to()};
     }
 
-    if (!$product->votes_to_confirm) {
-        # UNCONFIRMED becomes an invalid status if votes_to_confirm is 0,
-        # even if you are in editbugs.
-        @valid_statuses = grep {$_->name ne 'UNCONFIRMED'} @valid_statuses;
-    }
-
     # Check permissions for users filing new bugs.
     if (!ref $invocant) {
-        if ($user->in_group('editbugs', $product->id)
-            || $user->in_group('canconfirm', $product->id)) {
-            # If the user with privs hasn't selected another status,
-            # select the first one of the list.
-            unless ($new_status) {
-                if (scalar(@valid_statuses) == 1) {
-                    $new_status = $valid_statuses[0];
-                }
-                else {
-                    $new_status = ($valid_statuses[0]->name ne 'UNCONFIRMED') ?
-                                  $valid_statuses[0] : $valid_statuses[1];
-                }
+        # If a user is a developer in a particular product, he always files bugs as NEW
+        if ($user->is_developer($product)) {
+            if (grep {$_->name eq 'NEW'} @valid_statuses) {
+                $new_status = 'NEW';
+            }
+            else {
+                $new_status = $valid_statuses[0];
             }
         }
         else {

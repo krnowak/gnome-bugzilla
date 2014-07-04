@@ -319,21 +319,12 @@ TUI_hide_default('expert_fields');
   </tr>
 
   <tr>
-[% IF bug_status.size <= 1 %]
-  <input type="hidden" name="bug_status" 
-         value="[% default.bug_status FILTER html %]">
-    <th>Initial State:</th>
-    <td>[% get_status(default.bug_status) FILTER html %]</td>
-[% ELSE %]
-    [% sel = { description => 'Initial State', name => 'bug_status' } %]
-    [% INCLUDE select %]
-[% END %]
-
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
     <td>&nbsp;</td>
     [%# Calculate the number of rows we can use for flags %]
-    [% num_rows = 6 + (Param("useqacontact") ? 1 : 0) +
-                      (user.in_group(Param('timetrackinggroup')) ? 3 : 0) +
-                      (Param("usebugaliases") ? 1 : 0)
+    [% num_rows = (user.in_group(Param('timetrackinggroup')) ? 3 : 0) +
+                  (Param("usebugaliases") ? 1 : 0)
     %]
 
     <td rowspan="[% num_rows FILTER html %]">
@@ -357,67 +348,6 @@ TUI_hide_default('expert_fields');
     </td>
   </tr>
 
-  <tr>
-    <th><a href="page.cgi?id=fields.html#assigned_to">Assign To</a>:</th>
-    <td colspan="2">
-      [% INCLUDE global/userselect.html.tmpl
-         name => "assigned_to"
-         value => assigned_to
-         disabled => assigned_to_disabled
-         size => 30
-         emptyok => 1
-         custom_userlist => assignees_list
-       %]
-      <noscript>(Leave blank to assign to component's default assignee)</noscript>
-    </td>
-  </tr>
-  
-[% IF Param("useqacontact") %]
-    <tr>
-      <th>QA Contact:</th>
-      <td colspan="2">
-      [% INCLUDE global/userselect.html.tmpl
-         name => "qa_contact"
-         value => qa_contact
-         disabled => qa_contact_disabled
-         size => 30
-         emptyok => 1
-         custom_userlist => qa_contacts_list
-       %]
-        <noscript>(Leave blank to assign to default qa contact)</noscript>
-      </td>
-    </tr>
-[% END %]
-
-  <tr>
-    <th>CC:</th>
-    <td colspan="2">
-      [% INCLUDE global/userselect.html.tmpl
-         name => "cc"
-         value => cc
-         disabled => cc_disabled
-         size => 30
-         multiple => 5
-       %]
-    </td>
-  </tr>
-
-  <tr>
-    <th>Default CC:</th>
-    <td colspan="2">
-      <div id="initial_cc">
-          <!-- This has to happen after everything above renders,
-               and onload doesn't work. So this is as good a place
-               as any to put it. -->
-          <script type="text/javascript">set_assign_to();</script>
-      </div>
-   </td>
-  </tr>
-  
-  <tr>
-    <td colspan="3">&nbsp;</td>
-  </tr>
-
 [% IF user.in_group(Param('timetrackinggroup')) %]
   <tr>
     <th>Estimated Hours:</th>
@@ -431,10 +361,6 @@ TUI_hide_default('expert_fields');
       <input name="deadline" size="10" maxlength="10" value="[% deadline FILTER html %]">
       <small>(YYYY-MM-DD)</small>
     </td>
-  </tr>
-
-  <tr>
-    <td colspan="3">&nbsp;</td>
   </tr>
 [% END %]
 
@@ -554,7 +480,7 @@ TUI_hide_default('expert_fields');
         <th><a href="describekeywords.cgi">Keywords</a>:</th>
         <td colspan="3">
           <input id="keywords" name="keywords" size="40"
-                 value="[% keywords FILTER html %]"> (optional)
+                 value="[% keywords FILTER html %]"> 
         </td>
       </tr>
     [% END %]
@@ -573,6 +499,31 @@ TUI_hide_default('expert_fields');
       </td>
     </tr>
   [% END %]
+
+  <tr>
+    <th>CC:</th>
+    <td colspan="2">
+      [% INCLUDE global/userselect.html.tmpl
+         name => "cc"
+         value => cc
+         disabled => cc_disabled
+         size => 30
+         multiple => 5
+       %]
+    </td>
+  </tr>
+
+  <tr>
+    <th>Default CC:</th>
+    <td colspan="2">
+      <div id="initial_cc">
+          <!-- This has to happen after everything above renders,
+               and onload doesn't work. So this is as good a place
+               as any to put it. -->
+          <script type="text/javascript">set_assign_to();</script>
+      </div>
+   </td>
+  </tr>
 </tbody>
 
 <tbody class="expert_fields">
