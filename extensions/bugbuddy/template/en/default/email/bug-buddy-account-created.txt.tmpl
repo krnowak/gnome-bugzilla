@@ -1,0 +1,50 @@
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla BugBuddy Plugin
+  #
+  # The Initial Developer of the Original Code is Neiscape Communications
+  # Corporation. Portions created by Netscape are
+  # Copyright (C) 2005 Netscape Communications Corporation. All
+  # Rights Reserved.
+  #
+  # Contributor(s): Olav Vitters <olav@bkor.dhs.org>
+  #%]
+
+[% PROCESS global/variables.none.tmpl %]
+
+From: [% Param("maintainer") %]
+To: [% account %]
+Subject: [[% terms.Bug %]-buddy] Account created on bugzilla.gnome.org
+X-Bugzilla-Type: admin
+
+[%+ terms.Bug %]-buddy has added your [% terms.bug %] report to http://bugzilla.gnome.org/. You should
+receive another email with a copy of your [% terms.bug %] report. You will be kept informed
+of the progress via email.
+
+When answering questions please go to the webpage listed at the top of each
+email. Here you will also be able to make other changes to your  [% terms.bug %] report
+(such as adding attachments). Replies to the [% terms.bug %] emails are unfortunately
+ignored.
+
+The website will ask you for your email address and password. Your email
+address is [% account %].
+
+To set your password, visit the following link:
+
+[%+ urlbase %]token.cgi?t=[% token FILTER url_quote %]&a=cfmpw
+
+before [% expiration_ts FILTER time("%B %e, %Y at %H:%M %Z", timezone) %].
+
+After that time, you can visit:
+
+[%+ urlbase %]?GoAheadAndLogIn=1#forgot
+
+to reset your password.

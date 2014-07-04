@@ -11,3 +11,4 @@ RewriteEngine On
 RewriteRule bug-HOWTO.html$ /page.cgi?id=bug-writing.html [R=301,L]
 RewriteRule bugwritinghelp.html$ /page.cgi?id=bug-writing.html [R=301,L]
 RewriteRule describeflagtypes.cgi$ /page.cgi?id=fields.html#attachments.status [NE,R=301,L]
+RewriteRule bugbuddy.cgi /xmlrpc.cgi [PT,L]
