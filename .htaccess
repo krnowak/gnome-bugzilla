@@ -6,3 +6,7 @@
 <FilesMatch "\.cgi$">
   ErrorDocument 403 /page.cgi?id=403.html
 </FilesMatch>
+
+RewriteEngine On
+RewriteRule bug-HOWTO.html$ /page.cgi?id=bug-writing.html [R=301,L]
+RewriteRule bugwritinghelp.html$ /page.cgi?id=bug-writing.html [R=301,L]
