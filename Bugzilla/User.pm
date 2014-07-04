@@ -1769,6 +1769,29 @@ sub validate_password {
     return 1;
 }
 
+sub product_interests {
+    my $self = shift;
+
+    return $self->{'product_int'} if defined $self->{'product_int'};
+    return [] unless $self->id;
+
+    my $product_ids = Bugzilla->dbh->selectcol_arrayref(
+        qq{SELECT products.id
+             FROM components
+                  INNER JOIN products
+                  ON components.product_id = products.id
+                  LEFT JOIN watch
+                  ON components.initialowner = watch.watched
+            WHERE watch.watcher = ?
+                  OR components.initialowner = ?
+            ORDER BY products.name}, 
+    undef, ($self->id, $self->id));
+
+    $self->{'product_int'} = Bugzilla::Product->new_from_list($product_ids);
+
+    return $self->{'product_int'};
+}
+
 sub is_developer {
     my ($self, $product) = @_;
 
@@ -2262,6 +2285,10 @@ Untaints C<$passwd1> if successful.
 
 If a second password is passed in, this function also verifies that
 the two passwords match.
+
+=item C<product_interests()>
+
+Returns list of distinct products based on component owners that the user is currently watching.
 
 =back
 

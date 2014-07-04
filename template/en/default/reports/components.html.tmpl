@@ -25,8 +25,11 @@
 [% title = BLOCK %]
   Components for [% product.name FILTER html %]
 [% END %]
+[% header = BLOCK %]
+  Components for <a href="browse.cgi?product=[% product.name FILTER url_quote %]">[% product.name FILTER html %]</a>
+[% END %]
 
-[% PROCESS global/header.html.tmpl title = title %]
+[% PROCESS global/header.html.tmpl title = title header = header %]
 
 [% IF Param("useqacontact") %]
   [% numcols = 3 %]
