@@ -798,8 +798,9 @@
     [% ELSE %]
       [%+ Param('emailregexpdesc') %]
     [% END %]
-    It also must not contain any illegal characters.
-
+    It must also not contain any of these special characters:
+    <tt>\ ( ) &amp; &lt; &gt; , ; : &quot; [ ]</tt>, or any whitespace.
+    
   [% ELSIF error == "illegal_frequency" %]
     [% title = "Too Frequent" %]
     Unless you are an administrator, you may not create series which are 
