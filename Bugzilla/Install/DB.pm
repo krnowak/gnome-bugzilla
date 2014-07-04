@@ -2973,6 +2973,7 @@ sub _initialize_workflow {
     # This was till recently the only way to get back to NEW for
     # confirmed bugs, so we use this parameter here.
     my $reassign = $old_params->{'commentonreassign'} || 0;
+    my $needinfo = 0;
 
     # This is the default workflow.
     my @workflow = ([undef, 'UNCONFIRMED', $create],
@@ -2980,14 +2981,22 @@ sub _initialize_workflow {
                     [undef, 'ASSIGNED', $create],
                     ['UNCONFIRMED', 'NEW', $confirm],
                     ['UNCONFIRMED', 'ASSIGNED', $accept],
+                    ['UNCONFIRMED', 'NEEDINFO', $needinfo],
                     ['UNCONFIRMED', 'RESOLVED', $resolve],
                     ['NEW', 'ASSIGNED', $accept],
+                    ['NEW', 'NEEDINFO', $needinfo],
                     ['NEW', 'RESOLVED', $resolve],
                     ['ASSIGNED', 'NEW', $reassign],
+                    ['ASSIGNED', 'NEEDINFO', $needinfo],
                     ['ASSIGNED', 'RESOLVED', $resolve],
                     ['REOPENED', 'NEW', $reassign],
                     ['REOPENED', 'ASSIGNED', $accept],
+                    ['REOPENED', 'NEEDINFO', $needinfo],
                     ['REOPENED', 'RESOLVED', $resolve],
+                    ['NEEDINFO', 'UNCONFIRMED', $reassign],
+                    ['NEEDINFO', 'NEW', $reassign],
+                    ['NEEDINFO', 'ASSIGNED', $accept],
+                    ['NEEDINFO', 'RESOLVED', $resolve],
                     ['RESOLVED', 'UNCONFIRMED', $reopen],
                     ['RESOLVED', 'REOPENED', $reopen],
                     ['RESOLVED', 'VERIFIED', $verify],
