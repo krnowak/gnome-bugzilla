@@ -290,6 +290,20 @@ sub init {
         push(@specialchart, ["bug_id", $type, join(',', $params->param('bug_id'))]);
     }
 
+    # Compat for pre-cf gnome fields
+    # The 'none' case has changed from 'Unspecified' to '---' like all the
+    # other fields. These fields can contain multiple values
+    foreach my $gcompat (qw(gnome_version gnome_target)) {
+        if ($params->param($gcompat)) {
+            $params->param("cf_$gcompat",
+                           map { lc($_) eq 'unspecified' ? '---' : $_ }
+                            $params->param($gcompat));
+            # Delete the old param so that edit/save has the new data
+            $params->delete($gcompat);
+            
+        }
+    }
+
     # If the user has selected all of either status or resolution, change to
     # selecting none. This is functionally equivalent, but quite a lot faster.
     # Also, if the status is __open__ or __closed__, translate those
@@ -811,11 +825,22 @@ sub init {
                  $params->param("field$chart-$row-$col") ;
                  $col++) {
                 $f = $params->param("field$chart-$row-$col") || "noop";
-                my $original_f = $f; # Saved for search_description
                 $t = $params->param("type$chart-$row-$col") || "noop";
                 $v = $params->param("value$chart-$row-$col");
                 $v = "" if !defined $v;
                 $v = trim($v);
+                # Compat for pre-cf gnome fields
+                # Rewrite the params so that edit/save has the correct
+                # values
+                if ($f eq 'gnome_version' || $f eq 'gnome_target') {
+                    $f = "cf_$f";
+                    $params->param("field$chart-$row-$col", $f);
+                    if (lc($v) eq 'unspecified') {
+                        $v = '---';
+                        $params->param("value$chart-$row-$col", $v);
+                    }
+                }
+                my $original_f = $f; # Saved for search_description
                 if ($f eq "noop" || $t eq "noop" || $v eq "") {
                     next;
                 }

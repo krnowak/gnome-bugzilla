@@ -325,7 +325,7 @@ function doOnSelectProduct(selectmode) {
 
 <hr>
 
-[%# *** Status Resolution Severity Priority Hardware OS *** %]
+[%# *** Status Resolution Severity Priority Hardware OS gnome_version gnome_target *** %]
 
 <table>
   <tr>
@@ -398,11 +398,24 @@ function doOnSelectProduct(selectmode) {
       <table>
         <tr>
           <th align="left">
-            <label for="op_sys" accesskey="o"><u>O</u>S</label>:
+            <label for="gnome_version">GNOME Version</label>:
           </th>
         </tr>
         <tr valign="top">
-          [% PROCESS select sel = { name => 'op_sys',
+          [% PROCESS select sel = { name => 'cf_gnome_version',
+                                    size => 7 } %]
+        </tr>
+      </table>
+    </td>
+    <td>
+      <table>
+        <tr>
+          <th align="left">
+            <label for="gnome_target">GNOME Target</label>:
+          </th>
+        </tr>
+        <tr valign="top">
+          [% PROCESS select sel = { name => 'cf_gnome_target',
                                     size => 7 } %]
         </tr>
       </table>

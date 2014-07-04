@@ -556,6 +556,38 @@ sub update_table_definitions {
 
     # 2009-03-02 arbingersys@gmail.com - Bug 423613
     _add_extern_id_index();
+
+    # 2009-05-06 bbaetz@everythingsolved.com - gnome specific
+    # Move from the old hacked-up custom fields to the new ones
+    my $gnome_version = new Bugzilla::Field({'name' => 'cf_gnome_version'});
+    if (!$gnome_version) {
+        $gnome_version = Bugzilla::Field->create({
+            name        => 'cf_gnome_version',
+            description => 'GNOME version',
+            type        => FIELD_TYPE_SINGLE_SELECT,
+            sortkey     => 200,
+            mailhead    => 1,
+            enter_bug   => 1,
+            obsolete    => 0,
+            custom      => 1,
+        });
+        _port_gnome_cf('gnome_version', 'cf_gnome_version');
+    }
+
+    my $gnome_target = new Bugzilla::Field({'name' => 'cf_gnome_target'});
+    if (!$gnome_target) {
+        $gnome_target = Bugzilla::Field->create({
+            name        => 'cf_gnome_target',
+            description => 'GNOME target',
+            type        => FIELD_TYPE_SINGLE_SELECT,
+            sortkey     => 200,
+            mailhead    => 1,
+            enter_bug   => 1,
+            obsolete    => 0,
+            custom      => 1,
+        });
+        _port_gnome_cf('gnome_target', 'cf_gnome_target');
+    }
  
     ################################################################
     # New --TABLE-- changes should go *** A B O V E *** this point #
@@ -3140,6 +3172,46 @@ sub _add_visiblity_value_to_value_tables {
         $dbh->bz_add_column($field, 'visibility_value_id', {TYPE => 'INT2'});
         $dbh->bz_add_index($field, "${field}_visibility_value_id_idx", 
                            ['visibility_value_id']);
+    }
+}
+
+# Move the old gnome custom fields to standard Bugzilla ones
+# Code taken from gnome's partly updated customizations
+sub _port_gnome_cf {
+    my ($old_field_name, $new_field_name) = (@_);
+
+    my $old_field = new Bugzilla::Field({'name' => $old_field_name});
+    my $new_field = new Bugzilla::Field({'name' => $new_field_name});
+
+    if ($old_field && $new_field) {
+        my $dbh = Bugzilla->dbh;
+
+        $dbh->bz_start_transaction();
+
+        $dbh->do('UPDATE bugs_activity SET fieldid = ? WHERE fieldid = ?', undef, 
+                 ($new_field->id, $old_field->id));
+
+        # Move options
+        $dbh->do("INSERT INTO $new_field_name (value, sortkey, isactive)
+                    SELECT value, sortkey, isactive
+                      FROM $old_field_name
+                     WHERE id > 1");
+
+        my $new_default_value = $dbh->selectrow_array(
+            "SELECT value FROM $new_field_name WHERE id = 1");
+        my $old_default_value = $dbh->selectrow_array(
+            "SELECT value FROM $old_field_name WHERE id = 1");
+
+        $dbh->do("UPDATE bugs SET $new_field_name = $old_field_name");
+        $dbh->do("UPDATE bugs SET $new_field_name = ? WHERE $new_field_name = ?",
+            undef, ($new_default_value, $old_default_value));
+
+        $dbh->do('DELETE FROM fielddefs WHERE id = ?', undef,
+                 $old_field->id);
+        $dbh->bz_commit_transaction();
+
+        $dbh->bz_drop_column('bugs', $old_field_name);
+        $dbh->bz_drop_table($old_field_name);
     }
 }
 
