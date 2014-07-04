@@ -322,6 +322,10 @@
           <li>Sortkey updated to 
             <em>[% changes.sortkey.1 FILTER html %]</em>.</li>
         [% END %]
+        [% IF changes.description %]
+          <li>Description updated to
+            <em>[% changes.description.1 FILTER html %]</em>.</li>
+        [% END %]
         [% IF changes.visibility_value_id %]
           [% IF value.visibility_value.defined %]
             <li>It only appears when 

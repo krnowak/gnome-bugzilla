@@ -454,12 +454,17 @@ use constant ABSTRACT_SCHEMA => {
                              DEFAULT => 'FALSE'},
             isurl        => {TYPE => 'BOOLEAN', NOTNULL => 1,
                              DEFAULT => 'FALSE'},
+            status       => {TYPE => 'varchar(64)', NOTNULL => 1,
+                             REFERENCES => {TABLE  => 'attachment_status',
+                                            COLUMN => 'value',
+                                            DELETE => 'CASCADE'}},
         ],
         INDEXES => [
             attachments_bug_id_idx => ['bug_id'],
             attachments_creation_ts_idx => ['creation_ts'],
             attachments_modification_time_idx => ['modification_time'],
             attachments_submitter_id_idx => ['submitter_id', 'bug_id'],
+            attachments_status_idx => ['status'],
         ],
     },
     attach_data => {
@@ -470,6 +475,18 @@ use constant ABSTRACT_SCHEMA => {
                                          COLUMN => 'attach_id',
                                          DELETE => 'CASCADE'}},
             thedata => {TYPE => 'LONGBLOB', NOTNULL => 1},
+        ],
+    },
+    attachment_status => {
+        FIELDS => [
+            @{ dclone(FIELD_TABLE_SCHEMA->{FIELDS}) },
+            description => {TYPE => 'MEDIUMTEXT', NOTNULL => 1},
+        ],
+        INDEXES => [
+            attachment_status_value_idx   => {FIELDS => ['value'],
+                                             TYPE => 'UNIQUE'},
+            attachment_status_sortkey_idx => ['sortkey', 'value'],
+            attachment_status_visibility_value_id_idx => ['visibility_value_id'],
         ],
     },
 

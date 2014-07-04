@@ -633,6 +633,13 @@ sub update {
     Bugzilla::Attachment->validate_description(THROW_ERROR);
     Bugzilla::Attachment->validate_is_patch(THROW_ERROR);
     Bugzilla::Attachment->validate_content_type(THROW_ERROR) unless $cgi->param('ispatch');
+
+    # Only shows for patches
+    if ($cgi->param('attachments.status')) {
+        Bugzilla::Attachment->validate_status(THROW_ERROR);
+    } else {
+        $cgi->param('attachments.status', $attachment->status);
+    }
     $cgi->param('isobsolete', $cgi->param('isobsolete') ? 1 : 0);
     $cgi->param('isprivate', $cgi->param('isprivate') ? 1 : 0);
 
@@ -703,10 +710,12 @@ sub update {
   my $description = $cgi->param('description');
   my $contenttype = $cgi->param('contenttype');
   my $filename = $cgi->param('filename');
+  my $status = $cgi->param('attachments.status');
   # we can detaint this way thanks to placeholders
   trick_taint($description);
   trick_taint($contenttype);
   trick_taint($filename);
+  trick_taint($status);
 
   # Figure out when the changes were made.
   my ($timestamp) = $dbh->selectrow_array("SELECT NOW()");
@@ -725,11 +734,12 @@ sub update {
                     ispatch     = ?,
                     isobsolete  = ?,
                     isprivate   = ?,
+                    status      = ?,
                     modification_time = ?
             WHERE   attach_id   = ?",
             undef, ($description, $contenttype, $filename,
             $cgi->param('ispatch'), $cgi->param('isobsolete'), 
-            $cgi->param('isprivate'), $timestamp, $attachment->id));
+            $cgi->param('isprivate'), $status, $timestamp, $attachment->id));
 
   my $updated_attachment = new Bugzilla::Attachment($attachment->id);
   # Record changes in the activity table.
@@ -773,6 +783,12 @@ sub update {
     my $fieldid = get_field_id('attachments.isprivate');
     $sth->execute($bug->id, $attachment->id, $user->id, $timestamp, $fieldid,
                   $attachment->isprivate, $updated_attachment->isprivate);
+    $updated = 1;
+  }
+  if ($attachment->status ne $updated_attachment->status) {
+    my $fieldid = get_field_id('attachments.status');
+    $sth->execute($bug->id, $attachment->id, $user->id, $timestamp, $fieldid,
+                  $attachment->status, $updated_attachment->status);
     $updated = 1;
   }
 

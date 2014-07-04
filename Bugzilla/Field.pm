@@ -197,6 +197,8 @@ use constant DEFAULT_FIELDS => (
     {name => 'attachments.ispatch',     desc => 'Attachment is patch'},
     {name => 'attachments.isobsolete',  desc => 'Attachment is obsolete'},
     {name => 'attachments.isprivate',   desc => 'Attachment is private'},
+    {name => 'attachments.status',      desc => 'Attachment status',
+     type => FIELD_TYPE_SINGLE_SELECT},
     {name => 'attachments.submitter',   desc => 'Attachment creator'},
 
     {name => 'target_milestone',      desc => 'Target Milestone',

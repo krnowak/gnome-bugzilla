@@ -106,6 +106,7 @@
             <type>[% a.contenttype FILTER xml %]</type>
             <size>[% a.datasize FILTER xml %]</size>
             <attacher>[% a.attacher.email FILTER email FILTER xml %]</attacher>
+            <status>[% a.ispatch ? a.status : "" FILTER xml %]</status>
             [%# This is here so automated clients can still use attachment.cgi %]
             [% IF displayfields.token && user.id %]
               <token>[% issue_hash_token([a.id, a.modification_time]) FILTER xml %]</token>

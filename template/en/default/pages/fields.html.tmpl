@@ -313,4 +313,21 @@ verified, remember to set the status field appropriately.
     fields.</p>
 [% END %]
 
+<h2><a name="attachments.status">Attachment status</a></h2>
+
+[% field = Bugzilla.get_fields({ name = 'attachments.status' }) %]
+<table border="1" cellpadding="4" cellspacing="0">
+  <tr>
+    <th align="left">Name</th>
+    <th align="left">Description</th>
+  </tr>
+
+  [% FOREACH v = field.legal_values %]
+  <tr>
+    <td>[% v.name FILTER html %]</td>
+    <td>[% v.description FILTER html %]</td>
+  </tr>
+  [% END %]
+</table>
+
 [% INCLUDE global/footer.html.tmpl %]

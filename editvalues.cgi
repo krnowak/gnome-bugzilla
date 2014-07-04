@@ -188,6 +188,8 @@ if ($action eq 'update') {
     $value->set_name($cgi->param('value_new'));
     $value->set_sortkey($cgi->param('sortkey'));
     $value->set_visibility_value($cgi->param('visibility_value_id'));
+    # XXX - hack!
+    $value->set_description($cgi->param('description')) if $value->can('set_description');
     $vars->{'changes'} = $value->update();
     delete_token($token);
     $vars->{'message'} = 'field_value_updated';

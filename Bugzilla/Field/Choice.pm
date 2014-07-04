@@ -49,6 +49,8 @@ use constant UPDATE_COLUMNS => qw(
     visibility_value_id
 );
 
+use constant PARENT_TABLE => 'bugs';
+
 use constant NAME_FIELD => 'value';
 use constant LIST_ORDER => 'sortkey, value';
 
@@ -63,6 +65,7 @@ use constant VALIDATORS => {
 use constant CLASS_MAP => {
     bug_status => 'Bugzilla::Status',
     product    => 'Bugzilla::Product',
+    'attachments.status' => 'Bugzilla::AttachmentStatus',
 };
 
 use constant DEFAULT_MAP => {
@@ -87,7 +90,10 @@ sub type {
     my $field_name = $field_obj->name;
 
     if ($class->CLASS_MAP->{$field_name}) {
-        return $class->CLASS_MAP->{$field_name};
+        # Make sure that the class is loaded
+        my $c = $class->CLASS_MAP->{$field_name};
+        eval "require $c";
+        return $c;
     }
 
     # For generic classes, we use a lowercase class name, so as
@@ -159,7 +165,7 @@ sub update {
                      undef, $new, $old);
         }
         else {
-            $dbh->do("UPDATE bugs SET $fname = ? WHERE $fname = ?",
+            $dbh->do("UPDATE " . $self->PARENT_TABLE . " SET $fname = ? WHERE $fname = ?",
                      undef, $new, $old);
         }
 

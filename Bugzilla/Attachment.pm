@@ -81,6 +81,7 @@ sub DB_COLUMNS {
         isprivate
         isurl
         mimetype
+        status
         modification_time
         submitter_id),
         $dbh->sql_date_format('attachments.creation_ts', '%Y.%m.%d %H:%i') . ' AS creation_ts';
@@ -278,6 +279,22 @@ sub isprivate {
     my $self = shift;
     return $self->{isprivate};
 }
+
+=over
+
+=item C<status>
+
+the attachment status
+
+=back
+
+=cut
+
+sub status {
+    my $self = shift;
+    return $self->{status};
+}
+
 
 =over
 
@@ -765,6 +782,27 @@ sub validate_obsolete {
     return @obsolete_attachments;
 }
 
+=item C<validate_status($throw_error)>
+
+Description: validates the attachment status
+
+Returns:     1 on success.
+
+=cut
+
+sub validate_status {
+    my ($class, $throw_error) = @_;
+    my $cgi = Bugzilla->cgi;
+
+    my ($field) = Bugzilla->get_fields({ name => 'attachments.status' });
+
+    (grep($_->name eq $cgi->param('attachments.status'),
+          @{$field->legal_values}))
+     || ($throw_error ? ThrowUserError("missing_attachment_status") : return 0);
+
+    return 1;
+}
+
 ###############################
 ####     Constructors     #####
 ###############################
@@ -862,6 +900,17 @@ sub create {
         $hr_vars->{'message'} = 'user_match_multiple';
     }
 
+    my $status;
+    if ($cgi->param('ispatch') and Bugzilla->user->in_group('editbugs')
+        and defined $cgi->param('attachments.status'))
+    {
+        $class->validate_status($throw_error) || return;
+        $status = $cgi->param('attachments.status');
+        trick_taint($status);
+    } else {
+        $status = 'none';
+    }
+
     # Escape characters in strings that will be used in SQL statements.
     my $description = $cgi->param('description');
     trick_taint($description);
@@ -871,9 +920,9 @@ sub create {
     my $sth = $dbh->do(
         "INSERT INTO attachments
             (bug_id, creation_ts, modification_time, filename, description,
-             mimetype, ispatch, isurl, isprivate, submitter_id)
-         VALUES (?,?,?,?,?,?,?,?,?,?)", undef, ($bug->bug_id, $timestamp, $timestamp,
-              $filename, $description, $contenttype, $cgi->param('ispatch'),
+             mimetype, status, ispatch, isurl, isprivate, submitter_id)
+         VALUES (?,?,?,?,?,?,?,?,?,?,?)", undef, ($bug->bug_id, $timestamp, $timestamp,
+              $filename, $description, $contenttype, $status, $cgi->param('ispatch'),
               $isurl, $isprivate, $user->id));
     # Retrieve the ID of the newly created attachment record.
     my $attachid = $dbh->bz_last_key('attachments', 'attach_id');
@@ -980,8 +1029,8 @@ sub remove_from_db {
     $dbh->bz_start_transaction();
     $dbh->do('DELETE FROM flags WHERE attach_id = ?', undef, $self->id);
     $dbh->do('DELETE FROM attach_data WHERE id = ?', undef, $self->id);
-    $dbh->do('UPDATE attachments SET mimetype = ?, ispatch = ?, isurl = ?, isobsolete = ?
-              WHERE attach_id = ?', undef, ('text/plain', 0, 0, 1, $self->id));
+    $dbh->do('UPDATE attachments SET mimetype = ?, ispatch = ?, isurl = ?, isobsolete = ?, status = ?
+              WHERE attach_id = ?', undef, ('text/plain', 0, 0, 1, 'none', $self->id));
     $dbh->bz_commit_transaction();
 }
 

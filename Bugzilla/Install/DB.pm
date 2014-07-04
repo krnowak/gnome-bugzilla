@@ -471,6 +471,13 @@ sub update_table_definitions {
     $dbh->bz_drop_column('profiles', 'refreshed_when');
     $dbh->bz_drop_column('groups', 'last_changed');
 
+    # GNOME had a "0" in the flagtypes id column, which needs to be changed
+    # to a 7 before we can alter the column.
+    if ($dbh->bz_column_info('attachments', 'status_id')) {
+        $dbh->do('UPDATE flagtypes SET id = 7 WHERE id = 0');
+        $dbh->do('UPDATE attachments SET status_id = 7 WHERE status_id = 0');
+    }
+
     # 2006-08-06 LpSolit@gmail.com - Bug 347521
     $dbh->bz_alter_column('flagtypes', 'id',
           {TYPE => 'SMALLSERIAL', NOTNULL => 1, PRIMARYKEY => 1});
@@ -591,6 +598,13 @@ sub update_table_definitions {
         _port_gnome_cf('gnome_target', 'cf_gnome_target');
     }
  
+    # 2009-05-07 bbaetz@everythingsolved.com.au
+    # Migrate attachment statuses from flagtypes to their own table
+    # (gnome change)
+    _migrate_gnome_attachment_status();
+    # We need at least one attachment status, so if there was nothing to
+    # migrate make sure that we have the 'none' entry
+    _populate_gnome_attachment_status();
     ################################################################
     # New --TABLE-- changes should go *** A B O V E *** this point #
     ################################################################
@@ -3257,6 +3271,64 @@ sub _port_gnome_cf {
 
         $dbh->bz_drop_column('bugs', $old_field_name);
         $dbh->bz_drop_table($old_field_name);
+    }
+}
+
+sub _migrate_gnome_attachment_status {
+    my $dbh = Bugzilla->dbh;
+
+    if (!$dbh->bz_column_info('attachments', 'status')) {
+        # Gnome was overloading flagtypes for statuses
+
+        # Allow NULL values till the conversion has happened
+        $dbh->bz_add_column('attachments', 'status',
+                            {TYPE => 'varchar(64)'});
+
+        $dbh->bz_start_transaction();
+
+        my $sth = $dbh->prepare("SELECT id, name, description, sortkey
+                                  FROM flagtypes
+                                 WHERE target_type = 'a'");
+        $sth->execute;
+
+        my $ins_sth = $dbh->prepare("INSERT INTO attachment_status
+                                     (value, description, sortkey)
+                                     VALUES (?, ?, ?)");
+        my %status_map;
+        while (my ($id, $value, $desc, $sortkey) = $sth->fetchrow_array) {
+            $ins_sth->execute($value, $desc, $sortkey);
+            $status_map{$id} = $value;
+        }
+        
+        my $upd_sth = $dbh->prepare("UPDATE attachments
+                                        SET status = ?
+                                      WHERE status_id = ?");
+        foreach my $s (keys %status_map) {
+            $upd_sth->execute($status_map{$s}, $s);
+        }
+        # And clean up the existing 'flags'
+        $dbh->do("DELETE FROM flagtypes WHERE target_type='a'");
+
+        $dbh->bz_drop_column('attachments', 'status_id');
+
+        $dbh->bz_commit_transaction();
+
+        # Now that we're done, disallow NULLs
+        $dbh->bz_alter_column('attachments', 'status',
+                              {TYPE => 'varchar(64)', NOTNULL => 1});
+
+        # Add the index last
+        $dbh->bz_add_index('attachments', 'attachments_status',
+                           [qw(status)]);
+    }
+}
+
+sub _populate_gnome_attachment_status {
+    my $dbh = Bugzilla->dbh;
+
+    if (!$dbh->selectrow_arrayref("SELECT 1 FROM attachment_status LIMIT 1")) {
+        $dbh->do("INSERT INTO attachment_status (value, sortkey, description)
+                       VALUES ('none', 0, 'None')");
     }
 }
 

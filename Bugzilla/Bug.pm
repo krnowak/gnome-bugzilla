@@ -2737,6 +2737,18 @@ sub show_attachment_flags {
     return $self->{'show_attachment_flags'};
 }
 
+sub show_attachment_status {
+    my ($self) = @_;
+    return $self->{'show_attachment_status'} 
+        if exists $self->{'show_attachment_status'};
+    return 0 if $self->{'error'};
+
+    $self->{'show_attachment_status'} =
+        grep { $_->ispatch } @{$self->attachments};
+
+    return $self->{'show_attachment_status'};
+}
+
 sub use_votes {
     my ($self) = @_;
     return 0 if $self->{'error'};
