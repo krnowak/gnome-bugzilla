@@ -853,6 +853,7 @@ sub update {
     # Remove obsolete internal variables.
     delete $self->{'_old_assigned_to'};
     delete $self->{'_old_qa_contact'};
+    delete $self->{'_old_resolution'};
 
     # Also flush the visible_bugs cache for this bug as the user's
     # relationship with this bug may have changed.
@@ -2064,6 +2065,8 @@ sub set_resolution {
     my ($self, $value, $params) = @_;
     
     my $old_res = $self->resolution;
+    # Store the old resolution. check_can_change_field() needs it.
+    $self->{'_old_resolution'} = $old_res;
     $self->set('resolution', $value);
     my $new_res = $self->resolution;
 
@@ -2100,6 +2103,7 @@ sub clear_resolution {
     if (!$self->status->is_open) {
         ThrowUserError('resolution_cant_clear', { bug_id => $self->id });
     }
+    $self->{'_old_resolution'} = $self->resolution;
     $self->{'resolution'} = ''; 
     $self->_clear_dup_id; 
 }
@@ -3509,6 +3513,20 @@ sub check_can_change_field {
     {
         $$PrivilegesRequired = 2;
         return 0;
+    }
+    # - change the status/resolution if the bug is WONTFIX
+    # Note that we have to check against the old resolution
+    # value not the current one, because the order of the fields
+    # passed to this sub is undefined, and if resolution is
+    # checked first then it could be changed to WONTFIX and the
+    # subsequent bug_status check would fail
+    if ($field eq 'bug_status' or $field eq 'resolution') {
+        my $oldres = exists $self->{'_old_resolution'} ?
+            $self->{'_old_resolution'} : $self->resolution;
+        if ($oldres eq 'WONTFIX') {
+            $$PrivilegesRequired = 2;
+            return 0;
+        }
     }
     # - unconfirm bugs (confirming them is handled above)
     if ($field eq 'everconfirmed') {

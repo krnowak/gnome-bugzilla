@@ -32,7 +32,8 @@
   [% FOREACH bug_status = bug.status.can_change_to %]
     [% NEXT IF bug.isunconfirmed && bug_status.is_open && !bug.user.canconfirm %]
     [% NEXT IF bug.isopened && !bug.isunconfirmed && bug_status.is_open && !bug.user.canedit %]
-    [% NEXT IF (!bug_status.is_open || !bug.isopened) && !bug.user.canedit && !bug.user.isreporter %]
+    [% NEXT IF (!bug_status.is_open || !bug.isopened) && !bug.user.canedit &&
+       !(bug.user.isreporter && bug.resolution != 'WONTFIX') %]
     [%# Special hack to only display UNCO or REOP when reopening, but not both;
       # for compatibility with older versions. %]
     [% NEXT IF !bug.isopened && (bug.everconfirmed && bug_status.name == "UNCONFIRMED"
@@ -54,7 +55,7 @@
   [% END %]
 
   [%# These actions are special and are independent of the workflow. %]
-  [% IF bug.user.canedit || bug.user.isreporter %]
+  [% IF bug.user.canedit || (bug.user.isreporter && bug.resolution != 'WONTFIX') %]
     [% IF NOT bug_status_select_displayed %]
       <select name="bug_status" id="bug_status">
       [% bug_status_select_displayed = 1 %] 
@@ -80,7 +81,7 @@
         [% END %]
       [% END %]
   [% END %]
-  [% IF bug.user.canedit || bug.user.isreporter %]  
+  [% IF bug.user.canedit || (bug.user.isreporter && bug.resolution != 'WONTFIX') %]  
     [% IF show_resolution %]
       <noscript><br>resolved&nbsp;as&nbsp;</noscript>
       <span id="resolution_settings">[% PROCESS select_resolution %]</span>
