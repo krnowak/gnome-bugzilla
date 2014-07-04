@@ -1489,6 +1489,9 @@ sub wants_mail {
     # No mail if there are no events
     return 0 if !scalar(@$events);
 
+    # No mail if you are an @gnome.bugs user.
+    return 0 if $self->login =~ /\@gnome\.bugs$/;
+
     # If a relationship isn't given, default to REL_ANY.
     if (!defined($relationship)) {
         $relationship = REL_ANY;
