@@ -561,7 +561,6 @@ TUI_hide_default('expert_fields');
 </tbody>
 
 <tbody class="expert_fields">
-  [% IF user.in_group('editbugs', product.id) %]
     [% IF use_keywords %]
       <tr>
         <th><a href="describekeywords.cgi">Keywords</a>:</th>
@@ -572,6 +571,7 @@ TUI_hide_default('expert_fields');
       </tr>
     [% END %]
 
+  [% IF user.in_group('editbugs', product.id) %]
     <tr>
       <th>Depends on:</th>
       <td colspan="3">
