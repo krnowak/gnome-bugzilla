@@ -112,7 +112,7 @@ use constant COMPONENT_EXCEPTIONS => (
 our ($chart, $and, $or);
 
 sub quicksearch {
-    my ($searchstring) = (@_);
+    my ($searchstring, $permissive) = (@_);
     my $cgi = Bugzilla->cgi;
     my $urlbase = correct_urlbase();
 
@@ -130,7 +130,7 @@ sub quicksearch {
         # Allow separation by comma or whitespace.
         $searchstring =~ s/[,\s]+/,/g;
 
-        if (index($searchstring, ',') < $[) {
+        if (!$permissive and index($searchstring, ',') < $[) {
             # Single bug number; shortcut to show_bug.cgi.
             print $cgi->redirect(-uri => "${urlbase}show_bug.cgi?id=$searchstring");
             exit;
@@ -145,7 +145,7 @@ sub quicksearch {
     else {
         # It's not just a bug number or a list of bug numbers.
         # Maybe it's an alias?
-        if ($searchstring =~ /^([^,\s]+)$/) {
+        if (!$permissive and $searchstring =~ /^([^,\s]+)$/) {
             if (Bugzilla->dbh->selectrow_array(q{SELECT COUNT(*)
                                                    FROM bugs
                                                   WHERE alias = ?},
@@ -397,13 +397,13 @@ sub quicksearch {
         } # foreach (@words)
 
         # Inform user about any unknown fields
-        if (scalar(@unknownFields)) {
+        if (!$permissive and scalar(@unknownFields)) {
             ThrowUserError("quicksearch_unknown_field",
                            { fields => \@unknownFields });
         }
 
         # Make sure we have some query terms left
-        scalar($cgi->param())>0 || ThrowUserError("buglist_parameters_required");
+        scalar($cgi->param())>0 || (!$permissive and ThrowUserError("buglist_parameters_required"));
     }
 
     # List of quicksearch-specific CGI parameters to get rid of.

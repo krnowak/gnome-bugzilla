@@ -26,6 +26,7 @@ use Bugzilla::Constants;
 use Bugzilla::Hook;
 use Bugzilla::Install::Util qw(indicate_progress install_string);
 use Bugzilla::Util;
+use Bugzilla::Search::Quicksearch;
 use Bugzilla::Series;
 
 use Date::Parse;
@@ -627,6 +628,8 @@ sub update_table_definitions {
     _set_vote_fields();
 
     _cleanup_old_gnome_db();
+
+    _fix_saved_searches();
 
     ################################################################
     # New --TABLE-- changes should go *** A B O V E *** this point #
@@ -3487,6 +3490,34 @@ sub _cleanup_old_gnome_db {
     # The GNOME Bugzilla had extra indexes
     $dbh->bz_drop_index('bugs', 'status_index');
     $dbh->bz_drop_index('longdescs', 'comment_text');
+}
+
+# In the old GNOME Bugzilla, you could save searches with the 
+# "query=" string literally in the search. Now we have to translate them
+# into QuickSearch queries.
+sub _fix_saved_searches {
+    my $dbh = Bugzilla->dbh;
+    my $queries_to_fix = $dbh->selectall_arrayref(
+        "SELECT id, query FROM namedqueries WHERE query LIKE 'query=%'");
+    return if !@$queries_to_fix;
+
+    my $total = scalar @$queries_to_fix;
+    my $count = 1;
+    print "Fixing saved searches...\n";
+    $dbh->bz_start_transaction();
+    foreach my $row (@$queries_to_fix) {
+        my ($id, $query) = @$row;
+        indicate_progress({ current => $count++, total => $total,
+                            every => 10 });
+        my $cgi = new Bugzilla::CGI($query);
+        my $quicksearch = $cgi->param('query');
+        my $fixed = quicksearch($quicksearch, 1);
+        $dbh->do('UPDATE namedqueries SET query = ? WHERE id = ?',
+                 undef, $fixed, $id);
+        # quicksearch() uses Bugzilla->cgi to store its variables.
+        Bugzilla->cgi->delete_all();
+    }
+    $dbh->bz_commit_transaction();
 }
 
 sub _add_extern_id_index {
