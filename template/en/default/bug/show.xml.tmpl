@@ -22,7 +22,16 @@
 [% PROCESS bug/time.html.tmpl %]
 <?xml version="1.0" [% IF Param('utf8') %]encoding="UTF-8" [% END %]standalone="yes" ?>
 <!DOCTYPE bugzilla SYSTEM "[% urlbase FILTER html %]bugzilla.dtd">
+<!-- 
 
+WARNING:
+
+ Do NOT automatically retrieve large amounts of data from GNOME Bugzilla
+
+ This will likely result in a ban
+ bugmaster@amp;gnome.org
+
+ -->
 <bugzilla version="[% constants.BUGZILLA_VERSION %]"
           urlbase="[% urlbase FILTER xml %]"
           [%# Note that the maintainer's email is not filtered, 

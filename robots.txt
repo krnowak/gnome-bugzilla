@@ -1,3 +1,8 @@
 User-agent: *
 Allow: /index.cgi
 Disallow: /
+
+# Do NOT automatically retrieve large amounts of data from GNOME Bugzilla
+#
+# This will likely result in a permanent ban.
+# bugmaster@gnome.org
