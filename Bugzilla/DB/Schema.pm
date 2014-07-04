@@ -1169,6 +1169,7 @@ use constant ABSTRACT_SCHEMA => {
             name        => {TYPE => 'varchar(64)', NOTNULL => 1},
             description => {TYPE => 'MEDIUMTEXT'},
             sortkey     => {TYPE => 'INT2', NOTNULL => 1, DEFAULT => '0'},
+            is_gnome    => {TYPE => 'BOOLEAN', NOTNULL => 1, DEFAULT => 'FALSE'},
         ],
         INDEXES => [
             classifications_name_idx => {FIELDS => ['name'],

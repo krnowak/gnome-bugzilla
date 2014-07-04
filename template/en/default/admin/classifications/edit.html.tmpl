@@ -45,6 +45,13 @@
       <td><input id="sortkey" size="20" maxlength="20" name="sortkey" value="
       [%- classification.sortkey FILTER html %]"></td>
     </tr>
+    <tr>
+      <th align="right"><label for="is_gnome">GNOME:</label></th>
+      <td>
+        <input type="checkbox" name="is_gnome" 
+               value="1" [% 'checked="checked"' IF classification.is_gnome %]>
+      </td>
+    </tr>
     <tr valign=top>
       <th align="right">
         <a href="editproducts.cgi?classification=[% classification.name FILTER url_quote %]">

@@ -103,7 +103,9 @@ if ($action eq 'new') {
     my $classification =
       Bugzilla::Classification->create({name        => $class_name,
                                         description => scalar $cgi->param('description'),
-                                        sortkey     => scalar $cgi->param('sortkey')});
+                                        sortkey     => scalar $cgi->param('sortkey'),
+                                        is_gnome    => scalar $cgi->param('is_gnome'),
+                                       });
 
     delete_token($token);
 
@@ -182,6 +184,7 @@ if ($action eq 'update') {
     $classification->set_name($class_name);
     $classification->set_description(scalar $cgi->param('description'));
     $classification->set_sortkey(scalar $cgi->param('sortkey'));
+    $classification->set_is_gnome(scalar $cgi->param('is_gnome'));
 
     my $changes = $classification->update;
     delete_token($token);

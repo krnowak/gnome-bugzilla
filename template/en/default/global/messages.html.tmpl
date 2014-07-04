@@ -193,6 +193,9 @@
         [% IF changes.sortkey.defined %]
           <li>Sortkey updated to '[% classification.sortkey FILTER html %]'</li>
         [% END %]
+        [% IF changes.is_gnome.defined %]
+          <li>Classification marked as [%+ "not" IF !classification.is_gnome %] GNOME</li>
+        [% END %]
       </ul>
     [% ELSE %]
       No changes made to <em>[% classification.name FILTER html %]</em>.
