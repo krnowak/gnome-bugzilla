@@ -531,10 +531,8 @@
       <tr>
         <td class="field_label">
           <label for="target_milestone"><b>
-            [% IF bug.milestoneurl %]
-              <a href="[% bug.milestoneurl FILTER html %]">
-            [% END %]
-            Target&nbsp;Milestone[% "</a>" IF bug.milestoneurl %]
+            <a href="page.cgi?id=fields.html#target_milestone">
+            Target&nbsp;Milestone</a>
           [%%]</b></label>:
         </td>
         [% PROCESS select selname = "target_milestone" %]
