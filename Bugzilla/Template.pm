@@ -136,7 +136,7 @@ sub get_format {
 # If you want to modify this routine, read the comments carefully
 
 sub quoteUrls {
-    my ($text, $curr_bugid) = (@_);
+    my ($text, $bug, $comment) = (@_);
     return $text unless $text;
 
     # We use /g for speed, but uris can have other things inside them
@@ -163,6 +163,17 @@ sub quoteUrls {
     my @things;
     my $count = 0;
     my $tmp;
+
+    my @hook_regexes;
+    Bugzilla::Hook::process('bug-format_comment',
+        { text => \$text, bug => $bug, regexes => \@hook_regexes,
+          comment => $comment });
+
+    foreach my $re (@hook_regexes) {
+        my ($match, $replace) = @$re{qw(match replace)};
+        $text =~ s/$match/($things[$count++] = $replace) 
+                          && ("\0\0" . ($count-1) . "\0\0")/egx;
+    }
 
     # Provide tooltips for full bug links (Bug 74355)
     my $urlbase_re = '(' . join('|',
@@ -211,7 +222,7 @@ sub quoteUrls {
               ~egmxi;
 
     # Current bug ID this comment belongs to
-    my $current_bugurl = $curr_bugid ? "show_bug.cgi?id=$curr_bugid" : "";
+    my $current_bugurl = $bug ? ("show_bug.cgi?id=" . $bug->id) : "";
 
     # This is a hack to speed up displaying comments for the Bugzilla 3.4
     # branch.
@@ -558,10 +569,10 @@ sub create {
             clean_text => \&Bugzilla::Util::clean_text ,
 
             quoteUrls => [ sub {
-                               my ($context, $bug) = @_;
+                               my ($context, $bug, $comment) = @_;
                                return sub {
                                    my $text = shift;
-                                   return quoteUrls($text, $bug);
+                                   return quoteUrls($text, $bug, $comment);
                                };
                            },
                            1
