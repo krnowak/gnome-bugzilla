@@ -147,6 +147,8 @@
   <select name="resolution" id="resolution">
     [% FOREACH r = bug.choices.resolution %]
       [% NEXT IF r == "MOVED" && bug.resolution != "MOVED" %]
+      [% NEXT IF r == "GNOME1.x" && bug.resolution != "GNOME1.x" %]
+      [% NEXT IF r == "NOTXIMIAN" && bug.resolution != "NOTXIMIAN" %]
       <option value="[% r FILTER html %]"
       [% "selected" IF r == bug.resolution %]>
         [% get_resolution(r) FILTER html %]</option>
