@@ -205,7 +205,7 @@ sub quoteUrls {
                ("\0\0" . ($count-1) . "\0\0")
               ~egmx;
 
-    $text =~ s~\b(attachment\s*\#?\s*(\d+))
+    $text =~ s~\b((?:attachment|patch)\s*\#?\s*(\d+))
               ~($things[$count++] = get_attachment_link($2, $1)) &&
                ("\0\0" . ($count-1) . "\0\0")
               ~egmxi;
