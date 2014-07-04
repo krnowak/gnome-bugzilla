@@ -637,6 +637,7 @@ sub sendMail {
         severity => $values{'bug_severity'},
         status => $values{'bug_status'},
         priority => $values{'priority'},
+        version => $values{'version'},
         assignedto => $values{'assigned_to'},
         assignedtoname => Bugzilla::User->new({name => $values{'assigned_to'}})->name,
         targetmilestone => $values{'target_milestone'},
