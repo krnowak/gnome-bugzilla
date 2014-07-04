@@ -147,7 +147,123 @@
   <input type="hidden" name="token" value="[% issue_hash_token([bug.id, bug.delta_ts]) FILTER html %]">
 
   [% PROCESS section_title %]
+
+  [%# *** Bug Summary *** %]
+
+  <div id="bug_summary">
+    <table cellpadding="0" cellspacing="0" border="0">
+    <tr>
+      <td><b>Product:</b></td>
+      <td>
+        <a href="browse.cgi?product=[% bug.product FILTER url_quote %]">
+        [% bug.product FILTER html %]</a>
+      </td>
+    </tr>
+    <tr>
+      <td><b>Component:</b></td>
+      <td>[% bug.component FILTER html %]</td>
+    </tr>
+    <tr>
+      <td><b>Version:</b></td>
+      <td>[% bug.version FILTER html %]</td>
+    </tr>
+    <tr>
+      <td><b>Status:</b></td>
+      <td>[% bug.bug_status FILTER html %]</td>
+    </tr>
+    <tr>
+      <td><b>Priority:</b></td>
+      <td>[% bug.priority FILTER html %]</td>
+    </tr>
+    <tr>
+      <td><b>Severity:</b></td>
+      <td>[% bug.bug_severity FILTER html %]</td>
+    </tr>
+    </table>
+  </div>
+
+  [%# *** Comments *** %]
+
+  <table cellpadding="1" cellspacing="1">
+    <tr>
+      <td id="comment_status_commit">
+        [%# *** Additional Comments *** %]
+        <div id="comments">
+        [% PROCESS bug/comments.html.tmpl
+           comments = bug.longdescs
+           mode = user.id ? "edit" : "show"
+         %]
+        </div>
+
+        <!-- The table keeps the commit button aligned with the box. -->
+        <a name="add_comment"></a>
+        [% IF user.id %]
+        <table><tr><td>
+          <label for="comment" accesskey="c"><b>Additional <u>C</u>omments</b></label>:
+          [% IF Param("insidergroup") && user.in_group(Param("insidergroup")) %]
+            <input type="checkbox" name="commentprivacy" value="1"
+                   id="newcommentprivacy"
+                   onClick="updateCommentTagControl(this, form)">
+            <label for="newcommentprivacy">Private</label>
+          [% END %]
+          <br>
+          [% INCLUDE global/textarea.html.tmpl
+                     name      = 'comment'
+                     id        = 'comment'
+                     minrows   = 10
+                     maxrows   = 25
+                     cols      = constants.COMMENT_COLS
+          %]
+          [% Hook.process("after_comment_textarea") %]
+          <br>
+          [% PROCESS commit_button id=""%]
+          <table class="status" cellspacing="0" cellpadding="0">
+            <tr>
+              <td class="field_label">
+                <b><a href="page.cgi?id=fields.html#status">Status</a></b>:
+              </td>
+              <td>
+                <a name="bug_status_bottom"></a>
+                [% PROCESS bug/knob.html.tmpl %]
+              </td>
+            </tr>
+          </table>
+        </td></tr></table>
+        [% ELSE %]
+          <fieldset>
+            <legend>Note</legend>
+            <p>
+              You need to
+              <a href="[% IF Param('ssl') != 'never' %][% Param('sslbase') %][% END %]show_bug.cgi?id=[% bug.bug_id %]&amp;GoAheadAndLogIn=1">log in</a>
+              before you can comment on or make changes to this [% terms.bug %].
+            </p>
+          </fieldset>
+        [% END %]
+      </td>
+    </tr>
+  </table>
+
+  [% PROCESS section_restrict_visibility %]
+  [% IF user.in_group(Param('timetrackinggroup')) %]
+    <br>
+    [% PROCESS section_timetracking %]
+  [% END %]
+
+  [%# *** Attachments *** %]
+
+  [% PROCESS attachment/list.html.tmpl
+             attachments = bug.attachments
+             bugid       = bug.bug_id
+             num_attachment_flag_types = bug.num_attachment_flag_types
+             show_attachment_flags = bug.show_attachment_flags
+   %]
+
   <table class="edit_form">
+    <tr>
+      <td colspan="3">
+          <hr id="bz_top_half_spacer">
+      </td>
+    </tr>
     <tr>
       [%# 1st Column %]
       <td id="bz_show_bug_column_1" class="bz_show_bug_column">     
@@ -204,93 +320,7 @@
         </table>
       </td>
     </tr>
-    <tr>
-      <td colspan="3">
-          <hr id="bz_top_half_spacer">
-      </td>
-    </tr>
-  </table>
-
-  
-  [% PROCESS section_restrict_visibility %]
-  [% IF user.in_group(Param('timetrackinggroup')) %]
-    <br>
-    [% PROCESS section_timetracking %]
-  [% END %]
-  
-
-[%# *** Attachments *** %]
-
-  [% PROCESS attachment/list.html.tmpl
-             attachments = bug.attachments
-             bugid       = bug.bug_id
-             num_attachment_flag_types = bug.num_attachment_flag_types
-             show_attachment_flags = bug.show_attachment_flags
-   %]
-
-
-[%# *** Comments Groups *** %]
-
-  <br>
-  <table cellpadding="1" cellspacing="1">
-    <tr>
-      <td id="comment_status_commit">
-        <!-- The table keeps the commit button aligned with the box. -->
-        <a name="add_comment"></a>
-        [% IF user.id %]
-        <table><tr><td>
-          <label for="comment" accesskey="c"><b>Additional <u>C</u>omments</b></label>:
-          [% IF Param("insidergroup") && user.in_group(Param("insidergroup")) %]
-            <input type="checkbox" name="commentprivacy" value="1"
-                   id="newcommentprivacy"
-                   onClick="updateCommentTagControl(this, form)">
-            <label for="newcommentprivacy">Private</label>
-          [% END %]
-          <br>
-          [% INCLUDE global/textarea.html.tmpl
-                     name      = 'comment'
-                     id        = 'comment'
-                     minrows   = 10
-                     maxrows   = 25
-                     cols      = constants.COMMENT_COLS
-          %]
-          [% Hook.process("after_comment_textarea") %]
-          <br>
-          [% PROCESS commit_button id=""%]
-          <table class="status" cellspacing="0" cellpadding="0">
-            <tr>
-              <td class="field_label">
-                <b><a href="page.cgi?id=fields.html#status">Status</a></b>:
-              </td>
-              <td>
-                <a name="bug_status_bottom"></a>
-                [% PROCESS bug/knob.html.tmpl %]
-              </td>
-            </tr>
-          </table>
-        </td></tr></table>
-        [% ELSE %]
-          <fieldset>
-            <legend>Note</legend>
-            <p>
-              You need to
-              <a href="[% IF Param('ssl') != 'never' %][% Param('sslbase') %][% END %]show_bug.cgi?id=[% bug.bug_id %]&amp;GoAheadAndLogIn=1">log in</a>
-              before you can comment on or make changes to this [% terms.bug %].
-            </p>
-          </fieldset>
-        [% END %]
-        [%# *** Additional Comments *** %]
-        <hr>
-        <div id="comments">
-        [% PROCESS bug/comments.html.tmpl
-           comments = bug.longdescs
-           mode = user.id ? "edit" : "show"
-         %]
-        </div>
-        
-      </td>
-    </tr>
-  </table>
+  </table>  
 </form>
 
 [%############################################################################%]
@@ -911,6 +941,11 @@
       </td>
     </tr>
   [% END %]
+
+  <tr class="bottom_commit_container">
+    <td>&nbsp;</td>
+    <td>[% PROCESS commit_button id = "_gnome_form" %]</td>
+  </tr>
 [% END %]
 
 [%############################################################################%]
