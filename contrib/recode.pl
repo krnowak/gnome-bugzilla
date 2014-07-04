@@ -284,7 +284,7 @@ foreach my $table ($dbh->bz_table_list_real) {
 
                 # We only fix it if it's not ASCII or UTF-8 already.
                 if ($encoding && !grep($_ eq $encoding, IGNORE_ENCODINGS)) {
-                    my $decoded = encode('utf8', decode($encoding, $data));
+                    my $decoded = encode('UTF-8', decode($encoding, $data));
                     if ($switch{'dry-run'} && $data ne $decoded) {
                         print "Row:  [$pk_line]\n",
                               "From: [" . trunc($data) . "] Key: $digest\n",

@@ -34,6 +34,7 @@ package Bugzilla::Template;
 
 use strict;
 
+use Bugzilla::Bug;
 use Bugzilla::Constants;
 use Bugzilla::Install::Requirements;
 use Bugzilla::Install::Util qw(install_string template_include_path include_languages);
@@ -51,6 +52,7 @@ use File::Find;
 use File::Path qw(rmtree mkpath);
 use File::Spec;
 use IO::Dir;
+use Scalar::Util qw(blessed);
 
 use base qw(Template);
 
@@ -307,20 +309,22 @@ sub get_attachment_link {
 #    comment in the bug
 
 sub get_bug_link {
-    my ($bug_num, $link_text, $options) = @_;
+    my ($bug, $link_text, $options) = @_;
     my $dbh = Bugzilla->dbh;
 
-    if (!defined($bug_num) || ($bug_num eq "")) {
-        return "&lt;missing bug number&gt;";
+    if (!$bug) {
+        return html_quote('<missing bug number>');
     }
     my $quote_bug_num = html_quote($bug_num);
     detaint_natural($bug_num) || return "&lt;invalid bug number: $quote_bug_num&gt;";
     ($bug_num <= MAX_INT_32) || return $link_text;
 
-    my ($bug_alias, $bug_state, $bug_res, $bug_desc) =
-        $dbh->selectrow_array('SELECT bugs.alias, bugs.bug_status, bugs.resolution, bugs.short_desc
-                               FROM bugs WHERE bugs.bug_id = ?',
-                               undef, $bug_num);
+    $bug = blessed($bug) ? $bug : new Bugzilla::Bug($bug);
+    return $link_text if $bug->{error};
+    
+    # Initialize these variables to be "" so that we don't get warnings
+    # if we don't change them below (which is highly likely).
+    my ($pre, $title, $post) = ("", "", "");
 
     # This is a hack to speed up displaying comments for the Bugzilla 3.4
     # branch.
@@ -328,44 +332,36 @@ sub get_bug_link {
     Bugzilla->template_inner; # populates request_cache->{language}
     my $lang = Bugzilla->request_cache->{language} || '';
 
-    if ($bug_state) {
-        # Initialize these variables to be "" so that we don't get warnings
-        # if we don't change them below (which is highly likely).
-        my ($pre, $title, $post) = ("", "", "");
+    my $status = $word_cache->{$lang}->{status}->{$bug->bug_status}
+                 ||= get_text('get_status', {status => $bug->bug_status});
+    $title = $status;
 
-        my $status = $word_cache->{$lang}->{status}->{$bug_state} 
-                     ||= get_text('get_status', {status => $bug_state});
-        $title = $status;
-        if ($bug_state eq 'UNCONFIRMED') {
-            $pre = "<i>";
-            $post = "</i>";
+    if ($bug->bug_status eq 'UNCONFIRMED') {
+        $pre = "<i>";
+        $post = "</i>";
+    }
+    if ($bug->resolution) {
+        $pre = '<span class="bz_closed">';
+        my $resolution = $word_cache->{$lang}->{resolution}->{$bug->resolution}
+                         ||= get_text('get_resolution', 
+                                      { resolution => $bug->resolution });
+        $title .= ' ' . $resolution;
+        $post = '</span>';
+    }
+    if (Bugzilla->user->can_see_bug($bug)) {
+        $title .= " - " . $bug->short_desc;
+        if ($options->{use_alias} && $link_text =~ /^\d+$/ && $bug->alias) {
+            $link_text = $bug->alias;
         }
-        elsif (!is_open_state($bug_state)) {
-            $pre = '<span class="bz_closed">';
-            my $resolution = $word_cache->{$lang}->{resolution}->{$bug_res}
-                             ||= get_text('get_resolution', 
-                                          { resolution => $bug_res });
-            $title .= ' ' . $resolution;
-            $post = '</span>';
-        }
-        if (Bugzilla->user->can_see_bug($bug_num)) {
-            $title .= " - $bug_desc";
-            if ($options->{use_alias} && $link_text =~ /^\d+$/ && $bug_alias) {
-                $link_text = $bug_alias;
-            }
-        }
-        # Prevent code injection in the title.
-        $title = html_quote(clean_text($title));
+    }
+    # Prevent code injection in the title.
+    $title = html_quote(clean_text($title));
 
-        my $linkval = "show_bug.cgi?id=$bug_num";
-        if ($options->{comment_num}) {
-            $linkval .= "#c" . $options->{comment_num};
-        }
-        return qq{$pre<a href="$linkval" title="$title">$link_text</a>$post};
+    my $linkval = "show_bug.cgi?id=" . $bug->id;
+    if ($options->{comment_num}) {
+        $linkval .= "#c" . $options->{comment_num};
     }
-    else {
-        return qq{$link_text};
-    }
+    return qq{$pre<a href="$linkval" title="$title">$link_text</a>$post};
 }
 
 ###############################################################################
