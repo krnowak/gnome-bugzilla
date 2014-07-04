@@ -260,6 +260,7 @@ sub Send {
         if ($who ne $lastwho) {
             $lastwho = $who;
             $fullwho = $whoname ? "$whoname <$who>" : $who;
+            $fullwho = email_filter($fullwho, 'force');
             $diffheader = "\n$fullwho changed:\n\n";
             $diffheader .= three_columns("What    ", "Removed", "Added");
             $diffheader .= ('-' x 76) . "\n";
