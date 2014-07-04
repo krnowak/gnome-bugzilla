@@ -865,6 +865,10 @@ sub votes_to_confirm  { return $_[0]->{'votestoconfirm'};    }
 sub default_milestone { return $_[0]->{'defaultmilestone'};  }
 sub classification_id { return $_[0]->{'classification_id'}; }
 
+sub classification {
+    return Bugzilla::Classification->new($_[0]->classification_id);
+}
+
 ###############################
 ####      Subroutines    ######
 ###############################

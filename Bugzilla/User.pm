@@ -694,6 +694,23 @@ sub get_selectable_classifications {
     return $self->{selectable_classifications};
 }
 
+sub get_selectable_gnome_products {
+    my ($self) = @_;
+
+    my @gnome_products = ();
+    my %visible_products = map { $_->name => $_ }
+        @{$self->get_selectable_products};
+
+    foreach my $c (@{Bugzilla::Classification->match({ 'is_gnome' => 1 })}) {
+        foreach my $p (@{$c->products}) {
+            next unless $visible_products{$p->name};
+            push @gnome_products, $p;
+        }
+    }
+
+    return \@gnome_products;
+}
+
 sub can_enter_product {
     my ($self, $product_name, $warn) = @_;
     my $dbh = Bugzilla->dbh;

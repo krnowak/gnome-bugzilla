@@ -2589,6 +2589,15 @@ sub classification {
     return $self->{classification};
 }
 
+sub classification_obj {
+    my ($self) = @_;
+    return $self->{classification_obj} if defined $self->{classification_obj};
+    return {} if $self->{error};
+    $self->{classification_obj} =
+        new Bugzilla::Classification($self->classification_id);
+    return $self->{classification_obj};
+}
+
 sub dependson {
     my ($self) = @_;
     return $self->{'dependson'} if exists $self->{'dependson'};
