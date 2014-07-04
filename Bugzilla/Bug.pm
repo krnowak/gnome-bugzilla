@@ -1183,8 +1183,8 @@ sub _check_comment_type {
 sub _check_component {
     my ($invocant, $name, $product) = @_;
     $name = trim($name);
-    $name || ThrowUserError("require_component");
     ($product = $invocant->product_obj) if ref $invocant;
+    $name || ThrowUserError("require_component", { product => $product });
     my $obj = Bugzilla::Component->check({ product => $product, name => $name });
     return $obj;
 }

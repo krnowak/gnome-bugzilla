@@ -427,6 +427,7 @@
     Sorry, either the product <em>[% product FILTER html %]</em>
     does not exist or you aren't authorized to
     enter [% terms.abug %] into it.
+    Please choose a <a href="describecomponents.cgi">valid product</a>.
 
   [% ELSIF error == "field_already_exists" %]
     [% title = "Field Already Exists" %]
@@ -922,6 +923,7 @@
   [% ELSIF error == "invalid_product_name" %]
     [% title = "Invalid Product Name" %]
     The product name '[% product FILTER html %]' is invalid or does not exist.
+    Please choose a <a href="describecomponents.cgi">valid product</a>.
 
   [% ELSIF error == "invalid_regexp" %]
     [% title = "Invalid regular expression" %]
@@ -1254,6 +1256,10 @@
     [% IF class == "Bugzilla::User" %]
       Either you mis-typed the name or that user has not yet registered
       for a [% terms.Bugzilla %] account.
+    [% ELSIF class == "Bugzilla::Component" AND product.defined %]
+      Please choose a <a href="describecomponents.cgi?product=[% product.name FILTER url_quote %]">valid component</a>.
+    [% ELSIF class == "Bugzilla::Product" OR class == "Bugzilla::Component" %]
+      Please choose a <a href="describecomponents.cgi">valid product</a>.
     [% END %]
 
   [% ELSIF error == "old_password_incorrect" %]
@@ -1292,10 +1298,12 @@
   [% ELSIF error == "product_access_denied" %]
     Either the product '[% product FILTER html %]' does not exist or
     you don't have access to it.
+    Please choose a <a href="describecomponents.cgi">valid product</a>.
 
   [% ELSIF error == "product_doesnt_exist" %]
     [% title = "Specified Product Does Not Exist" %]
     The product '[% product FILTER html %]' does not exist.
+    Please choose a <a href="describecomponents.cgi">valid product</a>.
 
   [% ELSIF error == "product_illegal_group" %]
     [% title = "Illegal Group" %]
@@ -1354,6 +1362,7 @@
     [% admindocslinks = {'products.html' => 'Administering products'} %]
     Sorry, entering [% terms.abug %] into the
     product <em>[% product.name FILTER html %]</em> has been disabled.
+    Please choose a <a href="describecomponents.cgi">valid product</a>.
 
   [% ELSIF error == "product_edit_denied" %]
     [% title = "Product Edit Access Denied" %]
@@ -1361,6 +1370,7 @@
                          'groups.html'   => 'Group security'} %]
     You are not permitted to edit [% terms.bugs %] in product 
     [%+ product FILTER html %].
+    Please choose a <a href="describecomponents.cgi">valid product</a>.
 
   [% ELSIF error == "product_has_bugs" %]
     [% title = BLOCK %]Product has [% terms.Bugs %][% END %]
@@ -1388,6 +1398,7 @@
                          'versions.html'   => 'Administering versions'} %]
     No product specified when trying to edit components, milestones, versions
     or product.
+    Please choose a <a href="describecomponents.cgi">valid product</a>.
 
   [% ELSIF error == "query_name_exists" %]
     [% title = "Search Name Already In Use" %]
@@ -1429,8 +1440,9 @@
 
   [% ELSIF error == "require_component" %]
     [% title = "Component Needed" %]
-    To file this [% terms.bug %], you must first choose a component.
-    If necessary, just guess.
+    To file this [% terms.bug %], you must first
+    <a href="describecomponents.cgi?product=[% product.name FILTER url_quote %]">
+    choose a component</a>. If necessary, just guess.
 
   [% ELSIF error == "require_new_password" %]
     [% title = "New Password Needed" %]
