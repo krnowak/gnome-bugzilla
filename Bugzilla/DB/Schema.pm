@@ -1194,7 +1194,7 @@ use constant ABSTRACT_SCHEMA => {
             maxvotesperbug    => {TYPE => 'INT2', NOTNULL => 1,
                                   DEFAULT => '10000'},
             votestoconfirm    => {TYPE => 'INT2', NOTNULL => 1,
-                                  DEFAULT => 0},
+                                  DEFAULT => 10000},
             defaultmilestone  => {TYPE => 'varchar(20)',
                                   NOTNULL => 1, DEFAULT => "'---'"},
         ],
