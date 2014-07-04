@@ -92,6 +92,11 @@ if ($cgi->request_method() eq 'POST') {
     }
 }
 
+# Backwards-compat for old GNOME Bugzilla 2.20 saved searches and links.
+if (defined $cgi->param('query') and !defined $cgi->param('quicksearch')) {
+    $cgi->param('quicksearch', $cgi->param('query'));
+    $cgi->delete('query');
+}
 # Determine whether this is a quicksearch query.
 my $searchstring = $cgi->param('quicksearch');
 if (defined($searchstring)) {
