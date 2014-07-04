@@ -43,8 +43,8 @@ cycle of [% terms.abug %].
   </tr>
 
   <tr valign="top">
-    <td>The <b>status</b> field indicates the general health of a 
-    [% terms.bug %]. Only certain status transitions are allowed.</td>
+    <td>The <b>status</b> field indicates the general health of 
+    [% terms.abug %]. Only certain status transitions are allowed.</td>
 
     <td>The <b>resolution</b> field indicates what happened to this
     [%+ terms.bug %].</td>
@@ -59,9 +59,13 @@ cycle of [% terms.abug %].
         <dd>
           This [% terms.bug %] has recently been added to the database. 
           Nobody has validated that this [% terms.bug %] is true. Users
-          who have the "canconfirm" permission set may confirm
-          this [% terms.bug %], changing its state to [% get_status("NEW") FILTER html %]. Or, it may be
-          directly resolved and marked [% get_status("RESOLVED") FILTER html %].
+          who have obtained permissions from the
+          <a href="http://live.gnome.org/Bugsquad">bugsquad</a> may confirm
+          this [% terms.bug %], changing its state to
+          <b>[% get_status("NEW") FILTER html %]</b>. Or, it may be directly
+          resolved and marked <b>[% get_status("RESOLVED") FILTER html %]</b>,
+          or more information may be necessary, moving it to
+          <b>[% get_status("NEEDINFO") FILTER html %]</b>.
         </dd>
 
         <dt>
@@ -83,6 +87,18 @@ cycle of [% terms.abug %].
           proper person. From here [% terms.bugs %] can be given to another 
           person and become <b>[% get_status("NEW") FILTER html %]</b>, or
           resolved and become <b>[% get_status("RESOLVED") FILTER html %]</b>.
+        </dd>
+
+        <dt>
+          <b>[% get_status("NEEDINFO") FILTER html %]</b>
+        </dt>
+        <dd>
+          More information from the reporter is needed to proceed further in
+          fixing this [% terms.bug %]. This should <i>not</i> be used when
+          someone needs more information from a developer - a
+          <b>[% get_status("NEW") FILTER html %]</b> or
+          <b>[% get_status("ASSIGNED") FILTER html %]</b> [%+ terms.bug %]
+          implicitly needs more information from the developer.
         </dd>
 
         <dt>
@@ -126,23 +142,15 @@ cycle of [% terms.abug %].
         </dd>
 
         <dt>
-          <b>[% get_status("VERIFIED") FILTER html %]</b>
-        </dt>
-        <dd>
-          QA has looked at the [% terms.bug %] and the resolution and 
-          agrees that the appropriate resolution has been taken. [% terms.Bugs %] remain
-          in this state until the product they were reported
-          against actually ships, at which point they become
-          <b>[% get_status("CLOSED") FILTER html %]</b>.
-        </dd>
-
-        <dt>
+          <b>[% get_status("VERIFIED") FILTER html %]</b> and
           <b>[% get_status("CLOSED") FILTER html %]</b>
         </dt>
         <dd>
-          The [% terms.bug %] is considered dead, the resolution is correct. 
-          Any zombie [% terms.bugs %] who choose to walk the earth again must 
-          do so by becoming <b>[% get_status("REOPENED") FILTER html %]</b>.
+          GNOME does not substantially use
+          <b>[%+ get_status("VERIFIED") FILTER html %]</b> or
+          <b>[% get_status("CLOSED") FILTER html %]</b>. When used, they
+          indicate that a third party has checked to see that [% terms.abug %]
+          was properly resolved.
         </dd>
       </dl>
     </td>
@@ -158,10 +166,13 @@ cycle of [% terms.abug %].
         </dd>
 
         <dt>
-          <b>[% get_resolution("INVALID") FILTER html %]</b>
+         <b>[% get_resolution("DUPLICATE") FILTER html %]</b>
         </dt>
         <dd>
-          The problem described is not [% terms.abug %].
+          The problem is a duplicate of an existing [% terms.bug %].
+          Marking [% terms.abug %] duplicate requires the [% terms.bug %]#
+          of the duplicating [% terms.bug %] and will at least put
+          that [% terms.bug %] number in the description field.
         </dd>
 
         <dt>
@@ -173,33 +184,46 @@ cycle of [% terms.abug %].
         </dd>
 
         <dt>
-         <b>[% get_resolution("DUPLICATE") FILTER html %]</b>
+          <b>[% get_resolution("NOTABUG") FILTER html %]</b>
         </dt>
         <dd>
-          The problem is a duplicate of an existing [% terms.bug %].
-          Marking [% terms.abug %] duplicate requires the [% terms.bug %]#
-          of the duplicating [% terms.bug %] and will at least put
-          that [% terms.bug %] number in the description field.
+          The problem described is not actually [% terms.abug %], but a
+          design choice of some sort.
         </dd>
 
         <dt>
-          <b>[% get_resolution("WORKSFORME") FILTER html %]</b>
+          <b>[% get_resolution("NOTGNOME") FILTER html %]</b>
         </dt>
         <dd>
-          All attempts at reproducing this [% terms.bug %] were futile, 
-          and reading the code produces no clues as to why the described
-          behavior would occur. If more information appears later,
-          the [% terms.bug %] can be reopened.
+          The [% terms.bug %] is either not in a module that is part of GNOME,
+          or is caused by something outside of GNOME that cannot be worked
+          around or otherwise resolved by the GNOME application.
         </dd>
 
         <dt>
-          <b>[% get_resolution("MOVED") FILTER html %]</b>
+          <b>[% get_resolution("INCOMPLETE") FILTER html %]</b>
         </dt>
         <dd>
-          The problem was specific to a related product 
-          whose [% terms.bugs %] are tracked in
-          another [% terms.bug %] database.
-          The [% terms.bug %] has been moved to that database.
+          The [% terms.bug %] lacks sufficient information to be fixed, and
+          unlike <b>[% get_status("NEEDINFO") %]</b>, no answer is possible
+          or expected.
+        </dd>
+
+        <dt>
+          <b>[% get_resolution("INVALID") FILTER html %]</b>
+        </dt>
+        <dd>
+          This [% terms.bug %] is in some way not valid - usually used when
+          <b>[% get_resolution("INCOMPLETE") %]</b> or
+          <b>[% get_resolution("NOTABUG") %]</b> just don't quite fit.
+        </dd>
+
+        <dt>
+          <b>[% get_resolution("OBSOLETE") %]</b>
+        </dt>
+        <dd>
+          This [% terms.bug %] is in an old (obsolete) or unmaintained
+          version. This includes GNOME 1.x.
         </dd>
       </dl>
     </td>
@@ -213,10 +237,59 @@ as described below.
 
 <h2><a name="priority">Priority</a></h2>
 This field describes the importance and order in which [% terms.abug %]
-should be fixed. This field is utilized by the
-programmers/engineers to prioritize their work to be done. The
-available priorities range from <b>P1</b> (most important) to
-<b>P5</b> (least important).
+should be fixed. This field is utilized by hackers to prioritize
+their work to be done. While each term has a description, it it important to
+note that priority is highly subjective, and [% terms.bugs %] can move up or
+down the priority scale based on subjective questions like 'would we be
+embarassed to release the software with this [% terms.bug %].'
+
+<table>
+  <tr>
+    <th>Immediate</th>
+
+    <td>
+      This [% terms.bug %] blocks development or testing work and should be
+      fixed ASAP, or is a security issue in a released version of the software.
+    </td>
+  </tr>
+
+  <tr>
+    <th>Urgent</th>
+
+    <td>
+      This [% terms.bug %] blocks usability of a large portion of the product,
+      and really should be fixed before the next planned release.
+    </td>
+  </tr>
+
+  <tr>
+    <th>High</th>
+
+    <td>
+      Seriously broken, but not as high impact. Should be fixed before next
+      major release. Frequently includes cosmetic [% terms.bugs %] of particularly
+      high visibility, regressions from functionality provided in previous releases,
+      and more minor [% terms.bugs %] that are frequently reported.
+    </td>
+  </tr>
+
+  <tr>
+    <th>Normal</th>
+
+    <td>
+      Either a fairly straightforward workaround exists or the functionality is
+      not very important and/or not frequently used.
+    </td>
+  </tr>
+
+  <tr>
+    <th>Low</th>
+
+    <td>
+      Just not all that important. Rarely used in GNOME.
+    </td>
+  </tr>
+</table>
 
 <h2><a name="bug_severity">Severity</a></h2>
 This field describes the impact of [% terms.abug %]. 
@@ -231,59 +304,49 @@ This field describes the impact of [% terms.abug %].
   <tr>
     <th>Critical</th>
 
-    <td>crashes, loss of data, severe memory leak</td>
+    <td>Crashes, causes loss of data, or is a severe memory leak</td>
   </tr>
 
   <tr>
     <th>Major</th>
 
-    <td>major loss of function</td>
+    <td>
+      Major loss of functionality - menu item broken, data output extremely
+      incorrect, or otherwise difficult/useless to use.
+    </td>
   </tr>
 
   <tr>
     <th>Normal</th>
 
-    <td>regular issue, some loss of functionality under specific circumstances</td>
+    <td>A minor part of the component is nonfunctional or broken.</td>
   </tr>
 
 
   <tr>
     <th>Minor</th>
 
-    <td>minor loss of function, or other problem where easy
-    workaround is present</td>
+    <td>Minor loss of function, or other problem where easy
+    workaround is present.</td>
   </tr>
 
   <tr>
     <th>Trivial</th>
 
-    <td>cosmetic problem like misspelled words or misaligned
-    text</td>
+    <td>Cosmetic problem like misspelled words or misaligned text.</td>
   </tr>
 
   <tr>
     <th>Enhancement</th>
 
-    <td>Request for enhancement</td>
+    <td>Request for a new feature or functionality.</td>
 </table>
 
 <h2><a name="op_sys">Operating System</a></h2>
-This is the operating system against which the [% terms.bug %] was
-reported. Legal operating systems include: 
 
-<ul>
-  <li>All (happens on all operating systems; cross-platform
-  [% terms.bug %])</li>
-
-  <li>Windows</li>
-
-  <li>Mac OS</li>
-
-  <li>Linux</li>
-</ul>
-Sometimes the operating system implies the platform, but not
-always. For example, Linux can run on PC and Macintosh and
-others. 
+<p>
+This field lists the operating system the [% terms.bug %] was found on.
+We know a lot of these are useless, bear with us. :)</p>
 
 <h2><a name="assigned_to">Assigned To</a></h2>
 
@@ -299,11 +362,73 @@ When searching for [% terms.bugs %] that have been resolved or
 verified, remember to set the status field appropriately. 
 </p>
 
+<h2><a name="target_milestone">Target Milestone</a></h2>
+
+<p>
+This field describes the version of the product that developers or the
+maintainers believe they should fix the [% terms.bug %] by. This field is
+not meant for use by general users, the bugsquad, or the release team. It
+is reserved for developers and maintainers of the given module.</p>
+
+<h2><a name="cf_gnome_version">Gnome Version</a></h2>
+
+<p>
+This field describes the version of GNOME that [% terms.abug %] has most
+recently been found in. This field is used by the GNOME release team and
+other interested parties to find all [% terms.bugs %] in a specific version
+of GNOME, no matter what program the [% terms.bug %] is in. For example, one
+query can find all GNOME 2.8 [% terms.bugs %], whether they are in Metacity
+2.91, totem 0.99, or nautilus 2.8.<br>
+<b>Don't</b> set update field if you haven't verified that the
+[% terms.bug %] exists in the version you're setting it to. <b>Don't</b>
+update this field without updating the product version field- that is still
+useful for maintainers.</p>
+
+<table>
+  <tr>
+    <th>Unspecified</th>
+
+    <td>
+      This [% terms.bug %] is in a module that is not in GNOME, or in an
+      unspecified version of GNOME.
+    </td>
+  </tr>
+
+  <tr>
+    <th>Unversioned Enhancement</th>
+
+    <td>
+      This [% terms.bug %] is an enhancement,and hence can be implemented at
+      any point.
+    </td>
+  </tr>
+
+  <tr>
+    <th>2.(odd)/2.(even)</th>
+
+    <td>
+      This [% terms.bug %] is in the odd/even-numbered series which culminates
+      in GNOME 2.even.
+    </td>
+  </tr>
+</table>
+
+<h2><a name="cf_gnome_target">Gnome Target Milestone</a></h2>
+
+<p>
+This field describes the version of GNOME that [% terms.abug %] should be
+fixed in. This is not a 'it would be nice' field, it is a 'Gnome releases may
+need to be delayed for this issue' field. It is intended for use by
+senior-ish [% terms.bug %] triagers and the release team. We allow others
+to nominate 'showstopper' [% terms.bugs %] by setting this field, but
+bugsquadders and release team members review such [% terms.bugs %] and unmark
+ones where the change is not warranted.</p>
+
 [% IF Param("use_see_also") %]
   <h2><a name="see_also"></a>See Also</h2>
 
   <p>This allows you to refer to [% terms.bugs %] in other installations.
-    You can enter a URL to a [%+ terms.bug %] in the "Add [% terms.Bug %] URLs"
+    You can enter a URL to [%+ terms.abug %] in the "Add [% terms.Bug %] URLs"
     field to note that that [% terms.bug %] is related to this one. You can
     enter multiple URLs at once by separating them with a comma.</p>
 
