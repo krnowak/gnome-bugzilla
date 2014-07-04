@@ -614,6 +614,11 @@ sub update_table_definitions {
                      SET is_gnome = 1
                    WHERE name IN ('Desktop', 'Platform', 'Bindings')");
     }
+        
+    # 2009-05-31 dlawrence@everythingsolved.com
+    # Migrate developers table to new group based system
+    _migrate_gnome_developers();
+
     _gnome_remove_closed_status();
 
     ################################################################
@@ -3350,6 +3355,62 @@ sub _populate_gnome_attachment_status {
     if (!$dbh->selectrow_arrayref("SELECT 1 FROM attachment_status LIMIT 1")) {
         $dbh->do("INSERT INTO attachment_status (value, sortkey, description)
                        VALUES ('none', 0, 'None')");
+    }
+}
+
+sub _migrate_gnome_developers {
+    my $dbh = Bugzilla->dbh;
+    if ($dbh->bz_table_info("developers")) {
+        # Create the global developer group if it doesn't yet exist
+        my $dev_group = Bugzilla::Group->new({ name => 'developers' });
+        if (!$dev_group) {
+            $dev_group = Bugzilla::Group->create({
+                name        => 'developers',
+                description => 'Developer Group',
+                isbuggroup  => 1,
+                isactive    => 1,
+            });
+        }
+
+        # Create product specific groups:
+        foreach my $product (Bugzilla::Product->get_all) {
+            my $group = Bugzilla::Group->new(
+                { name => $product->name . '_developers' });
+            if (!$group) {
+                # Create the group
+                $group = Bugzilla::Group->create({
+                    name        => $product->name . '_developers',
+                    description => $product->name . ' Developers',
+                    isbuggroup  => 1,
+                    isactive    => 1,
+                });
+
+                $dbh->do('INSERT INTO group_control_map
+                          (group_id, product_id, entry, membercontrol,
+                           othercontrol, canedit, editcomponents)
+                          VALUES (?, ?, 0, ?, ?, 0, 1)',
+                          undef, ($group->id, $product->id, CONTROLMAPSHOWN, 
+                                  CONTROLMAPNA));
+
+                $dbh->do('INSERT INTO group_group_map
+                          (member_id, grantor_id, grant_type)
+                          VALUES (?, ?, ?)',
+                          undef, ($group->id, $dev_group->id, GROUP_MEMBERSHIP));
+            }
+
+            # Make existing 'developers' members of this group
+            my $developers = $dbh->selectcol_arrayref('SELECT userid FROM developers
+                                                       WHERE product_id = ?', undef, $product->id);
+            my $sth_ugm = $dbh->prepare('INSERT INTO user_group_map
+                                         (grant_type, group_id, isbless, user_id)
+                                         VALUES (?, ?, ?, ?)');
+            foreach my $userid (@$developers) {
+                $sth_ugm->execute(GRANT_DIRECT, $group->id, 0, $userid);
+            }
+        }
+    
+        # Drop developers table as all developers have been migrated by now
+        $dbh->bz_drop_table('developers');
     }
 }
 
