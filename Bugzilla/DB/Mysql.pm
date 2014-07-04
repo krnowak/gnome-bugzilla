@@ -348,6 +348,34 @@ EOT
 
     my ($sd_index_deleted, $longdescs_index_deleted);
     my @tables = $self->bz_table_list_real();
+
+    # For GNOME, we need to speed up the very long (20+ hours)
+    # upgrade process. We do this by taking all the largest tables
+    # and copying them over into a new version of themselves directly,
+    # or performing large changes before the InnoDB conversion.
+    if (grep($_ eq 'bz_schema', @tables)) {
+        if (!$self->bz_column_info('longdescs', 'comment_id')) {
+            $self->bz_rename_table('longdescs', 'longdescs_old');
+            $self->bz_add_table('longdescs');
+            print "Populating longdescs...\n";
+            $self->do('INSERT INTO longdescs (bug_id, who, bug_when, thetext,
+                                              work_time, isprivate, 
+                                              already_wrapped)
+                            SELECT bug_id, who, bug_when, thetext, work_time, 
+                                   isprivate, already_wrapped
+                              FROM longdescs_old ORDER BY bug_when');
+            $self->bz_drop_table('longdescs_old');
+        }
+
+        if (!$self->bz_table_info('attach_data')) {
+            require Bugzilla::Install::DB;
+            $self->bz_add_table('attach_data');
+            $self->do("ALTER TABLE attach_data AVG_ROW_LENGTH=1000000,
+                       MAX_ROWS=100000, DEFAULT CHARACTER SET utf8");
+            Bugzilla::Install::DB::_copy_attachments_thedata_to_attach_data();
+        }
+    }
+
     # We want to convert tables to InnoDB, but it's possible that they have 
     # fulltext indexes on them, and conversion will fail unless we remove
     # the indexes.
@@ -680,7 +708,9 @@ EOT
     $self->_after_table_status([map($_->{Name}, @$utf_table_status)]);
     my @non_utf8_tables = grep(defined($_->{Collation}) && $_->{Collation} !~ /^utf8/, @$utf_table_status);
     
-    if (Bugzilla->params->{'utf8'} && scalar @non_utf8_tables) {
+    # For GNOME, we always want to do the UTF-8 conversion on upgrade. We'll
+    # turn on the utf8 parameter later.
+    if (Bugzilla->params->{'utf8'} and scalar @non_utf8_tables) {
         print <<EOT;
 
 WARNING: We are about to convert your table storage format to UTF8. This
@@ -721,6 +751,7 @@ EOT
         foreach my $table ($self->bz_table_list_real) {
             my $info_sth = $self->prepare("SHOW FULL COLUMNS FROM $table");
             $info_sth->execute();
+            my (@binary_sql, @utf8_sql);
             while (my $column = $info_sth->fetchrow_hashref) {
                 # Our conversion code doesn't work on enum fields, but they
                 # all go away later in checksetup anyway.
@@ -733,31 +764,13 @@ EOT
                 {
                     my $name = $column->{Field};
 
-                    # The code below doesn't work on a field with a FULLTEXT
-                    # index. So we drop it, which we'd do later anyway.
-                    if ($table eq 'longdescs' && $name eq 'thetext') {
-                        $self->bz_drop_index('longdescs', 
-                                             'longdescs_thetext_idx');
-                    }
-                    if ($table eq 'bugs' && $name eq 'short_desc') {
-                        $self->bz_drop_index('bugs', 'bugs_short_desc_idx');
-                    }
-                    my %ft_indexes;
-                    if ($table eq 'bugs_fulltext') {
-                        %ft_indexes = $self->_bz_real_schema->get_indexes_on_column_abstract(
-                            'bugs_fulltext', $name);
-                        foreach my $index (keys %ft_indexes) {
-                            $self->bz_drop_index('bugs_fulltext', $index);
-                        }
-                    }
+                    print "$table.$name needs to be converted UTF-8...\n";
 
                     my $dropped = $self->bz_drop_related_fks($table, $name);
                     push(@dropped_fks, @$dropped);
 
-                    print "Converting $table.$name to be stored as UTF-8...\n";
-                    my $col_info = 
+                    my $col_info =
                         $self->bz_column_info_real($table, $name);
-
                     # CHANGE COLUMN doesn't take PRIMARY KEY
                     delete $col_info->{PRIMARYKEY};
                     my $sql_def = $self->_bz_schema->get_type_ddl($col_info);
@@ -771,21 +784,38 @@ EOT
                     my $type = $self->_bz_schema->convert_type($col_info->{TYPE});
                     $binary =~ s/(\Q$type\E)/$1 CHARACTER SET binary/;
                     $utf8   =~ s/(\Q$type\E)/$1 CHARACTER SET utf8/;
-                    $self->do("ALTER TABLE $table CHANGE COLUMN $name $name 
-                              $binary");
-                    $self->do("ALTER TABLE $table CHANGE COLUMN $name $name 
-                              $utf8");
+                    push(@binary_sql, "MODIFY COLUMN $name $binary");
+                    push(@utf8_sql, "MODIFY COLUMN $name $utf8");
+                }
+            } # foreach column
 
-                    if ($table eq 'bugs_fulltext') {
-                        foreach my $index (keys %ft_indexes) {
-                            $self->bz_add_index('bugs_fulltext', $index,
-                                                $ft_indexes{$index});
-                        }
+            if (@binary_sql) {
+                my %indexes = %{ $self->bz_table_indexes($table) };
+                foreach my $index_name (keys %indexes) {
+                    my $index = $indexes{$index_name};
+                    if ($index->{TYPE} and $index->{TYPE} eq 'FULLTEXT') {
+                        $self->bz_drop_index($table, $index_name);
+                    }
+                    else {
+                        delete $indexes{$index_name};
                     }
                 }
-            }
 
-            $self->do("ALTER TABLE $table DEFAULT CHARACTER SET utf8");
+                print "Converting the $table table to UTF-8...\n";
+                my $bin = "ALTER TABLE $table " . join(', ', @binary_sql);
+                my $utf = "ALTER TABLE $table " . join(', ', @utf8_sql,
+                          'DEFAULT CHARACTER SET utf8');
+                $self->do($bin);
+                $self->do($utf);
+
+                # Re-add any removed FULLTEXT indexes.
+                foreach my $index (keys %indexes) {
+                    $self->bz_add_index($table, $index, $indexes{$index});
+                }
+            }
+            else {
+                $self->do("ALTER TABLE $table DEFAULT CHARACTER SET utf8");
+            }
 
         } # foreach my $table (@tables)
 
@@ -826,22 +856,40 @@ sub _fix_defaults {
     # a default.
     return unless (defined $assi_default && $assi_default ne '');
 
+    my %fix_columns;
     foreach my $table ($self->_bz_real_schema->get_table_list()) {
         foreach my $column ($self->bz_table_columns($table)) {
-        my $abs_def = $self->bz_column_info($table, $column);
+            my $abs_def = $self->bz_column_info($table, $column);
+            # BLOB/TEXT columns never have defaults
+            next if $abs_def->{TYPE} =~ /BLOB|TEXT/i;
             if (!defined $abs_def->{DEFAULT}) {
                 # Get the exact default from the database without any
                 # "fixing" by bz_column_info_real.
                 my $raw_info = $self->_bz_raw_column_info($table, $column);
                 my $raw_default = $raw_info->{COLUMN_DEF};
                 if (defined $raw_default) {
-                    $self->bz_alter_column_raw($table, $column, $abs_def);
-                    $raw_default = "''" if $raw_default eq '';
-                    print "Removed incorrect DB default: $raw_default\n";
+                    if ($raw_default eq '') {
+                        # Only (var)char columns can have empty strings as 
+                        # defaults, so if we got an empty string for some
+                        # other default type, then it's bogus.
+                        next unless $abs_def->{TYPE} =~ /char/i;
+                        $raw_default = "''";
+                    }
+                    $fix_columns{$table} ||= [];
+                    push(@{ $fix_columns{$table} }, $column);
+                    print "$table.$column has incorrect DB default: $raw_default\n";
                 }
             }
         } # foreach $column
     } # foreach $table
+
+    print "Fixing defaults...\n";
+    foreach my $table (reverse sort keys %fix_columns) {
+        my @alters = map("ALTER COLUMN $_ DROP DEFAULT", 
+                         @{ $fix_columns{$table} });
+        my $sql = "ALTER TABLE $table " . join(',', @alters);
+        $self->do($sql);
+    }
 }
 
 # There is a bug in MySQL 4.1.0 - 4.1.15 that makes certain SELECT

@@ -414,11 +414,12 @@ sub update_table_definitions {
     _fix_attachments_submitter_id_idx();
     _copy_attachments_thedata_to_attach_data();
     _fix_broken_all_closed_series();
-
     # 2005-08-14 bugreport@peshkin.net -- Bug 304583
     # Get rid of leftover DERIVED group permissions
-    use constant GRANT_DERIVED => 1;
-    $dbh->do("DELETE FROM user_group_map WHERE grant_type = " . GRANT_DERIVED);
+    # Note: We used to have "use constant GRANT_DERIVED => 1;"
+    $dbh->do("DELETE FROM user_group_map WHERE grant_type = 1");
+
+    _rederive_regex_groups();
 
     # PUBLIC is a reserved word in Oracle.
     $dbh->bz_rename_column('series', 'public', 'is_public');
@@ -518,6 +519,7 @@ sub update_table_definitions {
 
     # 2007-05-17 LpSolit@gmail.com - Bug 344965
     _initialize_workflow($old_params);
+    _create_duplicate_or_move_status_transitions();
 
     # 2007-08-08 LpSolit@gmail.com - Bug 332149
     $dbh->bz_add_column('groups', 'icon_url', {TYPE => 'TINYTEXT'});
@@ -2232,17 +2234,9 @@ sub _clone_email_event {
     my ($source, $target) = @_;
     my $dbh = Bugzilla->dbh;
 
-    my $sth1 = $dbh->prepare("SELECT user_id, relationship FROM email_setting
-                              WHERE event = $source");
-    my $sth2 = $dbh->prepare("INSERT into email_setting " .
-                             "(user_id, relationship, event) VALUES (" .
-                             "?, ?, $target)");
-
-    $sth1->execute();
-
-    while (my ($userid, $relationship) = $sth1->fetchrow_array()) {
-        $sth2->execute($userid, $relationship);
-    }
+    $dbh->do("INSERT INTO email_setting (user_id, relationship, event)
+                   SELECT user_id, relationship, $target FROM email_setting
+                    WHERE event = $source");
 }
 
 sub _migrate_email_prefs_to_new_table {
@@ -2358,15 +2352,15 @@ sub _initialize_dependency_tree_changes_email_pref {
 
     foreach my $desc (keys %events) {
         my $event = $events{$desc};
-        my $sth = $dbh->prepare("SELECT COUNT(*) FROM email_setting 
-                                  WHERE event = $event");
-        $sth->execute();
-        if (!($sth->fetchrow_arrayref()->[0])) {
-            # No settings in the table yet, so we assume that this is the
-            # first time it's being set.
-            print "Initializing \"$desc\" email_setting ...\n";
-            _clone_email_event(EVT_OTHER, $event);
-        }
+        my $has_events = $dbh->selectrow_array(
+           'SELECT 1 FROM email_setting WHERE event = ? ' 
+           . $dbh->sql_limit(1), undef, $event);
+        next if $has_events;
+
+        # No settings in the table yet, so we assume that this is the
+        # first time it's being set.
+        print "Initializing \"$desc\" email_setting ...\n";
+        _clone_email_event(EVT_OTHER, $event);
     }
 }
 
@@ -2625,6 +2619,54 @@ EOT
     } # if (@$broken_nonopen_series)
 }
 
+# This needs to happen at two times: when we upgrade from 2.16 (thus creating 
+# user_group_map), and when we kill derived gruops in the DB.
+sub _rederive_regex_groups {
+    my $dbh = Bugzilla->dbh;
+
+    my $regex_groups_exist = $dbh->selectrow_array(
+        "SELECT 1 FROM groups WHERE userregexp = '' " . $dbh->sql_limit(1));
+    return if !$regex_groups_exist;
+
+    my $regex_derivations = $dbh->selectrow_array(
+        'SELECT 1 FROM user_group_map WHERE grant_type = ' . GRANT_REGEXP 
+        . ' ' . $dbh->sql_limit(1));
+    return if $regex_derivations;
+
+    print "Deriving regex group memberships...\n";
+
+    # Re-evaluate all regexps, to keep them up-to-date.
+    my $sth = $dbh->prepare(
+        "SELECT profiles.userid, profiles.login_name, groups.id, 
+                groups.userregexp, user_group_map.group_id
+           FROM (profiles CROSS JOIN groups)
+                LEFT JOIN user_group_map
+                       ON user_group_map.user_id = profiles.userid
+                          AND user_group_map.group_id = groups.id
+                          AND user_group_map.grant_type = ?
+          WHERE userregexp != '' OR user_group_map.group_id IS NOT NULL");
+
+    my $sth_add = $dbh->prepare(
+        "INSERT INTO user_group_map (user_id, group_id, isbless, grant_type)
+              VALUES (?, ?, 0, " . GRANT_REGEXP . ")");
+
+    my $sth_del = $dbh->prepare(
+        "DELETE FROM user_group_map
+          WHERE user_id  = ? AND group_id = ? AND isbless = 0 
+                AND grant_type = " . GRANT_REGEXP);
+
+    $sth->execute(GRANT_REGEXP);
+    while (my ($uid, $login, $gid, $rexp, $present) = 
+               $sth->fetchrow_array()) 
+    {
+        if ($login =~ m/$rexp/i) {
+            $sth_add->execute($uid, $gid) unless $present;
+        } else {
+            $sth_del->execute($uid, $gid) if $present;
+        }
+    }
+}
+
 sub _clean_control_characters_from_short_desc {
     my $dbh = Bugzilla->dbh;
 
@@ -2865,10 +2907,12 @@ sub _initialize_workflow {
     $dbh->bz_add_column('bug_status', 'is_open',
                         {TYPE => 'BOOLEAN', NOTNULL => 1, DEFAULT => 'TRUE'});
 
-    # Till now, bug statuses were not customizable. Nevertheless, local
-    # changes are possible and so we will try to respect these changes.
-    # This means: get the status of bugs having a resolution different from ''
-    # and mark these statuses as 'closed', even if some of these statuses are
+    # Populate the status_workflow table. We do nothing if the table already
+    # has entries. If all bug status transitions have been deleted, the
+    # workflow will be restored to its default schema.
+    my $count = $dbh->selectrow_array('SELECT COUNT(*) FROM status_workflow');
+    return if $count;
+
     # expected to be open statuses. Bug statuses we have no information about
     # are left as 'open'.
     my @closed_statuses =
@@ -2894,67 +2938,64 @@ sub _initialize_workflow {
                   join(', ', @closed_statuses) . ')');
     }
 
-    # Populate the status_workflow table. We do nothing if the table already
-    # has entries. If all bug status transitions have been deleted, the
-    # workflow will be restored to its default schema.
-    my $count = $dbh->selectrow_array('SELECT COUNT(*) FROM status_workflow');
+    # Make sure the variables below are defined as
+    # status_workflow.require_comment cannot be NULL.
+    my $create = $old_params->{'commentoncreate'} || 0;
+    my $confirm = $old_params->{'commentonconfirm'} || 0;
+    my $accept = $old_params->{'commentonaccept'} || 0;
+    my $resolve = $old_params->{'commentonresolve'} || 0;
+    my $verify = $old_params->{'commentonverify'} || 0;
+    my $close = $old_params->{'commentonclose'} || 0;
+    my $reopen = $old_params->{'commentonreopen'} || 0;
+    # This was till recently the only way to get back to NEW for
+    # confirmed bugs, so we use this parameter here.
+    my $reassign = $old_params->{'commentonreassign'} || 0;
 
-    if (!$count) {
-        # Make sure the variables below are defined as
-        # status_workflow.require_comment cannot be NULL.
-        my $create = $old_params->{'commentoncreate'} || 0;
-        my $confirm = $old_params->{'commentonconfirm'} || 0;
-        my $accept = $old_params->{'commentonaccept'} || 0;
-        my $resolve = $old_params->{'commentonresolve'} || 0;
-        my $verify = $old_params->{'commentonverify'} || 0;
-        my $close = $old_params->{'commentonclose'} || 0;
-        my $reopen = $old_params->{'commentonreopen'} || 0;
-        # This was till recently the only way to get back to NEW for
-        # confirmed bugs, so we use this parameter here.
-        my $reassign = $old_params->{'commentonreassign'} || 0;
+    # This is the default workflow.
+    my @workflow = ([undef, 'UNCONFIRMED', $create],
+                    [undef, 'NEW', $create],
+                    [undef, 'ASSIGNED', $create],
+                    ['UNCONFIRMED', 'NEW', $confirm],
+                    ['UNCONFIRMED', 'ASSIGNED', $accept],
+                    ['UNCONFIRMED', 'RESOLVED', $resolve],
+                    ['NEW', 'ASSIGNED', $accept],
+                    ['NEW', 'RESOLVED', $resolve],
+                    ['ASSIGNED', 'NEW', $reassign],
+                    ['ASSIGNED', 'RESOLVED', $resolve],
+                    ['REOPENED', 'NEW', $reassign],
+                    ['REOPENED', 'ASSIGNED', $accept],
+                    ['REOPENED', 'RESOLVED', $resolve],
+                    ['RESOLVED', 'UNCONFIRMED', $reopen],
+                    ['RESOLVED', 'REOPENED', $reopen],
+                    ['RESOLVED', 'VERIFIED', $verify],
+                    ['RESOLVED', 'CLOSED', $close],
+                    ['VERIFIED', 'UNCONFIRMED', $reopen],
+                    ['VERIFIED', 'REOPENED', $reopen],
+                    ['VERIFIED', 'CLOSED', $close],
+                    ['CLOSED', 'UNCONFIRMED', $reopen],
+                    ['CLOSED', 'REOPENED', $reopen]);
 
-        # This is the default workflow.
-        my @workflow = ([undef, 'UNCONFIRMED', $create],
-                        [undef, 'NEW', $create],
-                        [undef, 'ASSIGNED', $create],
-                        ['UNCONFIRMED', 'NEW', $confirm],
-                        ['UNCONFIRMED', 'ASSIGNED', $accept],
-                        ['UNCONFIRMED', 'RESOLVED', $resolve],
-                        ['NEW', 'ASSIGNED', $accept],
-                        ['NEW', 'RESOLVED', $resolve],
-                        ['ASSIGNED', 'NEW', $reassign],
-                        ['ASSIGNED', 'RESOLVED', $resolve],
-                        ['REOPENED', 'NEW', $reassign],
-                        ['REOPENED', 'ASSIGNED', $accept],
-                        ['REOPENED', 'RESOLVED', $resolve],
-                        ['RESOLVED', 'UNCONFIRMED', $reopen],
-                        ['RESOLVED', 'REOPENED', $reopen],
-                        ['RESOLVED', 'VERIFIED', $verify],
-                        ['RESOLVED', 'CLOSED', $close],
-                        ['VERIFIED', 'UNCONFIRMED', $reopen],
-                        ['VERIFIED', 'REOPENED', $reopen],
-                        ['VERIFIED', 'CLOSED', $close],
-                        ['CLOSED', 'UNCONFIRMED', $reopen],
-                        ['CLOSED', 'REOPENED', $reopen]);
+    print "Now filling the 'status_workflow' table with valid bug status transitions...\n";
+    my $sth_select = $dbh->prepare('SELECT id FROM bug_status WHERE value = ?');
+    my $sth = $dbh->prepare('INSERT INTO status_workflow (old_status, new_status,
+                                         require_comment) VALUES (?, ?, ?)');
 
-        print "Now filling the 'status_workflow' table with valid bug status transitions...\n";
-        my $sth_select = $dbh->prepare('SELECT id FROM bug_status WHERE value = ?');
-        my $sth = $dbh->prepare('INSERT INTO status_workflow (old_status, new_status,
-                                             require_comment) VALUES (?, ?, ?)');
+    foreach my $transition (@workflow) {
+        my ($from, $to);
+        # If it's an initial state, there is no "old" value.
+        $from = $dbh->selectrow_array($sth_select, undef, $transition->[0])
+          if $transition->[0];
+        $to = $dbh->selectrow_array($sth_select, undef, $transition->[1]);
+        # If one of the bug statuses doesn't exist, the transition is invalid.
+        next if (($transition->[0] && !$from) || !$to);
 
-        foreach my $transition (@workflow) {
-            my ($from, $to);
-            # If it's an initial state, there is no "old" value.
-            $from = $dbh->selectrow_array($sth_select, undef, $transition->[0])
-              if $transition->[0];
-            $to = $dbh->selectrow_array($sth_select, undef, $transition->[1]);
-            # If one of the bug statuses doesn't exist, the transition is invalid.
-            next if (($transition->[0] && !$from) || !$to);
-
-            $sth->execute($from, $to, $transition->[2] ? 1 : 0);
-        }
+        $sth->execute($from, $to, $transition->[2] ? 1 : 0);
     }
+}
 
+sub _create_duplicate_or_move_status_transitions {
+    my $dbh = Bugzilla->dbh;
+    
     # Make sure the bug status used by the 'duplicate_or_move_bug_status'
     # parameter has all the required transitions set.
     my $dup_status = Bugzilla->params->{'duplicate_or_move_bug_status'};
@@ -3109,6 +3150,10 @@ sub _populate_bugs_fulltext {
         if (UNIVERSAL::can($dbh, 'sql_group_concat')) {
             print "Populating bugs_fulltext...";
             print " (this can take a long time.)\n";
+
+            # As recommended by Monty Widenius for GNOME's upgrade.
+            $dbh->do('SET SESSION myisam_sort_buffer_size = 3221225472');
+
             $dbh->do(
                 q{INSERT INTO bugs_fulltext (bug_id, short_desc, comments, 
                                              comments_noprivate)
