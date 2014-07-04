@@ -262,7 +262,7 @@ use constant MAILTO_GROUP => 1;
 
 # The default list of columns for buglist.cgi
 use constant DEFAULT_COLUMN_LIST => (
-    "bug_severity", "priority", "op_sys","assigned_to",
+    "bug_severity", "priority", "op_sys", "product",
     "bug_status", "resolution", "short_desc"
 );
 
@@ -277,7 +277,7 @@ use constant LIST_OF_BUGS => 1;
 # The column length for displayed (and wrapped) bug comments.
 use constant COMMENT_COLS => 80;
 # Used in _check_comment(). Gives the max length allowed for a comment.
-use constant MAX_COMMENT_LENGTH => 65535;
+use constant MAX_COMMENT_LENGTH => 131072;
 
 # The type of bug comments.
 use constant CMT_NORMAL => 0;
