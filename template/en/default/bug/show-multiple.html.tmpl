@@ -159,20 +159,6 @@
     [% PROCESS row cell = "rep_platform" %]
     [% PROCESS row cell = "op_sys"  %]
 
-    [% IF bug.bug_file_loc %]
-      <tr>
-        <th>[% field_descs.bug_file_loc FILTER html %]:</th>
-        <td colspan="3">
-          [% IF is_safe_url(bug.bug_file_loc) %]
-            <a href="[% bug.bug_file_loc FILTER html %]">
-                     [% bug.bug_file_loc FILTER html %]</a>
-          [% ELSE %]
-            [% bug.bug_file_loc FILTER html %]
-          [% END %]
-        </td>
-      </tr>
-    [% END %]
-
     [% IF Param("usestatuswhiteboard") %]
       [% PROCESS row cell = "status_whiteboard" fullrow = 1 %]
     [% END %]
