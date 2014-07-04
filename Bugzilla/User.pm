@@ -1536,10 +1536,9 @@ sub is_insider {
 sub is_global_watcher {
     my $self = shift;
 
-    if (!defined $self->{'is_global_watcher'}) {
-        my @watchers = split(/[,\s]+/, Bugzilla->params->{'globalwatchers'});
-        $self->{'is_global_watcher'} = scalar(grep { $_ eq $self->login } @watchers) ? 1 : 0;
-    }
+    my @watchers = split(/[,\s]+/, Bugzilla->params->{'globalwatchers'});
+    $self->{'is_global_watcher'} = 
+        scalar(grep { $_ eq $self->login } @watchers) ? 1 : 0;
     return  $self->{'is_global_watcher'};
 }
 

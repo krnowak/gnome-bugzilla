@@ -27,6 +27,7 @@ use strict;
 use lib qw(. lib);
 
 use Bugzilla;
+use Bugzilla::Config qw(:admin);
 use Bugzilla::Constants;
 use Bugzilla::Search;
 use Bugzilla::Util;
@@ -300,6 +301,16 @@ sub SaveEmail {
     }
 
     $dbh->bz_commit_transaction();
+
+    my @watchers = split(/[,\s]+/, Bugzilla->params->{'globalwatchers'});
+    if ($cgi->param('globalwatcher') && !$user->is_global_watcher) {
+        push(@watchers, $user->login);
+    }
+    elsif (!$cgi->param('globalwatcher') && $user->is_global_watcher) {
+        @watchers = grep { $_ ne $user->login } @watchers;
+    }
+    SetParam('globalwatchers', join(',', @watchers));
+    write_params();
 
     ###########################################################################
     # User watching
