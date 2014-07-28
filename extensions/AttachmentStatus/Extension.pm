@@ -34,6 +34,7 @@ sub install_update_db {
         } elsif (updating) {
             update_gnome_attachment_status;
         } else {
+            print "install_update_db: we are already updated\n";
             # Do nothing, we are already updated.
         }
     }

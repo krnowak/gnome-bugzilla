@@ -30,9 +30,14 @@ sub updating {
 
     return undef unless (any {$_ eq 'status'} @columns);
 
+    print "updating: status column exists\n";
     my $info = $dbh->bz_column_info('attachment_status', 'id');
 
-    defined $info;
+    return undef unless defined $info;
+
+    print "updating: attachment status table exists\n";
+
+    1;
 }
 
 # Checks whether we have a vanilla instance.
@@ -42,11 +47,14 @@ sub fresh {
     my @columns = $schema->get_table_columns('attachment');
 
     return undef if (any {$_ eq 'status'} @columns);
+    print "fresh: no status column\n";
     return undef if (any {$_ eq 'gnome_attachment_status'} @columns);
+    print "fresh: no gnome attachment status column\n";
 
     my $info = $dbh->bz_column_info('attachment_status', 'id');
 
     return undef if defined ($info);
+    print "fresh: no attachment status table\n";
 
     $info = $dbh->bz_column_info('gnome_attachment_status', 'id');
 
@@ -55,8 +63,10 @@ sub fresh {
     return undef if not defined $info;
 
     my $value = $dbh->selectrow_arrayref('SELECT COUNT(*) FROM gnome_attachment_status');
+    return undef unless defined $value and $value->[0] == 0;
 
-    defined $value and $value->[0] == 0;
+    print "fresh: attachment status table empty\n";
+    1;
 }
 
 sub get_definition {
