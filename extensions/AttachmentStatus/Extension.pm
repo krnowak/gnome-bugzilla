@@ -130,7 +130,7 @@ sub db_schema_abstract_schema {
 #}
 #
 sub enabled {
-    undef;
+    1;
 }
 
 __PACKAGE__->NAME;
