@@ -28,16 +28,13 @@ my $bz_a = 'Bugzilla::Attachment';
 sub install_update_db {
     my ($class, $args) = @_;
 
-    print "install_update_db: $class\n";
-    if ($class->isa($bz_a)) {
-        if (fresh) {
-            install_gnome_attachment_status;
-        } elsif (updating) {
-            update_gnome_attachment_status;
-        } else {
-            print "install_update_db: we are already updated\n";
-            # Do nothing, we are already updated.
-        }
+    if (fresh) {
+        install_gnome_attachment_status;
+    } elsif (updating) {
+        update_gnome_attachment_status;
+    } else {
+        print "install_update_db: we are already updated\n";
+        # Do nothing, we are already updated.
     }
 }
 
