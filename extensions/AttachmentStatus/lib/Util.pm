@@ -50,7 +50,13 @@ sub fresh {
 
     $info = $dbh->bz_column_info('gnome_attachment_status', 'id');
 
-    not defined $info;
+    # gnome attachment status table has to exist now - it was created
+    # in db_schema_abstract_schema hook.
+    return undef if not defined $info;
+
+    my $value = $dbh->selectrow_arrayref('SELECT COUNT(*) FROM gnome_attachment_status');
+
+    defined $value and $value->[0] == 0;
 }
 
 sub get_definition {
