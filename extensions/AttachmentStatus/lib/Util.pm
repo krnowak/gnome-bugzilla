@@ -25,7 +25,7 @@ our @EXPORT = qw(
 # Checks whether we are updating from old attachment status.
 sub updating {
     my $dbh = Bugzilla->dbh;
-    my $column = $dbh->bz_column_info('attachment', 'status');
+    my $column = $dbh->bz_column_info('attachments', 'status');
 
     return undef unless (defined $column);
     print "updating: status column exists\n";
@@ -40,12 +40,12 @@ sub updating {
 # Checks whether we have a vanilla instance.
 sub fresh {
     my $dbh = Bugzilla->dbh;
-    my $column = $dbh->bz_column_info('attachment', 'status');
+    my $column = $dbh->bz_column_info('attachments', 'status');
 
     return undef if (defined $column);
     print "fresh: no status column\n";
 
-    $column = $dbh->bz_column_info('attachment', 'gnome_attachment_status');
+    $column = $dbh->bz_column_info('attachments', 'gnome_attachment_status');
     return undef if (defined $column);
     print "fresh: no gnome attachment status column\n";
 
@@ -92,7 +92,7 @@ sub install_gnome_attachment_status {
     }
 
     # add column
-    $dbh->bz_add_column('attachment', 'gnome_attachment_status', get_definition, 'none');
+    $dbh->bz_add_column('attachments', 'gnome_attachment_status', get_definition, 'none');
 
     # populate fielddefs table for attachment status
     my $field_params = {
@@ -108,7 +108,7 @@ sub update_gnome_attachment_status {
     my $temp_definition = {TYPE => 'varchar(64)',
                            NOTNULL => 1};
 
-    $dbh->bz_alter_column('attachment', 'status', $temp_definition, 'none');
+    $dbh->bz_alter_column('attachments', 'status', $temp_definition, 'none');
 
     my $sth1 = $dbh->prepare('UPDATE attachment SET status = ? WHERE status = ?');
     # TODO: Make sure if this table really contains value column.
@@ -123,9 +123,9 @@ sub update_gnome_attachment_status {
         $sth1->execute($new, $old);
         $sth2->execute($new, $old);
     }
-    $dbh->bz_rename_column('attachment', 'status', 'gnome_attachment_status');
+    $dbh->bz_rename_column('attachments', 'status', 'gnome_attachment_status');
     $dbh->bz_rename_table('attachment_status', 'gnome_attachment_status');
-    $dbh->bz_alter_column('attachment', 'status', get_definition, 'none');
+    $dbh->bz_alter_column('attachments', 'status', get_definition, 'none');
 }
 
 1;
