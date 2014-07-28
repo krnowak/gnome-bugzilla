@@ -58,7 +58,7 @@ sub db_schema_abstract_schema {
                                     DEFAULT => 'TRUE'},
             visibility_value_id => {TYPE => 'INT2'},
             description         => {TYPE => 'varchar(128)', NOTNULL => 1,
-                                    DEFAULT => ''}
+                                    DEFAULT => '""'}
         ],
         INDEXES => [
             resolution_value_idx   => {FIELDS => ['value'],
