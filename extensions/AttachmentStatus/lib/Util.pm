@@ -75,6 +75,9 @@ sub get_definition {
 
 sub install_gnome_attachment_status {
     my $dbh = Bugzilla->dbh;
+
+    $dbh->bz_start_transaction;
+
     # gnome attachment status table is created in db_schema_abstract_schema hook
     # populate gnome_attachment_status enum table
     my $insert = $dbh->prepare("INSERT INTO gnome_attachment_status (value, sortkey, description) VALUES (?,?,?)");
@@ -101,6 +104,7 @@ sub install_gnome_attachment_status {
         type => Bugzilla::Constants::FIELD_TYPE_SINGLE_SELECT
     };
     Bugzilla::Field->create($field_params);
+    $dbh->bz_commit_transaction;
 }
 
 sub update_gnome_attachment_status {
@@ -108,6 +112,7 @@ sub update_gnome_attachment_status {
     my $temp_definition = {TYPE => 'varchar(64)',
                            NOTNULL => 1};
 
+    $dbh->bz_start_transaction;
     $dbh->bz_alter_column('attachments', 'status', $temp_definition, 'none');
 
     my $sth1 = $dbh->prepare('UPDATE attachment SET status = ? WHERE status = ?');
@@ -126,6 +131,8 @@ sub update_gnome_attachment_status {
     $dbh->bz_rename_column('attachments', 'status', 'gnome_attachment_status');
     $dbh->bz_rename_table('attachment_status', 'gnome_attachment_status');
     $dbh->bz_alter_column('attachments', 'status', get_definition, 'none');
+
+    $dbh->bz_commit_transaction;
 }
 
 1;
