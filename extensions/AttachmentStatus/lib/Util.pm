@@ -25,16 +25,13 @@ our @EXPORT = qw(
 # Checks whether we are updating from old attachment status.
 sub updating {
     my $dbh = Bugzilla->dbh;
-    my $schema = $dbh->_bz_schema();
-    my @columns = $schema->get_table_columns('attachment');
+    my $column = $dbh->bz_column_info('attachment', 'status');
 
-    return undef unless (any {$_ eq 'status'} @columns);
-
+    return undef unless (defined $column);
     print "updating: status column exists\n";
-    my $info = $dbh->bz_column_info('attachment_status', 'id');
 
+    $column = $dbh->bz_column_info('attachment_status', 'id');
     return undef unless defined $info;
-
     print "updating: attachment status table exists\n";
 
     1;
@@ -43,21 +40,20 @@ sub updating {
 # Checks whether we have a vanilla instance.
 sub fresh {
     my $dbh = Bugzilla->dbh;
-    my $schema = $dbh->_bz_schema();
-    my @columns = $schema->get_table_columns('attachment');
+    my $column = $dbh->bz_column_info('attachment', 'status');
 
-    return undef if (any {$_ eq 'status'} @columns);
+    return undef if (defined $column);
     print "fresh: no status column\n";
-    return undef if (any {$_ eq 'gnome_attachment_status'} @columns);
+
+    $column = $dbh->bz_column_info('attachment', 'gnome_attachment_status');
+    return undef if (defined $column);
     print "fresh: no gnome attachment status column\n";
 
-    my $info = $dbh->bz_column_info('attachment_status', 'id');
-
-    return undef if defined ($info);
+    $column = $dbh->bz_column_info('attachment_status', 'id');
+    return undef if defined ($column);
     print "fresh: no attachment status table\n";
 
-    $info = $dbh->bz_column_info('gnome_attachment_status', 'id');
-
+    $column = $dbh->bz_column_info('gnome_attachment_status', 'id');
     # gnome attachment status table has to exist now - it was created
     # in db_schema_abstract_schema hook.
     return undef if not defined $info;
