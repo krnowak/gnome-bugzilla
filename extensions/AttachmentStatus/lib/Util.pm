@@ -31,7 +31,7 @@ sub updating {
     print "updating: status column exists\n";
 
     $column = $dbh->bz_column_info('attachment_status', 'id');
-    return undef unless defined $info;
+    return undef unless defined $column;
     print "updating: attachment status table exists\n";
 
     1;
@@ -56,7 +56,7 @@ sub fresh {
     $column = $dbh->bz_column_info('gnome_attachment_status', 'id');
     # gnome attachment status table has to exist now - it was created
     # in db_schema_abstract_schema hook.
-    return undef if not defined $info;
+    return undef if not defined $column;
 
     my $value = $dbh->selectrow_arrayref('SELECT COUNT(*) FROM gnome_attachment_status');
     return undef unless defined $value and $value->[0] == 0;
