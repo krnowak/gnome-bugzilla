@@ -12,8 +12,9 @@ use strict;
 use warnings;
 use base qw(Bugzilla::Extension);
 
-# This code for this is in ./extensions/AttachmentStatus/lib/Util.pm
+# The code for this is in ./extensions/AttachmentStatus/lib/*.pm
 use Bugzilla::Extension::AttachmentStatus::Util;
+use Bugzilla::Extension::AttachmentStatus::Ops;
 
 use List::MoreUtils qw(any);
 
