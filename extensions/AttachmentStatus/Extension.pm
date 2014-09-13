@@ -56,7 +56,7 @@ sub db_schema_abstract_schema {
             isactive            => {TYPE => 'BOOLEAN', NOTNULL => 1,
                                     DEFAULT => 'TRUE'},
             visibility_value_id => {TYPE => 'INT2'},
-            description         => {TYPE => 'varchar(128)', NOTNULL => 1,
+            description         => {TYPE => 'MEDIUMTEXT', NOTNULL => 1,
                                     DEFAULT => '"(no description available)"'}
         ],
         INDEXES => [
