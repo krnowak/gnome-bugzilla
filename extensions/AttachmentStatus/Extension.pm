@@ -9,6 +9,7 @@
 
 package Bugzilla::Extension::AttachmentStatus;
 use strict;
+use warnings;
 use base qw(Bugzilla::Extension);
 
 # This code for this is in ./extensions/AttachmentStatus/lib/Util.pm

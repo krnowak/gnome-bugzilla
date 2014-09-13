@@ -9,6 +9,7 @@
 
 package Bugzilla::Extension::AttachmentStatus::Util;
 use strict;
+use warnings;
 use base qw(Exporter);
 use Bugzilla::Constants;
 use Data::Dumper;
@@ -183,13 +184,13 @@ sub prepare_msg {
                 $dumper_used = 0;
                 $s =~ s/^,?\s*//;
             }
-            raw_msg .= $_;
+            $raw_msg .= $_;
         } else {
-            unless (raw_msg =~ /\n$/) {
-                raw_msg =~ s/\s+$//;
-                raw_msg .= "\n";
+            unless ($raw_msg =~ /\n$/) {
+                $raw_msg =~ s/\s+$//;
+                $raw_msg .= "\n";
             }
-            raw_msg .= Dumper($_);
+            $raw_msg .= Dumper($_);
             $dumper_used = 1;
         }
     }
