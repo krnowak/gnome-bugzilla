@@ -17,6 +17,7 @@ our @EXPORT = qw(
     update_gnome_attachment_status
     g_a_s
     bz_a
+    validate_status
 );
 
 # This file can be loaded by your extension via
@@ -139,6 +140,19 @@ sub update_gnome_attachment_status {
     # $dbh->bz_alter_column('attachments', 'status', get_definition, 'none');
 
     $dbh->bz_commit_transaction;
+}
+
+# Does the attachment status validation
+sub validate_status {
+    my ($class, $value) = @_;
+
+    if ($class->isa(bz_a())) {
+        my $field = Bugzilla::Field::Choice->type(g_a_s())->check($value);
+
+        return $field->name;
+    }
+
+    return $value;
 }
 
 1;

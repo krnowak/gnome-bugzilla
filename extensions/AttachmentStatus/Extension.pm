@@ -83,18 +83,6 @@ sub object_update_columns {
     }
 }
 
-sub validate_status {
-    my ($class, $value) = @_;
-
-    if ($class->isa(bz_a())) {
-        my $field = Bugzilla::Field::Choice->type(g_a_s())->check($value);
-
-        return $field->name;
-    }
-
-    return $value;
-}
-
 sub object_validators {
     my ($class, $validators) = @_;
 
