@@ -23,6 +23,7 @@ our @EXPORT = qw(
     bz_a
     validate_status
     as_dbg
+    a_g_a_s
 );
 
 # This file can be loaded by your extension via
@@ -36,6 +37,10 @@ sub g_a_s {
 
 sub bz_a {
     'Bugzilla::Attachment'
+}
+
+sub a_g_a_s {
+    'attachments.' . g_a_s();
 }
 
 # Checks whether we are updating from old attachment status.
@@ -123,7 +128,7 @@ sub install_gnome_attachment_status {
 
     # populate fielddefs table for attachment status
     my $field_params = {
-        name => 'attachments.' . g_a_s(),
+        name => a_g_a_s(),
         description => 'Attachment status',
         type => Bugzilla::Constants::FIELD_TYPE_SINGLE_SELECT
     };
@@ -154,7 +159,7 @@ sub validate_status {
     as_dbg('validate status, class (or object): ', $class_or_object, ', value: ', $value, ', field: ', $field);
     if ($class_or_object->isa(bz_a()) && $field eq g_a_s()) {
         as_dbg('    inside ', bz_a(), ' for field: ', $field);
-        my $validated_field = Bugzilla::Field::Choice->type(g_a_s())->check($value);
+        my $validated_field = Bugzilla::Field::Choice->type(a_g_a_s())->check($value);
         as_dbg('result: ', $validated_field);
 
         return $validated_field->name;
