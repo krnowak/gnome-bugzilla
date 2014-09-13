@@ -82,13 +82,13 @@ sub install_gnome_attachment_status {
     # populate gnome_attachment_status enum table
     my $insert = $dbh->prepare("INSERT INTO gnome_attachment_status (value, sortkey, description) VALUES (?,?,?)");
     my $sortorder = 0;
-    my @pairs = (['none', 'Not reviewed or not a patch'],
-                 ['accepted - commit now', 'Reviewed and accepted, submitter can commit it immediately'],
-                 ['needs work', 'Reviewed, could be accepted provided that submitter does more work'],
-                 ['accepted - commit after freeze', 'Reviewed and accepted, submitter can commit it after freeze is lifted'],
-                 ['commited', 'Patch is commited'],
-                 ['rejected', 'General idea of the patch is rejected'],
-                 ['reviewed', 'Patch is reviewed']);
+    my @pairs = (['none', 'an unreviewed patch'],
+                 ['accepted-commit_now', 'The maintainer has given commit permission'],
+                 ['needs-work', 'The patch needs work'],
+                 ['accepted-commit_after_freeze', 'This patch is acceptable, but can\'t be committed until after the relevant freeze (string, etc.) is lifted.'],
+                 ['commited', 'This patch has already been committed but the bug remains open for other reasons'],
+                 ['rejected', 'The patch provides a change that is just not wanted, or the patch can\'t be fixed to be correct without rewriting.  Maintainers should always explain their reasons whenever marking a patch as rejected.'],
+                 ['reviewed', 'None of the other states made sense or are quite correct, but the other comments in the bug explain the status of the patch and the patch should be considered to have been reviewed.  If the submitter doesn\'t feel the comments on the patch are clear enough, they can unset this state']);
     foreach my $pair (@pairs) {
         $sortorder += 100;
         $insert->execute($pair->[0], $sortorder, $pair->[1]);
@@ -114,20 +114,6 @@ sub update_gnome_attachment_status {
 
     $dbh->bz_start_transaction;
     $dbh->bz_alter_column('attachments', 'status', $temp_definition, 'none');
-
-    my $sth1 = $dbh->prepare('UPDATE attachment SET status = ? WHERE status = ?');
-    # TODO: Make sure if this table really contains value column.
-    my $sth2 = $dbh->prepare('UPDATE attachment_status SET value = ? WHERE value = ?');
-
-    foreach my $name_pair (['accepted-commit_now', 'accepted - commit now'],
-                           ['needs-work'], ['needs work'],
-                           ['accepted-commit_after_freeze', 'accepted - commit after freeze']) {
-        my $old = $name_pair->[0];
-        my $new = $name_pair->[1];
-
-        $sth1->execute($new, $old);
-        $sth2->execute($new, $old);
-    }
     $dbh->bz_rename_column('attachments', 'status', 'gnome_attachment_status');
     $dbh->bz_rename_table('attachment_status', 'gnome_attachment_status');
     $dbh->bz_alter_column('attachments', 'status', get_definition, 'none');
