@@ -208,7 +208,7 @@ sub as_dbg {
     my $mesg = prepare_msg(@_);
     if (-w "$datadir/errorlog") {
         open(ERRORLOGFID, ">>$datadir/errorlog");
-        print ERRORLOGFID "GNOME attachment status: $mesg\n";
+        print ERRORLOGFID "GNOME attachment status: $mesg";
         close ERRORLOGFID;
     } else {
         die $mesg;
