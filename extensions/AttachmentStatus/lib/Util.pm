@@ -69,10 +69,16 @@ sub fresh {
 
 sub get_definition {
     {TYPE => 'varchar(64)',
-     NOTNULL => 1,
-     REFERENCES => {TABLE => 'gnome_attachment_status',
-                    COLUMN => 'value',
-                    DELETE => 'CASCADE'}};
+     NOTNULL => 1};
+# TODO: Looking at bugs.resolution I suppose that
+# attachments.(gnome_attachment_)status column has no REFERENCES. I'll
+# be sure once I get the attachments table structure. Also, I'm
+# getting some errors during checksetup because of it.
+#    {TYPE => 'varchar(64)',
+#     NOTNULL => 1,
+#     REFERENCES => {TABLE => 'gnome_attachment_status',
+#                    COLUMN => 'value',
+#                    DELETE => 'CASCADE'}};
 }
 
 sub install_gnome_attachment_status {
@@ -111,14 +117,16 @@ sub install_gnome_attachment_status {
 
 sub update_gnome_attachment_status {
     my $dbh = Bugzilla->dbh;
-    my $temp_definition = {TYPE => 'varchar(64)',
-                           NOTNULL => 1};
+    # TODO: Probably not needed, see comment in get_definition
+    # my $temp_definition = {TYPE => 'varchar(64)',
+    #                        NOTNULL => 1};
 
+    # TODO: recreate indices!
     $dbh->bz_start_transaction;
-    $dbh->bz_alter_column('attachments', 'status', $temp_definition, 'none');
+    # $dbh->bz_alter_column('attachments', 'status', $temp_definition, 'none');
     $dbh->bz_rename_column('attachments', 'status', 'gnome_attachment_status');
     $dbh->bz_rename_table('attachment_status', 'gnome_attachment_status');
-    $dbh->bz_alter_column('attachments', 'status', get_definition, 'none');
+    # $dbh->bz_alter_column('attachments', 'status', get_definition, 'none');
 
     $dbh->bz_commit_transaction;
 }
