@@ -56,8 +56,7 @@ sub db_schema_abstract_schema {
             isactive            => {TYPE => 'BOOLEAN', NOTNULL => 1,
                                     DEFAULT => 'TRUE'},
             visibility_value_id => {TYPE => 'INT2'},
-            description         => {TYPE => 'MEDIUMTEXT', NOTNULL => 1,
-                                    DEFAULT => '"(no description available)"'}
+            description         => {TYPE => 'MEDIUMTEXT', NOTNULL => 1}
         ],
         INDEXES => [
             gnome_attachment_status_value_idx   => {FIELDS => ['value'],
