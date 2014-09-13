@@ -73,6 +73,8 @@ sub object_columms {
     if ($args->{'class'}->isa(bz_a())) {
         as_dbg('    inside ', bz_a());
         push (@{$args->{'columns'}}, g_a_s());
+    } else {
+        as_dbg('    ', $args->{'class'}, ' is not a ', bz_a());
     }
 }
 
@@ -83,6 +85,8 @@ sub object_update_columns {
     if ($args->{'object'}->isa(bz_a())) {
         as_dbg('    inside ', bz_a());
         push (@{$args->{'columns'}}, g_a_s());
+    } else {
+        as_dbg('    ', $args->{'object'}, ' is not a ', bz_a());
     }
 }
 
@@ -105,6 +109,8 @@ sub object_validators {
             as_dbg('    none exists so far');
             $validators->{g_a_s()} = \&validate_status;
         }
+    } else {
+        as_dbg('    ', $args->{'class'}, ' is not a ', bz_a());
     }
 }
 
@@ -124,11 +130,12 @@ sub object_end_of_create_validators {
         } else {
             as_dbg('    left alone');
         }
+    } else {
+        as_dbg('    ', $args->{'class'}, ' is not a ', bz_a());
     }
 }
 
 sub enabled {
-    as_dbg('we are enabled');
     1;
 }
 

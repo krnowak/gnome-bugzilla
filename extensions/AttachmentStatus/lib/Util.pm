@@ -176,7 +176,7 @@ sub prepare_msg {
     }
 
     foreach (@copy) {
-        next unless defined;
+        $_ = '<UNDEF>' unless defined;
 
         if (ref eq '') {
             my $s = $_;
