@@ -19,7 +19,7 @@ sub DB_COLUMNS {
     return ($_[0]->SUPER::DB_COLUMNS, 'description');
 }
 
-sub create_none {
+sub new_none {
     my ($type) = @_;
     my $class = ref($type) || $type || 'Bugzilla::Extension::AttachmentStatus::Field';
 
