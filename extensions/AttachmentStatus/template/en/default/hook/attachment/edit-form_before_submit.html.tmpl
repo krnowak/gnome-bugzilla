@@ -1,9 +1,5 @@
 <select id="gnome_attachment_status" name="gnome_attachment_status">
-  [% PERL %]
-  [% use Bugzilla::Extension::AttachmentStatus::Field; %]
-  [% my @statuses = Bugzilla::Extension::AttachmentStatus::Field.get_all(); %]
-  [% END %]
-  [% FOREACH gnome_attachment_status = statuses %]
+  [% FOREACH gnome_attachment_status = all_gnome_attachment_status_values %]
   <option value="[% gnome_attachment_status.name FILTER html %]"
           [% IF attachment.gnome_attachment_status == gnome_attachment_status.name %]
           selected

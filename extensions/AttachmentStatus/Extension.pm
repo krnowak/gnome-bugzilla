@@ -15,6 +15,7 @@ use base qw(Bugzilla::Extension);
 # The code for this is in ./extensions/AttachmentStatus/lib/*.pm
 use Bugzilla::Extension::AttachmentStatus::Util;
 use Bugzilla::Extension::AttachmentStatus::Ops;
+use Bugzilla::Extension::AttachmentStatus::Field;
 
 use List::MoreUtils qw(any);
 
@@ -133,6 +134,16 @@ sub object_end_of_create_validators {
         }
     } else {
         as_dbg('    ', $args->{'class'}, ' is not a ', bz_a());
+    }
+}
+
+sub template_before_process {
+    my ($class, $args) = @_;
+
+    as_dbg('template before process, class: ', $class, ', args: ', $args);
+    if ($args->{'file'} eq 'attachment/edit-form_before_submit.html.tmpl') {
+        my $var_name = 'all_' + g_a_s() + '_values';
+        $vars->{$var_name} = Bugzilla::Extension::AttachmentStatus::Field->get_all();
     }
 }
 
