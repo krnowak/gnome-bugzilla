@@ -66,65 +66,65 @@ sub db_schema_abstract_schema {
 
     $schema->{g_a_s()} = $definition;
 }
-#
-#sub object_columms {
-#    my ($class, $columns) = @_;
-#
-#    if ($class->isa(bz_a())) {
-#	push (@{$columns}, g_a_s());
-#    }
-#}
-#
-#sub object_update_columns {
-#    my ($class, $columns) = @_;
-#
-#    if ($class->isa(bz_a())) {
-#	push (@{$columns}, g_a_s());
-#    }
-#}
-#
-#sub validate_status {
-#    my ($class, $value) = @_;
-#
-#    if ($class->isa(bz_a())) {
-#        my $field = Bugzilla::Field::Choice->type(g_a_s())->check($value);
-#
-#        return $field->name;
-#    }
-#
-#    return $value;
-#}
-#
-#sub object_validators {
-#    my ($class, $validators) = @_;
-#
-#    if ($class->isa(bz_a())) {
-#	if (exists ($validators->{g_a_s()})) {
-#	    my $old_validator = $validators->{g_a_s()};
-#	    $validators->{g_a_s()} = sub {
-#                my ($class, $value, $field, $all_fields) = @_;
-#
-#                validate_status($class, &{$old_validator}(@_), $field, $all_fields);
-#            };
-#	} else {
-#	    $validators->{g_a_s()} = \&validate_status;
-#	}
-#    }
-#}
-#
-#sub object_end_of_create_validators {
-#    my ($class, $params) = @_;
-#
-#    if ($class->isa(bz_a())) {
-#        # assuming that status, if exists, is already validated
-#        unless (defined $params->{g_a_s()} and $params->{'ispatch'}
-#                and Bugzilla->user->in_group('editbugs'))
-#        {
-#            $params->{g_a_s()} = 'none';
-#        }
-#    }
-#}
-#
+
+sub object_columms {
+    my ($class, $columns) = @_;
+
+    if ($class->isa(bz_a())) {
+        push (@{$columns}, g_a_s());
+    }
+}
+
+sub object_update_columns {
+    my ($class, $columns) = @_;
+
+    if ($class->isa(bz_a())) {
+        push (@{$columns}, g_a_s());
+    }
+}
+
+sub validate_status {
+    my ($class, $value) = @_;
+
+    if ($class->isa(bz_a())) {
+        my $field = Bugzilla::Field::Choice->type(g_a_s())->check($value);
+
+        return $field->name;
+    }
+
+    return $value;
+}
+
+sub object_validators {
+    my ($class, $validators) = @_;
+
+    if ($class->isa(bz_a())) {
+        if (exists ($validators->{g_a_s()})) {
+            my $old_validator = $validators->{g_a_s()};
+            $validators->{g_a_s()} = sub {
+                my ($class, $value, $field, $all_fields) = @_;
+
+                validate_status($class, &{$old_validator}(@_), $field, $all_fields);
+            };
+        } else {
+            $validators->{g_a_s()} = \&validate_status;
+        }
+    }
+}
+
+sub object_end_of_create_validators {
+    my ($class, $params) = @_;
+
+    if ($class->isa(bz_a())) {
+        # assuming that status, if exists, is already validated
+        unless (defined $params->{g_a_s()} and $params->{'ispatch'}
+                and Bugzilla->user->in_group('editbugs'))
+        {
+            $params->{g_a_s()} = 'none';
+        }
+    }
+}
+
 sub enabled {
     1;
 }
