@@ -13,6 +13,7 @@ use warnings;
 use base qw(Exporter);
 use Data::Dumper;
 use Bugzilla::Extension::AttachmentStatus::Util;
+use Bugzilla::Extension::AttachmentStatus::Field;
 
 our @EXPORT = qw(
     updating
