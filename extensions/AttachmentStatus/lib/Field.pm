@@ -23,7 +23,7 @@ sub create_none {
     my ($type) = @_;
     my $class = ref($type) || $type || 'Bugzilla::Extension::AttachmentStatus::Field';
 
-    $class->new({name => 'none'};
+    $class->new({name => 'none'});
 }
 
 1;
