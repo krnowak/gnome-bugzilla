@@ -38,9 +38,9 @@ sub install_update_db {
     }
 }
 
-# Add 'gnome_attachment_status' table with the same schema as
+# Add 'gnome_attachment_status' table with almost the same schema as
 # 'resolution' - 'resolution' has typical selectable field-like
-# schema.
+# schema. One addition is a description column.
 #
 # It would be better to have a hook for adding more enum initial
 # values instead (see Bugzilla::DB::bz_populate_enum_tables).
@@ -57,13 +57,13 @@ sub db_schema_abstract_schema {
                                     DEFAULT => 'TRUE'},
             visibility_value_id => {TYPE => 'INT2'},
             description         => {TYPE => 'varchar(128)', NOTNULL => 1,
-                                    DEFAULT => '""'}
+                                    DEFAULT => '"(no description available)"'}
         ],
         INDEXES => [
-            resolution_value_idx   => {FIELDS => ['value'],
-                                       TYPE => 'UNIQUE'},
-            resolution_sortkey_idx => ['sortkey', 'value'],
-            resolution_visibility_value_id_idx => ['visibility_value_id'],
+            gnome_attachment_status_value_idx   => {FIELDS => ['value'],
+                                                    TYPE => 'UNIQUE'},
+            gnome_attachment_status_sortkey_idx => ['sortkey', 'value'],
+            gnome_attachment_status_visibility_value_id_idx => ['visibility_value_id'],
         ]
     };
 
