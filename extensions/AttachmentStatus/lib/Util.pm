@@ -150,7 +150,7 @@ sub update_gnome_attachment_status {
 sub validate_status {
     my ($class, $value) = @_;
 
-    as_dbg('validate status, class: ' $class, ', value: ', $value);
+    as_dbg('validate status, class: ', $class, ', value: ', $value);
     if ($class->isa(bz_a())) {
         as_dbg('    inside ', bz_a());
         my $field = Bugzilla::Field::Choice->type(g_a_s())->check($value);
