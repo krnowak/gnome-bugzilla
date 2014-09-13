@@ -15,12 +15,22 @@ our @EXPORT = qw(
     fresh
     install_gnome_attachment_status
     update_gnome_attachment_status
+    g_a_s
+    bz_a
 );
 
 # This file can be loaded by your extension via
 # "use Bugzilla::Extension::AttachmentStatus::Util". You can put functions
 # used by your extension in here. (Make sure you also list them in
 # @EXPORT.)
+
+sub g_a_s {
+    'gnome_attachment_status'
+}
+
+sub bz_a {
+    'Bugzilla::Attachment'
+}
 
 # Checks whether we are updating from old attachment status.
 sub updating {
@@ -45,7 +55,7 @@ sub fresh {
     return undef if (defined $column);
     print "fresh: no status column\n";
 
-    $column = $dbh->bz_column_info('attachments', 'gnome_attachment_status');
+    $column = $dbh->bz_column_info('attachments', g_a_s());
     return undef if (defined $column);
     print "fresh: no gnome attachment status column\n";
 
@@ -53,13 +63,13 @@ sub fresh {
     return undef if defined ($column);
     print "fresh: no attachment status table\n";
 
-    $column = $dbh->bz_column_info('gnome_attachment_status', 'id');
+    $column = $dbh->bz_column_info(g_a_s(), 'id');
     # gnome attachment status table has to exist now - it was created
     # in db_schema_abstract_schema hook.
     return undef if not defined $column;
     print "fresh: gnome attachment status exists\n";
 
-    my $value = $dbh->selectrow_arrayref('SELECT COUNT(*) FROM gnome_attachment_status');
+    my $value = $dbh->selectrow_arrayref('SELECT COUNT(*) FROM ' . g_a_s());
     return undef unless defined $value and $value->[0] == 0;
 
     print "fresh: gnome attachment status table empty\n";
@@ -88,7 +98,7 @@ sub install_gnome_attachment_status {
 
     # gnome attachment status table is created in db_schema_abstract_schema hook
     # populate gnome_attachment_status enum table
-    my $insert = $dbh->prepare("INSERT INTO gnome_attachment_status (value, sortkey, description) VALUES (?,?,?)");
+    my $insert = $dbh->prepare('INSERT INTO ' . g_a_s() . ' (value, sortkey, description) VALUES (?,?,?)');
     my $sortorder = 0;
     my @pairs = (['none', 'an unreviewed patch'],
                  ['accepted-commit_now', 'The maintainer has given commit permission'],
@@ -103,11 +113,11 @@ sub install_gnome_attachment_status {
     }
 
     # add column
-    $dbh->bz_add_column('attachments', 'gnome_attachment_status', get_definition, 'none');
+    $dbh->bz_add_column('attachments', g_a_s(), get_definition, 'none');
 
     # populate fielddefs table for attachment status
     my $field_params = {
-        name => 'attachments.gnome_attachment_status',
+        name => 'attachments.' . g_a_s(),
         description => 'Attachment status',
         type => Bugzilla::Constants::FIELD_TYPE_SINGLE_SELECT
     };
@@ -124,8 +134,8 @@ sub update_gnome_attachment_status {
     # TODO: recreate indices!
     $dbh->bz_start_transaction;
     # $dbh->bz_alter_column('attachments', 'status', $temp_definition, 'none');
-    $dbh->bz_rename_column('attachments', 'status', 'gnome_attachment_status');
-    $dbh->bz_rename_table('attachment_status', 'gnome_attachment_status');
+    $dbh->bz_rename_column('attachments', 'status', g_a_s());
+    $dbh->bz_rename_table('attachment_status', g_a_s());
     # $dbh->bz_alter_column('attachments', 'status', get_definition, 'none');
 
     $dbh->bz_commit_transaction;

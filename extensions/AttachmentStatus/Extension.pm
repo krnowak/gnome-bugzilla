@@ -17,8 +17,6 @@ use Bugzilla::Extension::AttachmentStatus::Util;
 use List::MoreUtils qw(any);
 
 our $VERSION = '0.01';
-my $g_a_s = 'gnome_attachment_status';
-my $bz_a = 'Bugzilla::Attachment';
 
 # See the documentation of Bugzilla::Hook ("perldoc Bugzilla::Hook"
 # in the bugzilla directory) for a list of all available hooks.
@@ -66,30 +64,30 @@ sub db_schema_abstract_schema {
         ]
     };
 
-    $schema->{$g_a_s} = $definition;
+    $schema->{g_a_s()} = $definition;
 }
 #
 #sub object_columms {
 #    my ($class, $columns) = @_;
 #
-#    if ($class->isa($bz_a)) {
-#	push (@{$columns}, $g_a_s);
+#    if ($class->isa(bz_a())) {
+#	push (@{$columns}, g_a_s());
 #    }
 #}
 #
 #sub object_update_columns {
 #    my ($class, $columns) = @_;
 #
-#    if ($class->isa($bz_a)) {
-#	push (@{$columns}, $g_a_s);
+#    if ($class->isa(bz_a())) {
+#	push (@{$columns}, g_a_s());
 #    }
 #}
 #
 #sub validate_status {
 #    my ($class, $value) = @_;
 #
-#    if ($class->isa($bz_a)) {
-#        my $field = Bugzilla::Field::Choice->type($g_a_s)->check($value);
+#    if ($class->isa(bz_a())) {
+#        my $field = Bugzilla::Field::Choice->type(g_a_s())->check($value);
 #
 #        return $field->name;
 #    }
@@ -100,16 +98,16 @@ sub db_schema_abstract_schema {
 #sub object_validators {
 #    my ($class, $validators) = @_;
 #
-#    if ($class->isa($bz_a)) {
-#	if (exists ($validators->{$g_a_s})) {
-#	    my $old_validator = $validators->{$g_a_s};
-#	    $validators->{$g_a_s} = sub {
+#    if ($class->isa(bz_a())) {
+#	if (exists ($validators->{g_a_s()})) {
+#	    my $old_validator = $validators->{g_a_s()};
+#	    $validators->{g_a_s()} = sub {
 #                my ($class, $value, $field, $all_fields) = @_;
 #
 #                validate_status($class, &{$old_validator}(@_), $field, $all_fields);
 #            };
 #	} else {
-#	    $validators->{$g_a_s} = \&validate_status;
+#	    $validators->{g_a_s()} = \&validate_status;
 #	}
 #    }
 #}
@@ -117,12 +115,12 @@ sub db_schema_abstract_schema {
 #sub object_end_of_create_validators {
 #    my ($class, $params) = @_;
 #
-#    if ($class->isa($bz_a)) {
+#    if ($class->isa(bz_a())) {
 #        # assuming that status, if exists, is already validated
-#        unless (defined $params->{$g_a_s} and $params->{'ispatch'}
+#        unless (defined $params->{g_a_s()} and $params->{'ispatch'}
 #                and Bugzilla->user->in_group('editbugs'))
 #        {
-#            $params->{$g_a_s} = 'none';
+#            $params->{g_a_s()} = 'none';
 #        }
 #    }
 #}
