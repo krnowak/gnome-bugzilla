@@ -12,6 +12,8 @@ use strict;
 use warnings;
 use base qw(Exporter);
 use Bugzilla::Constants;
+use Bugzilla::Field;
+use Bugzilla::Field::Choice;
 use Data::Dumper;
 
 our @EXPORT = qw(
@@ -159,6 +161,8 @@ sub validate_status {
     as_dbg('validate status, class (or object): ', $class_or_object, ', value: ', $value, ', field: ', $field);
     if ($class_or_object->isa(bz_a()) && $field eq g_a_s()) {
         as_dbg('    inside ', bz_a(), ' for field: ', $field);
+        my $f = Bugzilla::Field->check(a_g_a_s());
+        as_dbg('    field name: ', $f->name);
         my $validated_field = Bugzilla::Field::Choice->type(a_g_a_s())->check($value);
         as_dbg('result: ', $validated_field);
 
