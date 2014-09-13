@@ -169,9 +169,9 @@ sub prepare_msg {
     my $spacing = '';
     my @copy = @_;
 
-    if ((@copy > 0) && defined (@copy[0]) && (ref(@copy[0]) eq '') && (@copy[0] =~ /^(\s+)/)) {
+    if ((@copy > 0) && defined ($copy[0]) && (ref($copy[0]) eq '') && ($copy[0] =~ /^(\s+)/)) {
         $spacing = $1;
-        @copy[0] =~ s/^\s+//;
+        $copy[0] =~ s/^\s+//;
     }
 
     foreach (@copy) {
@@ -196,7 +196,7 @@ sub prepare_msg {
     my $final_msg = '';
     foreach (split("\n", $raw_msg)) {
         next if $_ eq '';
-        $final_msg = 'GNOME attachment status: ' . $spacing . $_ "\n";
+        $final_msg = 'GNOME attachment status: ' . $spacing . $_ . "\n";
     }
 
     return $final_msg;
