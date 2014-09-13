@@ -195,7 +195,13 @@ sub prepare_msg {
         }
     }
     my $final_msg = '';
-    foreach (split("\n", $raw_msg)) {
+    my @splitted = split("\n", $raw_msg);
+    if (@splitted > 1) {
+        my $sep = '========';
+        unshift(@splitted, $sep);
+        push(@splitted, $sep);
+    }
+    foreach (@splitted) {
         next if $_ eq '';
         $final_msg .= 'GNOME attachment status: ' . $spacing . $_ . "\n";
     }
