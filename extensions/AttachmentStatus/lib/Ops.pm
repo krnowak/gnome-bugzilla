@@ -149,7 +149,7 @@ sub validate_status {
 
             return $validated_field->name;
         } else {
-            return Bugzilla::Extension::AttachmentStatus::create_none;
+            return Bugzilla::Extension::AttachmentStatus::Field::create_none;
         }
     }
 
