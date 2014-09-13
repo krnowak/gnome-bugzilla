@@ -149,15 +149,15 @@ sub update_gnome_attachment_status {
 
 # Does the attachment status validation
 sub validate_status {
-    my ($class, $value) = @_;
+    my ($class_or_object, $value, $field) = @_;
 
-    as_dbg('validate status, class: ', $class, ', value: ', $value);
-    if ($class->isa(bz_a())) {
-        as_dbg('    inside ', bz_a());
-        my $field = Bugzilla::Field::Choice->type(g_a_s())->check($value);
-        as_dbg('result: ', $field);
+    as_dbg('validate status, class (or object): ', $class_or_object, ', value: ', $value, ', field: ', $field);
+    if ($class_or_object->isa(bz_a()) && $field eq g_a_s()) {
+        as_dbg('    inside ', bz_a(), ' for field: ', $field);
+        my $validated_field = Bugzilla::Field::Choice->type(g_a_s())->check($value);
+        as_dbg('result: ', $validated_field);
 
-        return $field->name;
+        return $validated_field->name;
     }
 
     return $value;

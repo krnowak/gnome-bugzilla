@@ -25,8 +25,6 @@ our $VERSION = '0.01';
 # Either rename already existing 'status' column to
 # 'gnome_attachment_status' or create it.
 sub install_update_db {
-    my ($class, $args) = @_;
-
     if (fresh) {
         install_gnome_attachment_status;
     } elsif (updating) {
@@ -69,38 +67,39 @@ sub db_schema_abstract_schema {
 }
 
 sub object_columms {
-    my ($class, $columns) = @_;
-
-    as_dbg('object columns, class: ', $class, ', columns: ', $columns, ', bz_a: ', bz_a());
-    if ($class->isa(bz_a())) {
+    my ($class, $args) = @_;
+    as_dbg('object columns, class: ', $class, ', args: ', $params, ', bz_a: ', bz_a());
+    my $object_class = $args->{'class'};
+    if ($args->{'class'}->isa(bz_a())) {
         as_dbg('    inside ', bz_a());
-        push (@{$columns}, g_a_s());
+        push (@{$args->{'columns'}}, g_a_s());
     }
 }
 
 sub object_update_columns {
-    my ($class, $columns) = @_;
+    my ($class, $args) = @_;
 
-    as_dbg('object update columns, class: ', $class, ', columns: ', $columns, ', bz_a: ', bz_a());
-    if ($class->isa(bz_a())) {
+    as_dbg('object update columns, class: ', $class, ', args: ', $args, ', bz_a: ', bz_a());
+    if ($args->{'object'}->isa(bz_a())) {
         as_dbg('    inside ', bz_a());
-        push (@{$columns}, g_a_s());
+        push (@{$args->{'columns'}}, g_a_s());
     }
 }
 
 sub object_validators {
-    my ($class, $validators) = @_;
+    my ($class, $args) = @_;
 
-    as_dbg('object validators, class: ', $class, ', validators: ', $validators, ', bz_a: ', bz_a());
-    if ($class->isa(bz_a())) {
+    as_dbg('object validators, class: ', $class, ', args: ', $args, ', bz_a: ', bz_a());
+    if ($args->{'class'}->isa(bz_a())) {
+        my $validators = $args->{'validators'};
         as_dbg('    inside ', bz_a());
         if (exists ($validators->{g_a_s()})) {
             as_dbg('    one already exists');
             my $old_validator = $validators->{g_a_s()};
             $validators->{g_a_s()} = sub {
-                my ($class, $value, $field, $all_fields) = @_;
+                my ($class, $value, $field) = @_;
 
-                validate_status($class, &{$old_validator}(@_), $field, $all_fields);
+                validate_status($class, &{$old_validator}(@_), $field);
             };
         } else {
             as_dbg('    none exists so far');
@@ -110,10 +109,11 @@ sub object_validators {
 }
 
 sub object_end_of_create_validators {
-    my ($class, $params) = @_;
+    my ($class, $args) = @_;
 
-    as_dbg('object end of create validators, class: ', $class, ', params: ', $params, ', bz_a: ', bz_a());
-    if ($class->isa(bz_a())) {
+    as_dbg('object end of create validators, class: ', $class, ', args: ', $args, ', bz_a: ', bz_a());
+    if ($args->{'class'}->isa(bz_a())) {
+        my $params = $args->{'params'};
         # assuming that status, if exists, is already validated
         as_dbg('    inside ', bz_a());
         unless (defined $params->{g_a_s()} and $params->{'ispatch'}
