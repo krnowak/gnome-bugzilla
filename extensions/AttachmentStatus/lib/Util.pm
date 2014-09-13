@@ -184,7 +184,7 @@ sub prepare_msg {
                 $dumper_used = 0;
                 $s =~ s/^,?\s*//;
             }
-            $raw_msg .= $_;
+            $raw_msg .= $s;
         } else {
             unless ($raw_msg =~ /\n$/) {
                 $raw_msg =~ s/\s+$//;
@@ -197,7 +197,7 @@ sub prepare_msg {
     my $final_msg = '';
     foreach (split("\n", $raw_msg)) {
         next if $_ eq '';
-        $final_msg = 'GNOME attachment status: ' . $spacing . $_ . "\n";
+        $final_msg .= 'GNOME attachment status: ' . $spacing . $_ . "\n";
     }
 
     return $final_msg;
@@ -208,7 +208,7 @@ sub as_dbg {
     my $mesg = prepare_msg(@_);
     if (-w "$datadir/errorlog") {
         open(ERRORLOGFID, ">>$datadir/errorlog");
-        print ERRORLOGFID "GNOME attachment status: $mesg";
+        print ERRORLOGFID $mesg;
         close ERRORLOGFID;
     } else {
         die $mesg;
