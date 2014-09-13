@@ -205,7 +205,7 @@ sub prepare_msg {
 
 sub as_dbg {
     my $datadir = bz_locations()->{'datadir'};
-    my $mesg = prepate_msg(@_);
+    my $mesg = prepare_msg(@_);
     if (-w "$datadir/errorlog") {
         open(ERRORLOGFID, ">>$datadir/errorlog");
         print ERRORLOGFID "GNOME attachment status: $mesg\n";
