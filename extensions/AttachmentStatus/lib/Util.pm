@@ -10,6 +10,9 @@
 package Bugzilla::Extension::AttachmentStatus::Util;
 use strict;
 use base qw(Exporter);
+use Bugzilla::Constants;
+use Data::Dumper;
+
 our @EXPORT = qw(
     updating
     fresh
@@ -18,6 +21,7 @@ our @EXPORT = qw(
     g_a_s
     bz_a
     validate_status
+    as_dbg
 );
 
 # This file can be loaded by your extension via
@@ -146,13 +150,68 @@ sub update_gnome_attachment_status {
 sub validate_status {
     my ($class, $value) = @_;
 
+    as_dbg('validate status, class: ' $class, ', value: ', $value);
     if ($class->isa(bz_a())) {
+        as_dbg('    inside ', bz_a());
         my $field = Bugzilla::Field::Choice->type(g_a_s())->check($value);
+        as_dbg('result: ', $field);
 
         return $field->name;
     }
 
     return $value;
+}
+
+sub prepare_msg {
+    my $raw_msg = '';
+    local $Data::Dumper::Terse = 1;
+    my $dumper_used = 0;
+    my $spacing = '';
+    my @copy = @_;
+
+    if ((@copy > 0) && defined (@copy[0]) && (ref(@copy[0]) eq '') && (@copy[0] =~ /^(\s+)/)) {
+        $spacing = $1;
+        @copy[0] =~ s/^\s+//;
+    }
+
+    foreach (@copy) {
+        next unless defined;
+
+        if (ref eq '') {
+            my $s = $_;
+            if ($dumper_used) {
+                $dumper_used = 0;
+                $s =~ s/^,?\s*//;
+            }
+            raw_msg .= $_;
+        } else {
+            unless (raw_msg =~ /\n$/) {
+                raw_msg =~ s/\s+$//;
+                raw_msg .= "\n";
+            }
+            raw_msg .= Dumper($_);
+            $dumper_used = 1;
+        }
+    }
+    my $final_msg = '';
+    foreach (split("\n", $raw_msg)) {
+        next if $_ eq '';
+        $final_msg = 'GNOME attachment status: ' . $spacing . $_ "\n";
+    }
+
+    return $final_msg;
+}
+
+sub as_dbg {
+    my $datadir = bz_locations()->{'datadir'};
+    my $mesg = prepate_msg(@_);
+    if (-w "$datadir/errorlog") {
+        open(ERRORLOGFID, ">>$datadir/errorlog");
+        print ERRORLOGFID "GNOME attachment status: $mesg\n";
+        close ERRORLOGFID;
+    } else {
+        die $mesg;
+    }
 }
 
 1;

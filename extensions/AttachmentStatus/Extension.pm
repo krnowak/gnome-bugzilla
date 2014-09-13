@@ -70,7 +70,9 @@ sub db_schema_abstract_schema {
 sub object_columms {
     my ($class, $columns) = @_;
 
+    as_dbg('object columns, class: ', $class, ', columns: ', $columns, ', bz_a: ', bz_a());
     if ($class->isa(bz_a())) {
+        as_dbg('    inside ', bz_a());
         push (@{$columns}, g_a_s());
     }
 }
@@ -78,7 +80,9 @@ sub object_columms {
 sub object_update_columns {
     my ($class, $columns) = @_;
 
+    as_dbg('object update columns, class: ', $class, ', columns: ', $columns, ', bz_a: ', bz_a());
     if ($class->isa(bz_a())) {
+        as_dbg('    inside ', bz_a());
         push (@{$columns}, g_a_s());
     }
 }
@@ -86,8 +90,11 @@ sub object_update_columns {
 sub object_validators {
     my ($class, $validators) = @_;
 
+    as_dbg('object validators, class: ', $class, ', validators: ', $validators, ', bz_a: ', bz_a());
     if ($class->isa(bz_a())) {
+        as_dbg('    inside ', bz_a());
         if (exists ($validators->{g_a_s()})) {
+            as_dbg('    one already exists');
             my $old_validator = $validators->{g_a_s()};
             $validators->{g_a_s()} = sub {
                 my ($class, $value, $field, $all_fields) = @_;
@@ -95,6 +102,7 @@ sub object_validators {
                 validate_status($class, &{$old_validator}(@_), $field, $all_fields);
             };
         } else {
+            as_dbg('    none exists so far');
             $validators->{g_a_s()} = \&validate_status;
         }
     }
@@ -103,17 +111,23 @@ sub object_validators {
 sub object_end_of_create_validators {
     my ($class, $params) = @_;
 
+    as_dbg('object end of create validators, class: ', $class, ', params: ', $params, ', bz_a: ', bz_a());
     if ($class->isa(bz_a())) {
         # assuming that status, if exists, is already validated
+        as_dbg('    inside ', bz_a());
         unless (defined $params->{g_a_s()} and $params->{'ispatch'}
                 and Bugzilla->user->in_group('editbugs'))
         {
+            as_dbg('    not a patch or no gnome attachment status parameter or we are not in editbugs group - setting attachment status to none');
             $params->{g_a_s()} = 'none';
+        } else {
+            as_dbg('    left alone');
         }
     }
 }
 
 sub enabled {
+    as_dbg('we are enabled');
     1;
 }
 
