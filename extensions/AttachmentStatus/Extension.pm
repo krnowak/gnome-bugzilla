@@ -143,7 +143,7 @@ sub template_before_process {
     as_dbg('template before process, class: ', $class, ', args: ', $args);
     if ($args->{'file'} eq 'attachment/edit-form_before_submit.html.tmpl') {
         my $var_name = 'all_' + g_a_s() + '_values';
-        $vars->{$var_name} = Bugzilla::Extension::AttachmentStatus::Field->get_all();
+        $args->{'vars'}->{$var_name} = Bugzilla::Extension::AttachmentStatus::Field->get_all();
     }
 }
 
