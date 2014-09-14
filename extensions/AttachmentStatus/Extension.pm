@@ -50,7 +50,7 @@ sub install_update_db {
 # It would be better to have a hook for adding more enum initial
 # values instead (see Bugzilla::DB::bz_populate_enum_tables).
 sub db_schema_abstract_schema {
-    my ($class, $args) = @_;
+    my ($self, $args) = @_;
     my $schema = $args->{'schema'};
     my $definition = {
         FIELDS => [
@@ -75,8 +75,8 @@ sub db_schema_abstract_schema {
 }
 
 sub object_columns {
-    my ($class, $args) = @_;
-    as_dbg('object columns, class: ', $class, ', args: ', $args, ', bz_a: ', bz_a());
+    my ($self, $args) = @_;
+    as_dbg('object columns, self: ', $self, ', args: ', $args, ', bz_a: ', bz_a());
     if ($args->{'class'}->isa(bz_a())) {
         as_dbg('    inside ', bz_a());
         push (@{$args->{'columns'}}, g_a_s());
@@ -87,10 +87,10 @@ sub object_columns {
 }
 
 sub object_update_columns {
-    my ($class, $args) = @_;
+    my ($self, $args) = @_;
     my $object = $args->{'object'};
 
-    as_dbg('object update columns, class: ', $class, ', args: ', $args, ', bz_a: ', bz_a());
+    as_dbg('object update columns, self: ', $self, ', args: ', $args, ', bz_a: ', bz_a());
     if ($object->isa(bz_a())) {
         as_dbg('    inside ', bz_a());
         push (@{$args->{'columns'}}, g_a_s());
@@ -102,9 +102,9 @@ sub object_update_columns {
 }
 
 sub object_validators {
-    my ($class, $args) = @_;
+    my ($self, $args) = @_;
 
-    as_dbg('object validators, class: ', $class, ', args: ', $args, ', bz_a: ', bz_a());
+    as_dbg('object validators, self: ', $self, ', args: ', $args, ', bz_a: ', bz_a());
     if ($args->{'class'}->isa(bz_a())) {
         my $validators = $args->{'validators'};
         as_dbg('    inside ', bz_a());
@@ -126,9 +126,9 @@ sub object_validators {
 }
 
 sub object_end_of_create_validators {
-    my ($class, $args) = @_;
+    my ($self, $args) = @_;
 
-    as_dbg('object end of create validators, class: ', $class, ', args: ', $args, ', bz_a: ', bz_a());
+    as_dbg('object end of create validators, self: ', $self, ', args: ', $args, ', bz_a: ', bz_a());
     if ($args->{'class'}->isa(bz_a())) {
         my $params = $args->{'params'};
         # assuming that status, if exists, is already validated
@@ -147,9 +147,9 @@ sub object_end_of_create_validators {
 }
 
 sub template_before_process {
-    my ($class, $args) = @_;
+    my ($self, $args) = @_;
 
-    as_dbg('template before process, class: ', $class, ', args: ', $args);
+    as_dbg('template before process, self: ', $self, ', args: ', $args);
     if ($args->{'file'} eq 'attachment/edit.html.tmpl') {
         my $var_name = 'all_' . g_a_s() . '_values';
         my @values = Bugzilla::Field::Choice->type(a_g_a_s())->get_all();
