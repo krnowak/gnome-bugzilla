@@ -23,7 +23,7 @@ use List::MoreUtils qw(any);
 our $VERSION = '0.01';
 
 sub new {
-    my ($type, @rest) = @_;
+    my ($class, @rest) = @_;
 
     update_choice_class_map();
     return $class->SUPER::new(@rest);
