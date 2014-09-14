@@ -12,6 +12,8 @@ use strict;
 use warnings;
 use base qw(Bugzilla::Extension);
 
+use Bugzilla;
+use Bugzilla::CGI;
 # The code for this is in ./extensions/AttachmentStatus/lib/*.pm
 use Bugzilla::Extension::AttachmentStatus::Util;
 use Bugzilla::Extension::AttachmentStatus::Ops;
@@ -89,6 +91,14 @@ sub object_update_columns {
         as_dbg('    inside ', bz_a());
         push (@{$args->{'columns'}}, g_a_s());
         as_dbg('    after ', bz_a(), ', args: ', $args);
+        my $cgi = Bugzilla->cgi;
+        my $vars = $cgi->Vars;
+        as_dbg('    cgi_params: ', $vars);
+
+        # TODO: check if we are in update action of attachments.cgi?
+        if ($cgi->param(g_a_s())) {
+            $args->{'object'}->set(g_a_s(), $cgi->param(g_a_s()));
+        }
     } else {
         as_dbg('    ', $args->{'object'}, ' is not a ', bz_a());
     }
