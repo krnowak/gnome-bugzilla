@@ -75,6 +75,7 @@ sub object_columms {
     if ($args->{'class'}->isa(bz_a())) {
         as_dbg('    inside ', bz_a());
         push (@{$args->{'columns'}}, g_a_s());
+        as_dbg('    after ', bz_a(), ', args: ', $args);
     } else {
         as_dbg('    ', $args->{'class'}, ' is not a ', bz_a());
     }
@@ -87,6 +88,7 @@ sub object_update_columns {
     if ($args->{'object'}->isa(bz_a())) {
         as_dbg('    inside ', bz_a());
         push (@{$args->{'columns'}}, g_a_s());
+        as_dbg('    after ', bz_a(), ', args: ', $args);
     } else {
         as_dbg('    ', $args->{'object'}, ' is not a ', bz_a());
     }
@@ -142,7 +144,7 @@ sub template_before_process {
 
     as_dbg('template before process, class: ', $class, ', args: ', $args);
     if ($args->{'file'} eq 'attachment/edit.html.tmpl') {
-        my $var_name = 'all_' + g_a_s() + '_values';
+        my $var_name = 'all_' . g_a_s() . '_values';
         my @values = Bugzilla::Extension::AttachmentStatus::Field->get_all();
         my $vars = $args->{'vars'};
         my $attachment = $vars->get('attachment');
