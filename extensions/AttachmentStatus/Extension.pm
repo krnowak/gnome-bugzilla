@@ -91,6 +91,10 @@ sub object_update_columns {
         as_dbg('    inside ', bz_a());
         push (@{$args->{'columns'}}, g_a_s());
         as_dbg('    after ', bz_a(), ', args: ', $args);
+        # XXX: Gross hack. It would be better if we had a hook (named
+        # for instance 'object_cgi_update) inside attachment.cgi which
+        # provides an object being updated and either cgi object or
+        # cgi params.
         my $cgi = Bugzilla->cgi;
         as_dbg('    cgi: ', $cgi);
 
