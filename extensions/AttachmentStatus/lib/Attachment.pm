@@ -10,6 +10,7 @@
 package Bugzilla::Extension::AttachmentStatus::Attachment;
 use strict;
 use warnings;
+use base qw(Bugzilla::Object);
 use Bugzilla::Extension::AttachmentStatus::Util;
 use Bugzilla::Attachment;
 
