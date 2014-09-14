@@ -44,8 +44,8 @@ function toggle_display(link) {
 <br>
 <table id="attachment_table" cellspacing="0" cellpadding="4">
   [% colspan = 2 %]
-  [% colspan = colspan + 1 IF show_attachment_flags %]
-  [% colspan = colspan + 1 IF show_gnome_attachment_status %]
+  [% SET colspan = colspan + 1 IF show_attachment_flags %]
+  [% SET colspan = colspan + 1 IF show_gnome_attachment_status %]
   <tr id="a0">
     <th colspan="[% colspan %]" align="left">
       Attachments
