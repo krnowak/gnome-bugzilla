@@ -21,6 +21,7 @@ our @EXPORT = qw(
     install_gnome_attachment_status
     update_gnome_attachment_status
     validate_status
+    cgi_hack_update
 );
 
 # This file can be loaded by your extension via
@@ -156,6 +157,21 @@ sub validate_status {
     }
 
     return $value;
+}
+
+# XXX: Gross hack. It would be better if we had a hook (named for
+# instance 'object_cgi_update) inside attachment.cgi which provides an
+# object being updated and either cgi object or cgi params.
+sub cgi_hack_update {
+    my ($object) = @_;
+    my $cgi = Bugzilla->cgi;
+    as_dbg('    cgi: ', $cgi);
+    my $status = $cgi->param(g_a_s());
+    my $action = $cgi->param('action');
+
+    if (defined($status) && defined($action) && $action eq 'update') {
+        $object->set(g_a_s(), $status);
+    }
 }
 
 1;

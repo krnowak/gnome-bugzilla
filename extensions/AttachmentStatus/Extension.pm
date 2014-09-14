@@ -85,22 +85,14 @@ sub object_columns {
 
 sub object_update_columns {
     my ($class, $args) = @_;
+    my $object = $args->{'object'};
 
     as_dbg('object update columns, class: ', $class, ', args: ', $args, ', bz_a: ', bz_a());
-    if ($args->{'object'}->isa(bz_a())) {
+    if ($object->isa(bz_a())) {
         as_dbg('    inside ', bz_a());
         push (@{$args->{'columns'}}, g_a_s());
         as_dbg('    after ', bz_a(), ', args: ', $args);
-        # XXX: Gross hack. It would be better if we had a hook (named
-        # for instance 'object_cgi_update) inside attachment.cgi which
-        # provides an object being updated and either cgi object or
-        # cgi params.
-        my $cgi = Bugzilla->cgi;
-        as_dbg('    cgi: ', $cgi);
-
-        if ($cgi->param(g_a_s()) && $cgi->param('action') eq 'update') {
-            $args->{'object'}->set(g_a_s(), $cgi->param(g_a_s()));
-        }
+        cgi_hack_update($object);
     } else {
         as_dbg('    ', $args->{'object'}, ' is not a ', bz_a());
     }
