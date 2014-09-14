@@ -14,6 +14,7 @@ use base qw(Exporter);
 use Data::Dumper;
 use Bugzilla::Extension::AttachmentStatus::Util;
 use Bugzilla::Extension::AttachmentStatus::Field;
+use Bugzilla::Extension::AttachmentStatus::Bug;
 use Bugzilla::Extension::AttachmentStatus::Attachment;
 
 our @EXPORT = qw(
