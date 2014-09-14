@@ -23,10 +23,10 @@ use List::MoreUtils qw(any);
 our $VERSION = '0.01';
 
 sub new {
-    my ($class) = @_;
+    my ($type, @rest) = @_;
 
     update_choice_class_map();
-    $class->SUPER::new(@_);
+    return $class->SUPER::new(@rest);
 }
 
 # See the documentation of Bugzilla::Hook ("perldoc Bugzilla::Hook"
