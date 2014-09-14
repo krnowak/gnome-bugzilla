@@ -145,7 +145,8 @@ sub validate_status {
     if ($class_or_object->isa(bz_a()) && $field eq g_a_s()) {
         as_dbg('    inside ', bz_a(), ' for field: ', $field);
         if (defined ($value)) {
-            my $validated_field = Bugzilla::Extension::AttachmentStatus::Field->check($value);
+            #my $validated_field = Bugzilla::Extension::AttachmentStatus::Field->check($value);
+            my $validated_field = Bugzilla::Field::Choice->type(g_a_s())->check($value);
             as_dbg('result: ', $validated_field);
 
             return $validated_field->name;

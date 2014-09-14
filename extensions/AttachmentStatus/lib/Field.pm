@@ -26,4 +26,8 @@ sub new_none {
     $class->new({name => 'none'});
 }
 
+unless (exists (Bugzilla::Field::Choice::CLASS_MAP->{g_a_s()})) {
+    Bugzilla::Field::Choice::CLASS_MAP->{g_a_s()} = 'Bugzilla::Extension::AttachmentStatus::Field';
+}
+
 1;
