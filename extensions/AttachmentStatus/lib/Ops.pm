@@ -26,6 +26,7 @@ our @EXPORT = qw(
     cgi_hack_update
     update_choice_class_map
     attachment_edit_handler
+    attachment_list_handler
 );
 
 # This file can be loaded by your extension via
@@ -192,6 +193,18 @@ sub attachment_edit_handler {
     my @values = Bugzilla::Field::Choice->type(a_g_a_s())->get_all();
 
     $vars->set($var_name, \@values);
+}
+
+sub attachment_list_handler {
+    my ($file, $vars, $context) = @_;
+    my $bug_id = $vars->get('bugid');
+
+    if ($bugid) {
+        my $bug = Bugzilla::Bug->new($bugid);
+        my $show_status = $bug->show_gnome_attachment_status();
+
+        $vars->set('show_gnome_attachment_status', $show_status);
+    }
 }
 
 1;

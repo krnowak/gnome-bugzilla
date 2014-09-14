@@ -43,8 +43,11 @@ function toggle_display(link) {
 
 <br>
 <table id="attachment_table" cellspacing="0" cellpadding="4">
+  [% colspan = 2 %]
+  [% colspan = colspan + 1 IF show_attachment_flags %]
+  [% colspan = colspan + 1 IF show_gnome_attachment_status %]
   <tr id="a0">
-    <th colspan="[% show_attachment_flags ? 3 : 2 %]" align="left">
+    <th colspan="[% colspan %]" align="left">
       Attachments
     </th>
   </tr>
@@ -101,6 +104,16 @@ function toggle_display(link) {
           </span>
         </td>
 
+        [% IF show_gnome_attachment_status %]
+          <td class="bz_attach_status" valign="top">
+            [% IF attachment.ispatch %]
+            [% attachment.gnome_attachment_status FILTER html %]
+            [% ELSE %]
+            &nbsp;
+            [% END %]
+          </td>
+        [% END %]
+
         [% IF show_attachment_flags %]
           <td class="bz_attach_flags" valign="top">
             [% IF attachment.flags.size == 0 %]
@@ -141,7 +154,7 @@ function toggle_display(link) {
   [% END %]
 
   <tr class="bz_attach_footer">
-    <td colspan="[% show_attachment_flags ? 3 : 2 %]">
+    <td colspan="[% colspan %]">
       [% IF attachments.size %]
         <span class="bz_attach_view_hide">
           [% IF obsolete_attachments %]

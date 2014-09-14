@@ -22,7 +22,9 @@ our $VERSION = '0.01';
 
 sub new {
     my ($class) = @_;
-    my $handlers = {'attachment/edit.html.tmpl' => \&attachment_edit_handler};
+    my $handlers = {'attachment/edit.html.tmpl' => \&attachment_edit_handler,
+                    'attachment/list.html.tmpl' => \&attachment_list_handler
+    };
     my $instance = {'template_handlers' => $handlers};
 
     update_choice_class_map();
