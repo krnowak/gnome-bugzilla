@@ -10,6 +10,8 @@
 package Bugzilla::Extension::AttachmentStatus::Attachment;
 use strict;
 use warnings;
+# The below line is only to avoid protection faults in
+# Bugzilla::Object::set().
 use base qw(Bugzilla::Object);
 use Bugzilla::Extension::AttachmentStatus::Util;
 use Bugzilla::Attachment;
