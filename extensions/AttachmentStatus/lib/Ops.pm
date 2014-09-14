@@ -199,8 +199,8 @@ sub attachment_list_handler {
     my ($file, $vars, $context) = @_;
     my $bug_id = $vars->get('bugid');
 
-    if ($bugid) {
-        my $bug = Bugzilla::Bug->new($bugid);
+    if ($bug_id) {
+        my $bug = Bugzilla::Bug->new($bug_id);
         my $show_status = $bug->show_gnome_attachment_status();
 
         $vars->set('show_gnome_attachment_status', $show_status);
