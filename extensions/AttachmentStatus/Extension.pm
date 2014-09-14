@@ -68,7 +68,7 @@ sub db_schema_abstract_schema {
     $schema->{g_a_s()} = $definition;
 }
 
-sub object_columms {
+sub object_columns {
     my ($class, $args) = @_;
     as_dbg('object columns, class: ', $class, ', args: ', $args, ', bz_a: ', bz_a());
     my $object_class = $args->{'class'};
