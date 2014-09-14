@@ -77,7 +77,6 @@ sub db_schema_abstract_schema {
 sub object_columns {
     my ($class, $args) = @_;
     as_dbg('object columns, class: ', $class, ', args: ', $args, ', bz_a: ', bz_a());
-    my $object_class = $args->{'class'};
     if ($args->{'class'}->isa(bz_a())) {
         as_dbg('    inside ', bz_a());
         push (@{$args->{'columns'}}, g_a_s());
