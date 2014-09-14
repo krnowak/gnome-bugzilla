@@ -24,6 +24,7 @@ our @EXPORT = qw(
     validate_status
     cgi_hack_update
     update_choice_class_map
+    attachment_edit_handler
 );
 
 # This file can be loaded by your extension via
@@ -182,6 +183,14 @@ sub update_choice_class_map {
     unless (exists (Bugzilla::Field::Choice::CLASS_MAP->{$type->FIELD_NAME()})) {
         Bugzilla::Field::Choice::CLASS_MAP->{$type->FIELD_NAME} = $type;
     }
+}
+
+sub attachment_edit_handler {
+    my ($file, $vars, $context) = @_;
+    my $var_name = 'all_' . g_a_s() . '_values';
+    my @values = Bugzilla::Field::Choice->type(a_g_a_s())->get_all();
+
+    $vars->set($var_name, \@values);
 }
 
 1;

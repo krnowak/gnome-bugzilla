@@ -21,10 +21,12 @@ use List::MoreUtils qw(any);
 our $VERSION = '0.01';
 
 sub new {
-    my ($class, @rest) = @_;
+    my ($class) = @_;
+    my $handlers = {'attachment/edit.html.tmpl' => \&attachment_edit_handler};
+    my $instance = {'template_handlers' => $handlers};
 
     update_choice_class_map();
-    return $class->SUPER::new(@rest);
+    return $class->SUPER::new($instance);
 }
 
 # See the documentation of Bugzilla::Hook ("perldoc Bugzilla::Hook"
@@ -148,15 +150,15 @@ sub object_end_of_create_validators {
 
 sub template_before_process {
     my ($self, $args) = @_;
+    my $handlers = $self->{'template_handlers'};
+    my $file = $args->{'file'};
 
     as_dbg('template before process, self: ', $self, ', args: ', $args);
-    if ($args->{'file'} eq 'attachment/edit.html.tmpl') {
-        my $var_name = 'all_' . g_a_s() . '_values';
-        my @values = Bugzilla::Field::Choice->type(a_g_a_s())->get_all();
+    if (exists ($handlers->{$file})) {
         my $vars = $args->{'vars'};
-        my $attachment = $vars->get('attachment');
-        as_dbg('    inside ', $args->{'file'}, ', variable name: ', $var_name, ', values: ', \@values, ', attachment: ', $attachment);
-        $vars->set($var_name, \@values);
+        my $context = $args->{'context'};
+
+        $handlers->{$file}($file, $vars, $context);
     }
 }
 
