@@ -28,8 +28,4 @@ sub new_none {
     $class->new({name => 'none'});
 }
 
-unless (exists (Bugzilla::Field::Choice::CLASS_MAP->{FIELD_NAME()})) {
-    Bugzilla::Field::Choice::CLASS_MAP->{FIELD_NAME()} = G_A_S_PKG;
-}
-
 1;

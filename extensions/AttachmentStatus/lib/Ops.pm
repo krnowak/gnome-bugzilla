@@ -22,6 +22,7 @@ our @EXPORT = qw(
     update_gnome_attachment_status
     validate_status
     cgi_hack_update
+    update_choice_class_map
 );
 
 # This file can be loaded by your extension via
@@ -171,6 +172,14 @@ sub cgi_hack_update {
 
     if (defined($status) && defined($action) && $action eq 'update') {
         $object->set(g_a_s(), $status);
+    }
+}
+
+sub update_choice_class_map {
+    my $type = 'Bugzilla::Extension::AttachmentStatus::Field';
+
+    unless (exists (Bugzilla::Field::Choice::CLASS_MAP->{$type->FIELD_NAME()})) {
+        Bugzilla::Field::Choice::CLASS_MAP->{$type->FIELD_NAME} = $type;
     }
 }
 

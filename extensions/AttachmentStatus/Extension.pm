@@ -17,11 +17,17 @@ use Bugzilla::CGI;
 # The code for this is in ./extensions/AttachmentStatus/lib/*.pm
 use Bugzilla::Extension::AttachmentStatus::Util;
 use Bugzilla::Extension::AttachmentStatus::Ops;
-use Bugzilla::Extension::AttachmentStatus::Field;
 
 use List::MoreUtils qw(any);
 
 our $VERSION = '0.01';
+
+sub new {
+    my ($class) = @_;
+
+    update_choice_class_map();
+    $class->SUPER::new(@_);
+}
 
 # See the documentation of Bugzilla::Hook ("perldoc Bugzilla::Hook"
 # in the bugzilla directory) for a list of all available hooks.
@@ -149,7 +155,7 @@ sub template_before_process {
     as_dbg('template before process, class: ', $class, ', args: ', $args);
     if ($args->{'file'} eq 'attachment/edit.html.tmpl') {
         my $var_name = 'all_' . g_a_s() . '_values';
-        my @values = Bugzilla::Extension::AttachmentStatus::Field->get_all();
+        my @values = Bugzilla::Field::Choice->type(a_g_a_s())->get_all();
         my $vars = $args->{'vars'};
         my $attachment = $vars->get('attachment');
         as_dbg('    inside ', $args->{'file'}, ', variable name: ', $var_name, ', values: ', \@values, ', attachment: ', $attachment);
