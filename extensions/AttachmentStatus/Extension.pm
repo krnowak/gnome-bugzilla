@@ -92,11 +92,9 @@ sub object_update_columns {
         push (@{$args->{'columns'}}, g_a_s());
         as_dbg('    after ', bz_a(), ', args: ', $args);
         my $cgi = Bugzilla->cgi;
-        my $vars = $cgi->Vars;
-        as_dbg('    cgi_params: ', $vars);
+        as_dbg('    cgi: ', $cgi);
 
-        # TODO: check if we are in update action of attachments.cgi?
-        if ($cgi->param(g_a_s())) {
+        if ($cgi->param(g_a_s()) && $cgi->param('action') eq 'update') {
             $args->{'object'}->set(g_a_s(), $cgi->param(g_a_s()));
         }
     } else {
