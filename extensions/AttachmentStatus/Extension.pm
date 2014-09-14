@@ -12,8 +12,6 @@ use strict;
 use warnings;
 use base qw(Bugzilla::Extension);
 
-use Bugzilla;
-use Bugzilla::CGI;
 # The code for this is in ./extensions/AttachmentStatus/lib/*.pm
 use Bugzilla::Extension::AttachmentStatus::Util;
 use Bugzilla::Extension::AttachmentStatus::Ops;
