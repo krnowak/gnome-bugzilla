@@ -14,6 +14,8 @@ use base qw(Bugzilla::Field::Choice);
 use Bugzilla::Extension::AttachmentStatus::Util;
 
 use constant DB_TABLE => g_a_s();
+use constant FIELD_NAME => a_g_a_s();
+use constant G_A_S_PKG = 'Bugzilla::Extension::AttachmentStatus::Field';
 
 sub DB_COLUMNS {
     return ($_[0]->SUPER::DB_COLUMNS, 'description');
@@ -21,13 +23,13 @@ sub DB_COLUMNS {
 
 sub new_none {
     my ($type) = @_;
-    my $class = ref($type) || $type || 'Bugzilla::Extension::AttachmentStatus::Field';
+    my $class = ref($type) || $type || G_A_S_PKG;
 
     $class->new({name => 'none'});
 }
 
-unless (exists (Bugzilla::Field::Choice::CLASS_MAP->{a_g_a_s()})) {
-    Bugzilla::Field::Choice::CLASS_MAP->{a_g_a_s()} = 'Bugzilla::Extension::AttachmentStatus::Field';
+unless (exists (Bugzilla::Field::Choice::CLASS_MAP->{FIELD_NAME()})) {
+    Bugzilla::Field::Choice::CLASS_MAP->{FIELD_NAME()} = G_A_S_PKG;
 }
 
 1;
