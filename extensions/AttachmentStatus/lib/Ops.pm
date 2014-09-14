@@ -14,6 +14,7 @@ use base qw(Exporter);
 use Data::Dumper;
 use Bugzilla::Extension::AttachmentStatus::Util;
 use Bugzilla::Extension::AttachmentStatus::Field;
+use Bugzilla::Extension::AttachmentStatus::Attachment;
 
 our @EXPORT = qw(
     updating
@@ -164,14 +165,14 @@ sub validate_status {
 # instance 'object_cgi_update) inside attachment.cgi which provides an
 # object being updated and either cgi object or cgi params.
 sub cgi_hack_update {
-    my ($object) = @_;
+    my ($attachment) = @_;
     my $cgi = Bugzilla->cgi;
     as_dbg('    cgi: ', $cgi);
     my $status = $cgi->param(g_a_s());
     my $action = $cgi->param('action');
 
     if (defined($status) && defined($action) && $action eq 'update') {
-        $object->set(g_a_s(), $status);
+        $attachment->set_gnome_attachment_status($status);
     }
 }
 
