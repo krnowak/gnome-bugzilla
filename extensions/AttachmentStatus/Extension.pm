@@ -144,8 +144,10 @@ sub template_before_process {
     if ($args->{'file'} eq 'attachment/edit.html.tmpl') {
         my $var_name = 'all_' + g_a_s() + '_values';
         my @values = Bugzilla::Extension::AttachmentStatus::Field->get_all();
-        as_dbg('    inside ', $args->{'file'}, ', variable name: ', $var_name, ', values: ', \@values);
-        $args->{'vars'}->{$var_name} = \@values;
+        my $vars = $args->{'vars'};
+        my $attachment = $vars->get('attachment');
+        as_dbg('    inside ', $args->{'file'}, ', variable name: ', $var_name, ', values: ', \@values, ', attachment: ', $attachment);
+        $vars->set($var_name, \@values);
     }
 }
 
