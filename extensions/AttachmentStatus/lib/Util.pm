@@ -18,6 +18,7 @@ our @EXPORT = qw(
     g_a_s
     a_g_a_s
     bz_a
+    a
     as_dbg
 );
 
@@ -36,6 +37,10 @@ sub a_g_a_s {
 
 sub bz_a {
     'Bugzilla::Attachment'
+}
+
+sub a {
+    'attachments'
 }
 
 sub _prepare_msg {

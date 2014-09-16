@@ -38,7 +38,7 @@ our @EXPORT = qw(
 # very specific to the setup of GNOME database.
 sub updating {
     my $dbh = Bugzilla->dbh;
-    my $column = $dbh->bz_column_info('attachments', 'status');
+    my $column = $dbh->bz_column_info(a(), 'status');
 
     return undef unless (defined $column);
     print "updating: status column exists\n";
@@ -53,12 +53,12 @@ sub updating {
 # Checks whether we have a vanilla instance.
 sub fresh {
     my $dbh = Bugzilla->dbh;
-    my $column = $dbh->bz_column_info('attachments', 'status');
+    my $column = $dbh->bz_column_info(a(), 'status');
 
     return undef if (defined $column);
     print "fresh: no status column\n";
 
-    $column = $dbh->bz_column_info('attachments', g_a_s());
+    $column = $dbh->bz_column_info(a(), g_a_s());
     return undef if (defined $column);
     print "fresh: no gnome attachment status column\n";
 
@@ -116,7 +116,7 @@ sub install_gnome_attachment_status {
     }
 
     # add column
-    $dbh->bz_add_column('attachments', g_a_s(), get_definition, 'none');
+    $dbh->bz_add_column(a(), g_a_s(), get_definition, 'none');
 
     # populate fielddefs table for attachment status
     my $field_params = {
@@ -137,10 +137,10 @@ sub update_gnome_attachment_status {
 
     # TODO: recreate indices!
     $dbh->bz_start_transaction;
-    # $dbh->bz_alter_column('attachments', 'status', $temp_definition, 'none');
-    $dbh->bz_rename_column('attachments', 'status', g_a_s());
+    # $dbh->bz_alter_column(a(), 'status', $temp_definition, 'none');
+    $dbh->bz_rename_column(a(), 'status', g_a_s());
     $dbh->bz_rename_table('attachment_status', g_a_s());
-    # $dbh->bz_alter_column('attachments', 'status', get_definition, 'none');
+    # $dbh->bz_alter_column(a(), 'status', get_definition, 'none');
 
     $dbh->bz_commit_transaction;
 }
