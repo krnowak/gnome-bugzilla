@@ -27,6 +27,15 @@ sub new {
     };
     my $instance = {'template_handlers' => $handlers};
 
+    # TODO: Store a checksum of original attachment/list.html.tmpl and
+    # compare it to checksum of actual attachment/list.html.tmpl. Bail
+    # out when they are different. That way we can be notified when
+    # original template changed, so maybe we could be able to
+    # incorporate the changes to our override.
+
+    # BEWARE: Do not even think of using template_include_path from
+    # Bugzilla::Install::Util here - in my case it causes some deep
+    # recursion, httpd went berserk and my computer became a zombie.
     update_choice_class_map();
     return $class->SUPER::new($instance);
 }

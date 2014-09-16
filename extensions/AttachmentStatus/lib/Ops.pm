@@ -34,7 +34,8 @@ our @EXPORT = qw(
 # used by your extension in here. (Make sure you also list them in
 # @EXPORT.)
 
-# Checks whether we are updating from old attachment status.
+# Checks whether we are updating from old attachment status. This is
+# very specific to the setup of GNOME database.
 sub updating {
     my $dbh = Bugzilla->dbh;
     my $column = $dbh->bz_column_info('attachments', 'status');
@@ -127,6 +128,7 @@ sub install_gnome_attachment_status {
     $dbh->bz_commit_transaction;
 }
 
+# This code is very specific to the setup of GNOME database.
 sub update_gnome_attachment_status {
     my $dbh = Bugzilla->dbh;
     # TODO: Probably not needed, see comment in get_definition
