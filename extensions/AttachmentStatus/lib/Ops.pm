@@ -124,10 +124,22 @@ sub install_gnome_attachment_status {
 sub update_gnome_attachment_status {
     my $dbh = Bugzilla->dbh;
 
-    # TODO: recreate indices!
     $dbh->bz_start_transaction;
+    # We drop the REFERENCES constraint. There should be no such
+    # constraints for fields, as they may be altered by admin. We
+    # would not like to have some attachments dropped only because we
+    # decided to drop a 'reviewed' value deeming it as a duplicate of
+    # 'needs-work', right?
+    $dbh->bz_alter_column(a(), 'status', get_g_a_s_definition(), 'none');
+    # Fortunately, there is no need to recreate an index on column
+    # rename. We still are using a rather non-generic
+    # 'attachments_status' index name, though. I have to ask if
+    # recreating an index is a long operation. If it is not, then I'll
+    # recreate it.
+    # $dbh->bz_drop_index(a(), 'attachments_status');
     $dbh->bz_rename_column(a(), 'status', g_a_s());
     $dbh->bz_rename_table('attachment_status', g_a_s());
+    # $dbh->bz_add_index(a(), a() . '_' . g_a_s(), g_a_s());
 
     $dbh->bz_commit_transaction;
 }
