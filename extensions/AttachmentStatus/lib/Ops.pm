@@ -140,7 +140,7 @@ sub update_gnome_attachment_status {
     # $dbh->bz_alter_column(a(), 'status', $temp_definition, 'none');
     $dbh->bz_rename_column(a(), 'status', g_a_s());
     $dbh->bz_rename_table('attachment_status', g_a_s());
-    # $dbh->bz_alter_column(a(), 'status', get_definition, 'none');
+    # $dbh->bz_alter_column(a(), g_a_s(), get_definition, 'none');
 
     $dbh->bz_commit_transaction;
 }
