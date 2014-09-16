@@ -80,7 +80,7 @@ sub fresh {
     1;
 }
 
-sub get_definition {
+sub get_g_a_s_definition {
     {TYPE => 'varchar(64)',
      NOTNULL => 1};
 }
@@ -107,7 +107,7 @@ sub install_gnome_attachment_status {
     }
 
     # add column
-    $dbh->bz_add_column(a(), g_a_s(), get_definition, 'none');
+    $dbh->bz_add_column(a(), g_a_s(), get_g_a_s_definition(), 'none');
 
     # populate fielddefs table for attachment status
     my $field_params = {
