@@ -125,6 +125,7 @@ sub install_gnome_attachment_status {
 sub update_gnome_attachment_status {
     my $dbh = Bugzilla->dbh;
 
+    # TODO: Modify fielddefs!
     $dbh->bz_start_transaction;
     # We drop the REFERENCES constraint. There should be no such
     # constraints for fields, as they may be altered by admin. We
