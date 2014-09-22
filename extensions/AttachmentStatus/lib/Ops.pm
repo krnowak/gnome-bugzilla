@@ -108,7 +108,8 @@ sub install_gnome_attachment_status {
 
     # add column
     $dbh->bz_add_column(a(), g_a_s(), get_g_a_s_definition(), 'none');
-    $dbh->bz_add_index(a(), a() . '_' . g_a_s(), g_a_s());
+    $dbh->bz_add_index(a(), a() . '_' . g_a_s(),
+                       {FIELDS => [g_a_s()]});
 
     # populate fielddefs table for attachment status
     my $field_params = {
@@ -139,7 +140,8 @@ sub update_gnome_attachment_status {
     # $dbh->bz_drop_index(a(), 'attachments_status');
     $dbh->bz_rename_column(a(), 'status', g_a_s());
     $dbh->bz_rename_table('attachment_status', g_a_s());
-    # $dbh->bz_add_index(a(), a() . '_' . g_a_s(), g_a_s());
+    # $dbh->bz_add_index(a(), a() . '_' . g_a_s(),
+    #                    {FIELDS => [g_a_s()]});
 
     $dbh->bz_commit_transaction;
 }
