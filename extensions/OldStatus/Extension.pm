@@ -56,15 +56,15 @@ sub install_update_db {
             'REFERENCES' => {
                 'COLUMN' => 'value',
                 'DELETE' => 'CASCADE',
-                'TABLE' => 'attachment_status'
+                'TABLE' => a_s()
             },
                     'TYPE' => 'varchar(64)'
         };
         $dbh->bz_add_column(a(), st(), $definition, 'none');
         $dbh->bz_add_index(a(), a() . '_index',
                        {FIELDS => ['ispatch'], TYPE => ''});
-        $dbh->bz_add_index(a(), a_s(),
-                       {FIELDS => [st()], TYPE => ''});
+        #$dbh->bz_add_index(a(), a_s(),
+        #               {FIELDS => [st()], TYPE => ''});
 
         $dbh->bz_commit_transaction;
     }
