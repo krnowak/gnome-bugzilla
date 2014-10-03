@@ -141,6 +141,8 @@ sub install_before_final_checks
     $dbh->bz_add_column(a(), st(), $definition, 'none');
     $dbh->bz_add_index(a(), 'attachment_index', ['ispatch']);
     $dbh->bz_add_index(a(), a() . '_' . st(), [st()]);
+    # TODO: Create a bug, attachments and a named query. At this point
+    # admin user should be defined.
     $dbh->bz_commit_transaction;
 }
 
