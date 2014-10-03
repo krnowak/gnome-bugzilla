@@ -123,27 +123,66 @@ sub install_gnome_attachment_status {
 
 # This code is very specific to the setup of GNOME database.
 sub update_gnome_attachment_status {
+    # What needs to be done here:
+    # 'attachments' table:
+    # - rename 'status' column to 'gnome_attachment_status' (1)
+    # - get rid of foreign key on 'status' column (2)
+    # - rename 'attachments_status' index to
+    #   'attachments_gnome_attachment_status_idx' (3)
+    # - rename 'attachment_index' to 'attachments_ispatch_idx' (4)
+    #
+    # 'attachment_status' table:
+    # - rename it to 'gnome_attachment_status' (5)
+    #
+    # 'fielddefs' table:
+    # - rename 'attachments.status' to
+    #   'attachments.gnome_attachments_status' (6)
+    #
+    # 'namedqueries' table:
+    # - replace all uses of 'attachments.status' with
+    #   'attachments.gnome_attachment_status' (7)
+
     my $dbh = Bugzilla->dbh;
 
-    # TODO: Modify fielddefs!
     $dbh->bz_start_transaction;
     # We drop the REFERENCES constraint. There should be no such
     # constraints for fields, as they may be altered by admin. We
     # would not like to have some attachments dropped only because we
     # decided to drop a 'reviewed' value deeming it as a duplicate of
     # 'needs-work', right?
-    $dbh->bz_alter_column(a(), 'status', get_g_a_s_definition(), 'none');
-    # Fortunately, there is no need to recreate an index on column
-    # rename. We still are using a rather non-generic
-    # 'attachments_status' index name, though. I have to ask if
-    # recreating an index is a long operation. If it is not, then I'll
-    # recreate it.
-    # $dbh->bz_drop_index(a(), 'attachments_status');
-    $dbh->bz_rename_column(a(), 'status', g_a_s());
-    $dbh->bz_rename_table('attachment_status', g_a_s());
-    # $dbh->bz_add_index(a(), a() . '_' . g_a_s(),
-    #                    {FIELDS => [g_a_s()], TYPE => ''});
+    $dbh->bz_alter_column(a(), 'status', get_g_a_s_definition(), 'none'); # (2)
+    $dbh->bz_drop_index(a(), 'attachments_status'); # (3)
+    $dbh->bz_drop_index(a(), 'attachment_index'); # (4)
+    $dbh->bz_rename_column(a(), 'status', g_a_s()); # (1)
+    $dbh->bz_add_index(a(), join('_', a(), g_a_s(), 'idx'),
+                       {FIELDS => [g_a_s()], TYPE => ''}); # (3)
+    $dbh->bz_add_index(a(), join('_', a(), 'ispatch', 'idx'),
+                       {FIELDS => ['ispatch'], TYPE => ''}); # (4)
+    $dbh->bz_rename_table('attachment_status', g_a_s()); # (5)
 
+    # (6)
+    my $stmt = $dbh->prepare('UPDATE fielddefs SET name = ? WHERE name = ?',
+                             undef,
+                             'attachments.status', a_g_a_s()) or die $dbh->errstr;
+
+    $stmt->execute or die $stmt->errstr;
+    # (7)
+    my $query_rows = $dbh->selectall_arrayref('SELECT id, query ' .
+                                              'FROM namedqueries ' .
+                                              'WHERE query ' .
+                                              'LIKE \'%attachments.status%\'');
+
+    $stmt = $dbh->prepare('UPDATE namedqueries ' .
+                          'SET query = ? ' .
+                          'WHERE id = ?') or die $dbh->errstr;
+    while (my @row = @{$query_rows})
+    {
+        my $id = $row[0];
+        my $query = $row[1];
+
+        $query =~ s/attachments.status/a_g_a_s()/eg;
+        $stmt->execute($query, $id) or die $stmt->errstr;
+    }
     $dbh->bz_commit_transaction;
 }
 
