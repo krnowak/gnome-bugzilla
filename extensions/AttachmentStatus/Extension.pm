@@ -65,7 +65,9 @@ sub install_update_db {
 sub db_schema_abstract_schema {
     my ($self, $args) = @_;
     my $schema = $args->{'schema'};
-    unless (exists ($schema->{'attachment_status'}))
+    my $dbh = Bugzilla->dbh;
+
+    unless ($dbh->bz_column_info(a(), 'status'))
     {
         my $definition = {
             FIELDS => [
