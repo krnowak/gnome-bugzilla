@@ -63,32 +63,31 @@ sub install_update_db {
 # It would be better to have a hook for adding more enum initial
 # values instead (see Bugzilla::DB::bz_populate_enum_tables).
 sub db_schema_abstract_schema {
-    # TODO: We check for existence of 'attachment_status' table. If it
-    # exists then do nothing here - gnome_attachment_status will be
-    # created by renaming the old table.
-
     my ($self, $args) = @_;
     my $schema = $args->{'schema'};
-    my $definition = {
-        FIELDS => [
-            id                  => {TYPE => 'SMALLSERIAL', NOTNULL => 1,
-                                    PRIMARYKEY => 1},
-            value               => {TYPE => 'varchar(64)', NOTNULL => 1},
-            sortkey             => {TYPE => 'INT2', NOTNULL => 1, DEFAULT => 0},
-            isactive            => {TYPE => 'BOOLEAN', NOTNULL => 1,
-                                    DEFAULT => 'TRUE'},
-            visibility_value_id => {TYPE => 'INT2'},
-            description         => {TYPE => 'MEDIUMTEXT', NOTNULL => 1}
-        ],
-        INDEXES => [
-            gnome_attachment_status_value_idx   => {FIELDS => ['value'],
-                                                    TYPE => 'UNIQUE'},
-            gnome_attachment_status_sortkey_idx => ['sortkey', 'value'],
-            gnome_attachment_status_visibility_value_id_idx => ['visibility_value_id'],
-        ]
-    };
+    unless (exists ($schema->{'attachment_status'}))
+    {
+        my $definition = {
+            FIELDS => [
+                id                  => {TYPE => 'SMALLSERIAL', NOTNULL => 1,
+                                        PRIMARYKEY => 1},
+                value               => {TYPE => 'varchar(64)', NOTNULL => 1},
+                sortkey             => {TYPE => 'INT2', NOTNULL => 1, DEFAULT => 0},
+                isactive            => {TYPE => 'BOOLEAN', NOTNULL => 1,
+                                        DEFAULT => 'TRUE'},
+                visibility_value_id => {TYPE => 'INT2'},
+                description         => {TYPE => 'MEDIUMTEXT', NOTNULL => 1}
+                ],
+            INDEXES => [
+                gnome_attachment_status_value_idx   => {FIELDS => ['value'],
+                                                        TYPE => 'UNIQUE'},
+                gnome_attachment_status_sortkey_idx => ['sortkey', 'value'],
+                gnome_attachment_status_visibility_value_id_idx => ['visibility_value_id'],
+                ]
+        };
 
-    $schema->{g_a_s()} = $definition;
+        $schema->{g_a_s()} = $definition;
+    }
 }
 
 sub object_columns {
