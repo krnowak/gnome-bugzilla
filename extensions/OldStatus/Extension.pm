@@ -51,20 +51,7 @@ sub install_update_db {
         };
         Bugzilla::Field->create($field_params);
 
-        my $definition = {
-            'NOTNULL' => 1,
-            'REFERENCES' => {
-                'COLUMN' => 'value',
-                'DELETE' => 'CASCADE',
-                'TABLE' => 'attachment_status'
-            },
-                    'TYPE' => 'varchar(64)'
-        };
-        $dbh->bz_add_column(a(), st(), $definition, 'none');
-        $dbh->bz_add_index(a(), a() . '_index',
-                       {FIELDS => ['ispatch'], TYPE => ''});
-        $dbh->bz_add_index(a(), a_s(),
-                       {FIELDS => [st()], TYPE => ''});
+        # attachments table is modified in install_before_final_checks
 
         $dbh->bz_commit_transaction;
     }
@@ -133,6 +120,30 @@ sub db_schema_abstract_schema {
 
         $schema->{a_s()} = $definition;
     }
+}
+
+sub install_before_final_checks
+{
+    my ($self, $args) = @_;
+    my $silent = $args->{'silent'};
+    my $definition = {
+        'NOTNULL' => 1,
+        'REFERENCES' => {
+            'COLUMN' => 'value',
+            'DELETE' => 'CASCADE',
+            'TABLE' => a_s()
+        },
+        'TYPE' => 'varchar(64)'
+    };
+    my $dbh = Bugzilla->dbh;
+
+    $dbh->bz_start_transaction;
+    $dbh->bz_add_column(a(), st(), $definition, 'none');
+    $dbh->bz_add_index(a(), a() . '_index',
+                   {FIELDS => ['ispatch'], TYPE => ''});
+    $dbh->bz_add_index(a(), a_s(),
+                   {FIELDS => [st()], TYPE => ''});
+    $dbh->bz_commit_transaction;
 }
 
 sub enabled {
