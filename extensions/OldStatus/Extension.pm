@@ -139,10 +139,8 @@ sub install_before_final_checks
 
     $dbh->bz_start_transaction;
     $dbh->bz_add_column(a(), st(), $definition, 'none');
-    $dbh->bz_add_index(a(), a() . '_index',
-                   {FIELDS => ['ispatch'], TYPE => ''});
-    $dbh->bz_add_index(a(), a_s(),
-                   {FIELDS => [st()], TYPE => ''});
+    $dbh->bz_add_index(a(), 'attachment_index', ['ispatch']);
+    $dbh->bz_add_index(a(), a_s(), [st()]);
     $dbh->bz_commit_transaction;
 }
 
