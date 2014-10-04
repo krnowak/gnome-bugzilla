@@ -85,14 +85,10 @@ sub get_g_a_s_definition {
      NOTNULL => 1};
 }
 
-sub install_gnome_attachment_status {
+sub fill_gnome_attachment_status_table {
     my $dbh = Bugzilla->dbh;
-
-    $dbh->bz_start_transaction;
-
     # gnome attachment status table is created in db_schema_abstract_schema hook
-    # populate gnome_attachment_status enum table
-    my $insert = $dbh->prepare('INSERT INTO ' . g_a_s() . ' (value, sortkey, description) VALUES (?,?,?)');
+    my $insert = $dbh->prepare('INSERT INTO ' . g_a_s() . ' (value, sortkey, description) VALUES (?,?,?)') or die $dbh->errstr;
     my $sortorder = 0;
     my @pairs = (['none', 'an unreviewed patch'],
                  ['accepted-commit_now', 'The maintainer has given commit permission'],
@@ -103,9 +99,16 @@ sub install_gnome_attachment_status {
                  ['reviewed', 'None of the other states made sense or are quite correct, but the other comments in the bug explain the status of the patch and the patch should be considered to have been reviewed.  If the submitter doesn\'t feel the comments on the patch are clear enough, they can unset this state']);
     foreach my $pair (@pairs) {
         $sortorder += 100;
-        $insert->execute($pair->[0], $sortorder, $pair->[1]);
+        $insert->execute($pair->[0], $sortorder, $pair->[1]) or die $dbh->errstr;
     }
+}
 
+sub install_gnome_attachment_status {
+    my $dbh = Bugzilla->dbh;
+
+    $dbh->bz_start_transaction;
+
+    fill_gnome_attachment_status_table;
     # add column
     $dbh->bz_add_column(a(), g_a_s(), get_g_a_s_definition(), 'none');
     $dbh->bz_add_index(a(), a() . '_' . g_a_s(), [g_a_s()]);
@@ -131,7 +134,11 @@ sub update_gnome_attachment_status {
     # - rename 'attachment_index' to 'attachments_ispatch_idx' (4)
     #
     # 'attachment_status' table:
-    # - rename it to 'gnome_attachment_status' (5)
+    # - drop it in favor of 'gnome_attachment_status'. We could just
+    #   rename it, but I see no sensible way of checking for existence
+    #   of some table/column in db_schema_abstract_schema - schema
+    #   passed to this hook is rather vanilla. Calling bz_column_info
+    #   there ends with endless recursion. (5)
     #
     # 'fielddefs' table:
     # - rename 'attachments.status' to
@@ -155,7 +162,8 @@ sub update_gnome_attachment_status {
     $dbh->bz_rename_column(a(), 'status', g_a_s()); # (1)
     $dbh->bz_add_index(a(), join('_', a(), g_a_s(), 'idx'), [g_a_s()]); # (3)
     $dbh->bz_add_index(a(), join('_', a(), 'ispatch', 'idx'), ['ispatch']); # (4)
-    $dbh->bz_rename_table('attachment_status', g_a_s()); # (5)
+    $dbh->bz_drop_table('attachment_status'); # (5)
+    fill_gnome_attachment_status_table; # (5)
 
     # (6)
     my $stmt = $dbh->prepare('UPDATE fielddefs SET name = ? WHERE name = ?',

@@ -63,10 +63,6 @@ sub install_update_db {
 # It would be better to have a hook for adding more enum initial
 # values instead (see Bugzilla::DB::bz_populate_enum_tables).
 sub db_schema_abstract_schema {
-    # TODO: We check for existence of 'attachment_status' table. If it
-    # exists then do nothing here - gnome_attachment_status will be
-    # created by renaming the old table.
-
     my ($self, $args) = @_;
     my $schema = $args->{'schema'};
     my $definition = {
@@ -88,6 +84,8 @@ sub db_schema_abstract_schema {
         ]
     };
 
+    # Create the table unconditionally. If we are updating from old
+    # setup, we will just remove the attachment_status table.
     $schema->{g_a_s()} = $definition;
 }
 
