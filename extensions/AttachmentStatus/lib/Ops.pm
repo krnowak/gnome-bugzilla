@@ -103,15 +103,20 @@ sub fill_gnome_attachment_status_table {
     }
 }
 
+sub add_gnome_attachment_status_column {
+    my $dbh = Bugzilla->dbh;
+
+    $dbh->bz_add_column(a(), g_a_s(), get_g_a_s_definition(), 'none');
+    $dbh->bz_add_index(a(), join('_', a(), g_a_s(), 'idx'), [g_a_s()]);
+}
+
 sub install_gnome_attachment_status {
     my $dbh = Bugzilla->dbh;
 
     $dbh->bz_start_transaction;
 
     fill_gnome_attachment_status_table;
-    # add column
-    $dbh->bz_add_column(a(), g_a_s(), get_g_a_s_definition(), 'none');
-    $dbh->bz_add_index(a(), a() . '_' . g_a_s(), [g_a_s()]);
+    add_gnome_attachment_status_column;
 
     # populate fielddefs table for attachment status
     my $field_params = {
@@ -127,51 +132,54 @@ sub install_gnome_attachment_status {
 sub update_gnome_attachment_status {
     # What needs to be done here:
     # 'attachments' table:
-    # - rename 'status' column to 'gnome_attachment_status' (1)
-    # - get rid of foreign key on 'status' column (2)
-    # - rename 'attachments_status' index to
-    #   'attachments_gnome_attachment_status_idx' (3)
-    # - rename 'attachment_index' to 'attachments_ispatch_idx' (4)
+    # - create new column - 'gnome_attachment_status', copy contents
+    #   of 'status' to it, remove the 'status' column and create an
+    #   index for new column. We are doing it because I had problems
+    #   with dropping the foreign key constraint (it wasn't dropped at
+    #   all and it is still kept in bz_schema) and later both dropping
+    #   an attachment_status index and renaming the 'status' column
+    #   fail. Hopefully with all this, both an index and a foreign key
+    #   on status column are dropped. (1)
+    # - rename 'attachment_index' to 'attachments_ispatch_idx' (2)
     #
     # 'attachment_status' table:
     # - drop it in favor of 'gnome_attachment_status'. We could just
     #   rename it, but I see no sensible way of checking for existence
     #   of some table/column in db_schema_abstract_schema - schema
     #   passed to this hook is rather vanilla. Calling bz_column_info
-    #   there ends with endless recursion. (5)
+    #   there ends with endless recursion. (3)
     #
     # 'fielddefs' table:
     # - rename 'attachments.status' to
-    #   'attachments.gnome_attachments_status' (6)
+    #   'attachments.gnome_attachments_status' (4)
     #
     # 'namedqueries' table:
     # - replace all uses of 'attachments.status' with
-    #   'attachments.gnome_attachment_status' (7)
+    #   'attachments.gnome_attachment_status' (5)
 
     my $dbh = Bugzilla->dbh;
+    my $stmt;
 
     $dbh->bz_start_transaction;
-    # We drop the REFERENCES constraint. There should be no such
-    # constraints for fields, as they may be altered by admin. We
-    # would not like to have some attachments dropped only because we
-    # decided to drop a 'reviewed' value deeming it as a duplicate of
-    # 'needs-work', right?
-    $dbh->bz_alter_column(a(), 'status', get_g_a_s_definition(), 'none'); # (2)
-    $dbh->bz_drop_index(a(), 'attachments_status'); # (3)
-    $dbh->bz_drop_index(a(), 'attachment_index'); # (4)
-    $dbh->bz_rename_column(a(), 'status', g_a_s()); # (1)
-    $dbh->bz_add_index(a(), join('_', a(), g_a_s(), 'idx'), [g_a_s()]); # (3)
-    $dbh->bz_add_index(a(), join('_', a(), 'ispatch', 'idx'), ['ispatch']); # (4)
-    $dbh->bz_drop_table('attachment_status'); # (5)
-    fill_gnome_attachment_status_table; # (5)
-
-    # (6)
-    my $stmt = $dbh->prepare('UPDATE fielddefs SET name = ? WHERE name = ?',
-                             undef,
-                             'attachments.status', a_g_a_s()) or die $dbh->errstr;
+    # (1)
+    add_gnome_attachment_status_column;
+    $stmt = $dbh->prepare('UPDATE ? SET ? = status',
+                          undef,
+                          a(), g_a_s()) or die $dbh->errstr;
+    $stmt->execute or die $stmt->errstr;
+    # (2)
+    $dbh->bz_drop_index(a(), 'attachment_index');
+    $dbh->bz_add_index(a(), join('_', a(), 'ispatch', 'idx'), ['ispatch']);
+    # (3)
+    fill_gnome_attachment_status_table;
+    $dbh->bz_drop_table('attachment_status');
+    # (4)
+    $stmt = $dbh->prepare('UPDATE fielddefs SET name = ? WHERE name = ?',
+                          undef,
+                          'attachments.status', a_g_a_s()) or die $dbh->errstr;
 
     $stmt->execute or die $stmt->errstr;
-    # (7)
+    # (5)
     my $query_rows = $dbh->selectall_arrayref('SELECT id, query ' .
                                               'FROM namedqueries ' .
                                               'WHERE query ' .
