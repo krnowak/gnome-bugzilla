@@ -15,6 +15,7 @@ use Bugzilla::Constants;
 use Data::Dumper;
 
 our @EXPORT = qw(
+    bz_a
     st
     a_s
     a
@@ -26,6 +27,10 @@ our @EXPORT = qw(
 # "use Bugzilla::Extension::AttachmentStatus::Util". You can put functions
 # used by your extension in here. (Make sure you also list them in
 # @EXPORT.)
+
+sub bz_a {
+    'Bugzilla::Attachment'
+}
 
 sub st {
     'status';

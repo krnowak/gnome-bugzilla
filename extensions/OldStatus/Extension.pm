@@ -146,6 +146,37 @@ sub install_before_final_checks
     $dbh->bz_commit_transaction;
 }
 
+sub object_columns {
+    my ($self, $args) = @_;
+    if ($args->{'class'}->isa(bz_a())) {
+        push (@{$args->{'columns'}}, st());
+    }
+}
+
+sub object_update_columns {
+    my ($self, $args) = @_;
+    my $object = $args->{'object'};
+
+    if ($object->isa(bz_a())) {
+        push (@{$args->{'columns'}}, st());
+        cgi_hack_update($object);
+    }
+}
+
+sub object_end_of_create_validators {
+    my ($self, $args) = @_;
+
+    if ($args->{'class'}->isa(bz_a())) {
+        my $params = $args->{'params'};
+        # assuming that status, if exists, is already validated
+        unless (defined $params->{st()} and $params->{'ispatch'}
+                and Bugzilla->user->in_group('editbugs'))
+        {
+            $params->{st()} = 'none';
+        }
+    }
+}
+
 sub enabled {
     1;
 }
