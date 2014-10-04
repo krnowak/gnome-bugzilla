@@ -91,13 +91,13 @@ sub _prepare_msg {
 
 sub as_dbg {
     my $datadir = bz_locations()->{'datadir'};
-    my $mesg = _prepare_msg(@_);
+
     if (-w "$datadir/errorlog") {
+        my $mesg = _prepare_msg(@_);
+
         open(ERRORLOGFID, ">>$datadir/errorlog");
         print ERRORLOGFID $mesg;
         close ERRORLOGFID;
-    } else {
-        die $mesg;
     }
 }
 
