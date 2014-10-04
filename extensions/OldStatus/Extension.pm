@@ -127,6 +127,29 @@ sub db_schema_abstract_schema {
     }
 }
 
+sub first_foo
+{
+    my ($class) = @_;
+    my @stuff = $class->get_all;
+    die 'no ' . $class . ' instances in db' unless (@stuff > 0);
+    $stuff[0];
+}
+
+sub first_user
+{
+    first_foo('Bugzilla::User');
+}
+
+sub first_product
+{
+    first_foo('Bugzilla::Product');
+}
+
+sub first_component
+{
+    first_foo('Bugzilla::Component');
+}
+
 sub install_before_final_checks
 {
     my ($self, $args) = @_;
@@ -147,27 +170,19 @@ sub install_before_final_checks
     $dbh->bz_add_index(a(), 'attachment_index', ['ispatch']);
     $dbh->bz_add_index(a(), a() . '_' . st(), [st()]);
 
-    my @users = Bugzilla::User->get_all;
-    die 'no users' unless (@users > 0);
-    my $user = $users[0];
-    @users = ();
-    my $bug = Bugzilla::Bug->create({'assigned_to' => $user->id,
+    my $user = first_user;
+    my $bug = Bugzilla::Bug->create({'product' => first_product,
+                                     'component' => first_component,
+                                     'assigned_to' => $user,
                                      'bug_file_loc' => '',
                                      'bug_severity' => 'enhancement',
                                      'bug_status' => 'CONFIRMED',
-                                     'creation_ts' => '2014-10-04 14:37:32',
-                                     'delta_ts' => '2014-10-04 14:55:56',
                                      'short_desc' => 'blabla',
                                      'op_sys' => 'Linux',
                                      'priority' => '---',
-                                     'product_id' => 1,
                                      'rep_platform' => 'PC',
-                                     'reporter' => 1,
                                      'version' => 'unspecified',
-                                     'component_id' => 1,
-                                     'status_whiteboard' => '',
-                                     'lastdiffed' => '2014-10-04 14:55:56',
-                                     'everconfirmed' => 1});
+                                     'status_whiteboard' => ''});
     my $counter = 1;
     for my $pair (status_pairs) {
         my $attachment = Bugzilla::Attachment->create({'bug' => $bug,
