@@ -197,6 +197,20 @@ sub object_columns {
     }
 }
 
+# XXX: Gross hack. It would be better if we had a hook (named for
+# instance 'object_cgi_update) inside attachment.cgi which provides an
+# object being updated and either cgi object or cgi params.
+sub cgi_hack_update {
+    my ($attachment) = @_;
+    my $cgi = Bugzilla->cgi;
+    my $status = $cgi->param(st());
+    my $action = $cgi->param('action');
+
+    if (defined($status) && defined($action) && $action eq 'update') {
+        $attachment->set(st(), $status);
+    }
+}
+
 sub object_update_columns {
     my ($self, $args) = @_;
     my $object = $args->{'object'};
