@@ -14,6 +14,8 @@ use base qw(Bugzilla::Extension);
 
 # The code for this is in ./extensions/OldStatus/lib/*.pm
 use Bugzilla::Extension::OldStatus::Util;
+use Bugzilla::Bug;
+use Bugzilla::Attachment;
 
 use List::MoreUtils qw(any);
 
@@ -21,6 +23,16 @@ our $VERSION = '0.01';
 
 # See the documentation of Bugzilla::Hook ("perldoc Bugzilla::Hook"
 # in the bugzilla directory) for a list of all available hooks.
+
+sub status_pairs {
+    (['none', 'an unreviewed patch'],
+     ['accepted-commit_now', 'The maintainer has given commit permission'],
+     ['needs-work', 'The patch needs work'],
+     ['accepted-commit_after_freeze', 'This patch is acceptable, but can\'t be committed until after the relevant freeze (string, etc.) is lifted.'],
+     ['commited', 'This patch has already been committed but the bug remains open for other reasons'],
+     ['rejected', 'The patch provides a change that is just not wanted, or the patch can\'t be fixed to be correct without rewriting.  Maintainers should always explain their reasons whenever marking a patch as rejected.'],
+     ['reviewed', 'None of the other states made sense or are quite correct, but the other comments in the bug explain the status of the patch and the patch should be considered to have been reviewed.  If the submitter doesn\'t feel the comments on the patch are clear enough, they can unset this state']);
+}
 
 sub install_update_db {
     my $dbh = Bugzilla->dbh;
@@ -32,14 +44,7 @@ sub install_update_db {
 
         my $insert = $dbh->prepare('INSERT INTO ' . a_s() . ' (value, sortkey, description) VALUES (?,?,?)');
         my $sortorder = 0;
-        my @pairs = (['none', 'an unreviewed patch'],
-                     ['accepted-commit_now', 'The maintainer has given commit permission'],
-                     ['needs-work', 'The patch needs work'],
-                     ['accepted-commit_after_freeze', 'This patch is acceptable, but can\'t be committed until after the relevant freeze (string, etc.) is lifted.'],
-                     ['commited', 'This patch has already been committed but the bug remains open for other reasons'],
-                     ['rejected', 'The patch provides a change that is just not wanted, or the patch can\'t be fixed to be correct without rewriting.  Maintainers should always explain their reasons whenever marking a patch as rejected.'],
-                     ['reviewed', 'None of the other states made sense or are quite correct, but the other comments in the bug explain the status of the patch and the patch should be considered to have been reviewed.  If the submitter doesn\'t feel the comments on the patch are clear enough, they can unset this state']);
-        foreach my $pair (@pairs) {
+        foreach my $pair (status_pairs) {
             $sortorder += 100;
             $insert->execute($pair->[0], $sortorder, $pair->[1]);
         }
@@ -141,8 +146,47 @@ sub install_before_final_checks
     $dbh->bz_add_column(a(), st(), $definition, 'none');
     $dbh->bz_add_index(a(), 'attachment_index', ['ispatch']);
     $dbh->bz_add_index(a(), a() . '_' . st(), [st()]);
-    # TODO: Create a bug, attachments and a named query. At this point
-    # admin user should be defined.
+
+    my @users = Bugzilla::User->get_all;
+    die 'no users' unless (@users > 0);
+    my $user = $users[0];
+    @users = ();
+    my $bug = Bugzilla::Bug->create('assigned_to' => $user->id,
+                                    'bug_file_loc' => '',
+                                    'bug_severity' => 'enhancement',
+                                    'bug_status' => 'CONFIRMED',
+                                    'creation_ts' => '2014-10-04 14:37:32',
+                                    'delta_ts' => '2014-10-04 14:55:56',
+                                    'short_desc' => 'blabla',
+                                    'op_sys' => 'Linux',
+                                    'priority' => '---',
+                                    'product_id' => 1,
+                                    'rep_platform' => 'PC',
+                                    'reporter' => 1,
+                                    'version' => 'unspecified',
+                                    'component_id' => 1,
+                                    'status_whiteboard' => '',
+                                    'lastdiffed' => '2014-10-04 14:55:56',
+                                    'everconfirmed' => 1);
+    my $counter = 1;
+    for my $pair (status_pairs) {
+        Bugzilla::Attachment->create('bug_id' => $bug->id,
+                                     'creation_ts' => '2014-10-04 14:53:07',
+                                     'modification_time' => '2014-10-04 14:53:07',
+                                     'description' => 'p' . $counter,
+                                     'mimetype' => 'text/plain',
+                                     'ispatch' => 1,
+                                     'filename' => 'p',
+                                     'submitter_id' => $user->id,
+                                     'status' => $pair->[0]);
+        ++$counter;
+    }
+
+    my $stmt = $dbh->prepare('INSERT INTO ? (?, ?, ?) VALUES (?, ?, ?)',
+                             undef,
+                             'namedqueries', 'userid', 'name', 'query',
+                             $user->id, 'ajwaj', '\'component=TestComponent&f1=attachments.status&o1=notequals&query_format=advanced&resolution=---&v1=none&order=bug_status%2Cpriority%2Cassigned_to%2Cbug_id\'') or die $dbh->errstr;
+    $stmt->execute or die $stmt->errstr;
     $dbh->bz_commit_transaction;
 }
 
