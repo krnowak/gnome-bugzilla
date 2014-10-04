@@ -151,34 +151,34 @@ sub install_before_final_checks
     die 'no users' unless (@users > 0);
     my $user = $users[0];
     @users = ();
-    my $bug = Bugzilla::Bug->create('assigned_to' => $user->id,
-                                    'bug_file_loc' => '',
-                                    'bug_severity' => 'enhancement',
-                                    'bug_status' => 'CONFIRMED',
-                                    'creation_ts' => '2014-10-04 14:37:32',
-                                    'delta_ts' => '2014-10-04 14:55:56',
-                                    'short_desc' => 'blabla',
-                                    'op_sys' => 'Linux',
-                                    'priority' => '---',
-                                    'product_id' => 1,
-                                    'rep_platform' => 'PC',
-                                    'reporter' => 1,
-                                    'version' => 'unspecified',
-                                    'component_id' => 1,
-                                    'status_whiteboard' => '',
-                                    'lastdiffed' => '2014-10-04 14:55:56',
-                                    'everconfirmed' => 1);
+    my $bug = Bugzilla::Bug->create({'assigned_to' => $user->id,
+                                     'bug_file_loc' => '',
+                                     'bug_severity' => 'enhancement',
+                                     'bug_status' => 'CONFIRMED',
+                                     'creation_ts' => '2014-10-04 14:37:32',
+                                     'delta_ts' => '2014-10-04 14:55:56',
+                                     'short_desc' => 'blabla',
+                                     'op_sys' => 'Linux',
+                                     'priority' => '---',
+                                     'product_id' => 1,
+                                     'rep_platform' => 'PC',
+                                     'reporter' => 1,
+                                     'version' => 'unspecified',
+                                     'component_id' => 1,
+                                     'status_whiteboard' => '',
+                                     'lastdiffed' => '2014-10-04 14:55:56',
+                                     'everconfirmed' => 1});
     my $counter = 1;
     for my $pair (status_pairs) {
-        Bugzilla::Attachment->create('bug_id' => $bug->id,
-                                     'creation_ts' => '2014-10-04 14:53:07',
-                                     'modification_time' => '2014-10-04 14:53:07',
-                                     'description' => 'p' . $counter,
-                                     'mimetype' => 'text/plain',
-                                     'ispatch' => 1,
-                                     'filename' => 'p',
-                                     'submitter_id' => $user->id,
-                                     'status' => $pair->[0]);
+        my $attachment = Bugzilla::Attachment->create({'bug' => $bug,
+                                                       'data' => "some content\n",
+                                                       'description' => 'p' . $counter,
+                                                       'filename' => 'p',
+                                                       'mimetype' => 'text/plain',
+                                                       'ispatch' => 1});
+
+        $attachment->{'status'} = $pair->[0];
+        $attachment->update;
         ++$counter;
     }
 
