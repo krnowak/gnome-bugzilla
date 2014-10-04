@@ -163,9 +163,7 @@ sub update_gnome_attachment_status {
     $dbh->bz_start_transaction;
     # (1)
     add_gnome_attachment_status_column;
-    $stmt = $dbh->prepare('UPDATE ? SET ? = status',
-                          undef,
-                          a(), g_a_s()) or die $dbh->errstr;
+    $stmt = $dbh->prepare('UPDATE ' . a() . ' SET ' . g_a_s() . ' = status') or die $dbh->errstr;
     $stmt->execute or die $stmt->errstr;
     # (2)
     $dbh->bz_drop_index(a(), 'attachment_index');
@@ -174,9 +172,7 @@ sub update_gnome_attachment_status {
     fill_gnome_attachment_status_table;
     $dbh->bz_drop_table('attachment_status');
     # (4)
-    $stmt = $dbh->prepare('UPDATE fielddefs SET name = ? WHERE name = ?',
-                          undef,
-                          'attachments.status', a_g_a_s()) or die $dbh->errstr;
+    $stmt = $dbh->prepare('UPDATE fielddefs SET name = ' . a_g_a_s() . ' WHERE name = attachments.status') or die $dbh->errstr;
 
     $stmt->execute or die $stmt->errstr;
     # (5)
