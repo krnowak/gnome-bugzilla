@@ -145,9 +145,17 @@ sub first_product
     first_foo('Bugzilla::Product');
 }
 
-sub first_component
+sub first_component_of
 {
-    first_foo('Bugzilla::Component');
+    my ($product) = @_;
+
+    my @components = $product->components;
+    # Components returns an array of array refs containing one
+    # component or an array with single element being an array ref of
+    # components. Possibly a bug, eh? Either way we are interested
+    # only in first element of first element anyway.
+    die 'product has no components' unless (@components > 0 and @{$components[0]} > 0);
+    $components[0][0];
 }
 
 sub install_before_final_checks
@@ -171,8 +179,10 @@ sub install_before_final_checks
     $dbh->bz_add_index(a(), a() . '_' . st(), [st()]);
 
     my $user = first_user;
-    my $bug = Bugzilla::Bug->create({'product' => first_product,
-                                     'component' => first_component,
+    Bugzilla->set_user($user);
+    my $product = first_product;
+    my $bug = Bugzilla::Bug->create({'product' => $product,
+                                     'component' => first_component_of($product)->name,
                                      'assigned_to' => $user,
                                      'bug_file_loc' => '',
                                      'bug_severity' => 'enhancement',
@@ -197,11 +207,9 @@ sub install_before_final_checks
         ++$counter;
     }
 
-    my $stmt = $dbh->prepare('INSERT INTO ? (?, ?, ?) VALUES (?, ?, ?)',
-                             undef,
-                             'namedqueries', 'userid', 'name', 'query',
-                             $user->id, 'ajwaj', '\'component=TestComponent&f1=attachments.status&o1=notequals&query_format=advanced&resolution=---&v1=none&order=bug_status%2Cpriority%2Cassigned_to%2Cbug_id\'') or die $dbh->errstr;
-    $stmt->execute or die $stmt->errstr;
+    my $stmt = $dbh->prepare('INSERT INTO namedqueries (userid, name, query) VALUES (?, ?, ?)');
+
+    $stmt->execute($user->id, 'ajwaj', '\'component=TestComponent&f1=attachments.status&o1=notequals&query_format=advanced&resolution=---&v1=none&order=bug_status%2Cpriority%2Cassigned_to%2Cbug_id\'') or die $stmt->errstr;
     $dbh->bz_commit_transaction;
 }
 
