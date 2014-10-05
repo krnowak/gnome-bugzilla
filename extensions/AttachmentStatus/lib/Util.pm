@@ -52,7 +52,7 @@ sub a_s {
 
 # attachments.status - old fielddef name
 sub fd_a_s {
-    a() . '.' . a_s();
+    a() . '.' . st();
 }
 
 # gnome_attachment_status - new column name in attachments, new table name
