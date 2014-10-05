@@ -149,13 +149,9 @@ sub first_component_of
 {
     my ($product) = @_;
 
-    my @components = $product->components;
-    # Components returns an array of array refs containing one
-    # component or an array with single element being an array ref of
-    # components. Possibly a bug, eh? Either way we are interested
-    # only in first element of first element anyway.
-    die 'product has no components' unless (@components > 0 and @{$components[0]} > 0);
-    $components[0][0];
+    my $components = $product->components;
+    die 'product has no components' unless (defined ($components) and @{$components} > 0);
+    $components->[0];
 }
 
 sub schema_hash
