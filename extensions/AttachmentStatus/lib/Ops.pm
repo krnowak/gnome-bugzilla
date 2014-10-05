@@ -107,7 +107,7 @@ sub add_gnome_attachment_status_column {
     my $dbh = Bugzilla->dbh;
 
     $dbh->bz_add_column(a(), g_a_s(), get_g_a_s_definition(), 'none');
-    $dbh->bz_add_index(a(), join('_', a(), g_a_s(), 'idx'), [g_a_s()]);
+    $dbh->bz_add_index(a(), idx(a(), g_a_s()), [g_a_s()]);
 }
 
 sub install_gnome_attachment_status {
@@ -168,7 +168,7 @@ sub update_gnome_attachment_status {
     $dbh->bz_drop_column(a(), st());
     # (2)
     $dbh->bz_drop_index(a(), sa() . '_index');
-    $dbh->bz_add_index(a(), join('_', a(), 'ispatch', 'idx'), ['ispatch']);
+    $dbh->bz_add_index(a(), idx(a(), 'ispatch'), ['ispatch']);
     # (3)
     fill_gnome_attachment_status_table;
     $dbh->bz_drop_table(a_s);

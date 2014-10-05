@@ -23,6 +23,7 @@ our @EXPORT = qw(
     g_a_s
     fd_a_g_a_s
     bz_a
+    idx
     as_dbg
 );
 
@@ -66,6 +67,11 @@ sub fd_a_g_a_s {
 
 sub bz_a {
     'Bugzilla::Attachment';
+}
+
+# create a name for index
+sub idx {
+    join ('_', @_, 'idx');
 }
 
 sub _prepare_msg {
