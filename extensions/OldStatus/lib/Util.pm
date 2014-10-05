@@ -53,6 +53,8 @@ sub elegant_dump
 {
     my ($data, $clean) = @_;
 
+    $clean = defined($clean) and $clean;
+
     local $Data::Dumper::Purity = $clean;
     local $Data::Dumper::Deepcopy = $clean;
     local $Data::Dumper::Terse = not $clean;
