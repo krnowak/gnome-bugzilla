@@ -61,11 +61,10 @@ sub elegant_dump
 }
 
 sub _prepare_msg {
-    my $raw_msg = '';
-    local $Data::Dumper::Terse = 1;
     my $dumper_used = 0;
     my $spacing = '';
     my @copy = @_;
+    my @raw_msg_parts = ();
 
     if ((@copy > 0) && defined ($copy[0]) && (ref($copy[0]) eq '') && ($copy[0] =~ /^(\s+)/)) {
         $spacing = $1;
@@ -81,18 +80,18 @@ sub _prepare_msg {
                 $dumper_used = 0;
                 $s =~ s/^,?\s*//;
             }
-            $raw_msg .= $s;
+            push(@raw_msg_parts, $s);
         } else {
-            unless ($raw_msg =~ /\n$/) {
-                $raw_msg =~ s/\s+$//;
-                $raw_msg .= "\n";
+            unless ($raw_msg_parts[-1] =~ /\n$/) {
+                $raw_msg_parts[-1] =~ s/\s+$//;
+                push (@raw_msg_parts, "\n");
             }
-            $raw_msg .= elegant_dump($_);
+            push (@raw_msg_parts, elegant_dump($_));
             $dumper_used = 1;
         }
     }
     my $final_msg = '';
-    my @splitted = split("\n", $raw_msg);
+    my @splitted = split("\n", join('', @raw_msg_parts));
     if (@splitted > 1) {
         my $sep = '========';
         unshift(@splitted, $sep);
