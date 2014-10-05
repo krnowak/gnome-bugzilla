@@ -182,17 +182,19 @@ sub update_gnome_attachment_status {
     my $query_rows = $dbh->selectall_arrayref('SELECT id, query ' .
                                               'FROM namedqueries ' .
                                               'WHERE query ' .
-                                              'LIKE \'%' . fd_a_s() . '%\'');
+                                              'LIKE \'%' . fd_a_s() . '%\'') or die $dbh->errstr;
+    my $old_fd = fd_a_s();
+    my $new_fd = fd_a_g_a_s();
 
     $stmt = $dbh->prepare('UPDATE namedqueries ' .
                           'SET query = ? ' .
                           'WHERE id = ?') or die $dbh->errstr;
-    while (my @row = @{$query_rows})
+    for my $row (@{$query_rows})
     {
-        my $id = $row[0];
-        my $query = $row[1];
+        my $id = $row->[0];
+        my $query = $row->[1];
 
-        $query =~ s/\Qfd_a_s()\E/\Qfd_a_g_a_s()\E/eg;
+        $query =~ s/\Q$old_fd\E/\Q$new_fd\E/g;
         $stmt->execute($query, $id) or die $stmt->errstr;
     }
     $dbh->bz_commit_transaction;
