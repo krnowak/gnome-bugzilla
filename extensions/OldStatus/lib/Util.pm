@@ -20,6 +20,7 @@ our @EXPORT = qw(
     a_s
     a
     a_st
+    elegant_dump
     as_dbg
 );
 
@@ -46,6 +47,17 @@ sub a {
 
 sub a_st {
     a() . '.' . st();
+}
+
+sub elegant_dump
+{
+    my ($data) = @_;
+
+    local $Data::Dumper::Purity = 1;
+    local $Data::Dumper::Deepcopy = 1;
+    local $Data::Dumper::Sortkeys = 1;
+
+    return Dumper($data);
 }
 
 sub _prepare_msg {
@@ -75,7 +87,7 @@ sub _prepare_msg {
                 $raw_msg =~ s/\s+$//;
                 $raw_msg .= "\n";
             }
-            $raw_msg .= Dumper($_);
+            $raw_msg .= elegant_dump($_);
             $dumper_used = 1;
         }
     }

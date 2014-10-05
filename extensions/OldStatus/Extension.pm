@@ -180,16 +180,7 @@ sub serialize_schema
 {
     my ($schema_data) = @_;
 
-    # Make it ok to eval
-    local $Data::Dumper::Purity = 1;
-
-    # Avoid cross-refs
-    local $Data::Dumper::Deepcopy = 1;
-
-    # Always sort keys to allow textual compare
-    local $Data::Dumper::Sortkeys = 1;
-
-    return Dumper($schema_data);
+    elegant_dump ($schema_data);
 }
 
 sub store_schema
