@@ -180,7 +180,7 @@ sub serialize_schema
 {
     my ($schema_data) = @_;
 
-    elegant_dump ($schema_data);
+    elegant_dump ($schema_data, 1);
 }
 
 sub store_schema

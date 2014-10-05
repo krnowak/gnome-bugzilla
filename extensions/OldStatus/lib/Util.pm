@@ -51,10 +51,11 @@ sub a_st {
 
 sub elegant_dump
 {
-    my ($data) = @_;
+    my ($data, $clean) = @_;
 
-    local $Data::Dumper::Purity = 1;
-    local $Data::Dumper::Deepcopy = 1;
+    local $Data::Dumper::Purity = $clean;
+    local $Data::Dumper::Deepcopy = $clean;
+    local $Data::Dumper::Terse = not $clean;
     local $Data::Dumper::Sortkeys = 1;
 
     return Dumper($data);
