@@ -7,15 +7,15 @@
 # This Source Code Form is "Incompatible With Secondary Licenses", as
 # defined by the Mozilla Public License, v. 2.0.
 
-package Bugzilla::Extension::AttachmentStatus::Ops;
+package Bugzilla::Extension::GnomeAttachmentStatus::Ops;
 use strict;
 use warnings;
 use base qw(Exporter);
 use Data::Dumper;
-use Bugzilla::Extension::AttachmentStatus::Util;
-use Bugzilla::Extension::AttachmentStatus::Field;
-use Bugzilla::Extension::AttachmentStatus::Bug;
-use Bugzilla::Extension::AttachmentStatus::Attachment;
+use Bugzilla::Extension::GnomeAttachmentStatus::Util;
+use Bugzilla::Extension::GnomeAttachmentStatus::Field;
+use Bugzilla::Extension::GnomeAttachmentStatus::Bug;
+use Bugzilla::Extension::GnomeAttachmentStatus::Attachment;
 
 our @EXPORT = qw(
     updating
@@ -30,7 +30,7 @@ our @EXPORT = qw(
 );
 
 # This file can be loaded by your extension via
-# "use Bugzilla::Extension::AttachmentStatus::Util". You can put functions
+# "use Bugzilla::Extension::GnomeAttachmentStatus::Util". You can put functions
 # used by your extension in here. (Make sure you also list them in
 # @EXPORT.)
 
@@ -208,13 +208,13 @@ sub validate_status {
     if ($class_or_object->isa(bz_a()) && $field eq g_a_s()) {
         as_dbg('    inside ', bz_a(), ' for field: ', $field);
         if (defined ($value)) {
-            #my $validated_field = Bugzilla::Extension::AttachmentStatus::Field->check($value);
+            #my $validated_field = Bugzilla::Extension::GnomeAttachmentStatus::Field->check($value);
             my $validated_field = Bugzilla::Field::Choice->type(fd_a_g_a_s())->check($value);
             as_dbg('result: ', $validated_field);
 
             return $validated_field->name;
         } else {
-            return Bugzilla::Extension::AttachmentStatus::Field::new_none;
+            return Bugzilla::Extension::GnomeAttachmentStatus::Field::new_none;
         }
     }
 
@@ -237,7 +237,7 @@ sub cgi_hack_update {
 }
 
 sub update_choice_class_map {
-    my $type = 'Bugzilla::Extension::AttachmentStatus::Field';
+    my $type = 'Bugzilla::Extension::GnomeAttachmentStatus::Field';
 
     unless (exists (Bugzilla::Field::Choice::CLASS_MAP->{$type->FIELD_NAME()})) {
         Bugzilla::Field::Choice::CLASS_MAP->{$type->FIELD_NAME} = $type;

@@ -7,15 +7,15 @@
 # This Source Code Form is "Incompatible With Secondary Licenses", as
 # defined by the Mozilla Public License, v. 2.0.
 
-package Bugzilla::Extension::AttachmentStatus::Field;
+package Bugzilla::Extension::GnomeAttachmentStatus::Field;
 use strict;
 use warnings;
 use base qw(Bugzilla::Field::Choice);
-use Bugzilla::Extension::AttachmentStatus::Util;
+use Bugzilla::Extension::GnomeAttachmentStatus::Util;
 
 use constant DB_TABLE => g_a_s();
 use constant FIELD_NAME => fd_a_g_a_s();
-use constant G_A_S_PKG => 'Bugzilla::Extension::AttachmentStatus::Field';
+use constant G_A_S_PKG => 'Bugzilla::Extension::GnomeAttachmentStatus::Field';
 
 sub DB_COLUMNS {
     return ($_[0]->SUPER::DB_COLUMNS, 'description');

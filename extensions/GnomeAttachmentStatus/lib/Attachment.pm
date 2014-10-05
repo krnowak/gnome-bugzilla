@@ -7,13 +7,13 @@
 # This Source Code Form is "Incompatible With Secondary Licenses", as
 # defined by the Mozilla Public License, v. 2.0.
 
-package Bugzilla::Extension::AttachmentStatus::Attachment;
+package Bugzilla::Extension::GnomeAttachmentStatus::Attachment;
 use strict;
 use warnings;
 # The below line is only to avoid protection faults in
 # Bugzilla::Object::set().
 use base qw(Bugzilla::Object);
-use Bugzilla::Extension::AttachmentStatus::Util;
+use Bugzilla::Extension::GnomeAttachmentStatus::Util;
 use Bugzilla::Attachment;
 
 sub bugzilla_attachment_set_gnome_attachment_status {

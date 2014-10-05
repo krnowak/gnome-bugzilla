@@ -7,10 +7,10 @@
 # This Source Code Form is "Incompatible With Secondary Licenses", as
 # defined by the Mozilla Public License, v. 2.0.
 
-package Bugzilla::Extension::AttachmentStatus::Bug;
+package Bugzilla::Extension::GnomeAttachmentStatus::Bug;
 use strict;
 use warnings;
-use Bugzilla::Extension::AttachmentStatus::Util;
+use Bugzilla::Extension::GnomeAttachmentStatus::Util;
 use Bugzilla::Bug;
 use constant SHOW_G_A_S => 'show_' . g_a_s();
 

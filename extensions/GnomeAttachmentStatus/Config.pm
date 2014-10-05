@@ -5,10 +5,10 @@
 # This Source Code Form is "Incompatible With Secondary Licenses", as
 # defined by the Mozilla Public License, v. 2.0.
 
-package Bugzilla::Extension::AttachmentStatus;
+package Bugzilla::Extension::GnomeAttachmentStatus;
 use strict;
 
-use constant NAME => 'AttachmentStatus';
+use constant NAME => 'GnomeAttachmentStatus';
 
 use constant REQUIRED_MODULES => [
 ];

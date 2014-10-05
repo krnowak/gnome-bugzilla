@@ -7,7 +7,7 @@
 # This Source Code Form is "Incompatible With Secondary Licenses", as
 # defined by the Mozilla Public License, v. 2.0.
 
-package Bugzilla::Extension::AttachmentStatus::Util;
+package Bugzilla::Extension::GnomeAttachmentStatus::Util;
 use strict;
 use warnings;
 use base qw(Exporter);
@@ -28,7 +28,7 @@ our @EXPORT = qw(
 );
 
 # This file can be loaded by your extension via
-# "use Bugzilla::Extension::AttachmentStatus::Util". You can put functions
+# "use Bugzilla::Extension::GnomeAttachmentStatus::Util". You can put functions
 # used by your extension in here. (Make sure you also list them in
 # @EXPORT.)
 
