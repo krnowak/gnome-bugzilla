@@ -15,10 +15,14 @@ use Bugzilla::Constants;
 use Data::Dumper;
 
 our @EXPORT = qw(
-    g_a_s
-    a_g_a_s
-    bz_a
+    st
+    sa
     a
+    a_s
+    fd_a_s
+    g_a_s
+    fd_a_g_a_s
+    bz_a
     as_dbg
 );
 
@@ -27,20 +31,41 @@ our @EXPORT = qw(
 # used by your extension in here. (Make sure you also list them in
 # @EXPORT.)
 
-sub g_a_s {
-    'gnome_attachment_status'
+sub st {
+    'status';
 }
 
-sub a_g_a_s {
-    'attachments.' . g_a_s();
+sub sa {
+    'attachment';
+}
+
+# attachments - table name
+sub a {
+    sa() . 's';
+}
+
+# attachment_status - old table name
+sub a_s {
+    sa() . '_' . st();
+}
+
+# attachments.status - old fielddef name
+sub fd_a_s {
+    a() . '.' . a_s();
+}
+
+# gnome_attachment_status - new column name in attachments, new table name
+sub g_a_s {
+    'gnome_' . a_s();
+}
+
+# attachments.gnome_attachment_status - new fielddef name
+sub fd_a_g_a_s {
+    a() . '.' . g_a_s();
 }
 
 sub bz_a {
-    'Bugzilla::Attachment'
-}
-
-sub a {
-    'attachments'
+    'Bugzilla::Attachment';
 }
 
 sub _prepare_msg {

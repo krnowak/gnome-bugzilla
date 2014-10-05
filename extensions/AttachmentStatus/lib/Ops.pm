@@ -38,12 +38,12 @@ our @EXPORT = qw(
 # very specific to the setup of GNOME database.
 sub updating {
     my $dbh = Bugzilla->dbh;
-    my $column = $dbh->bz_column_info(a(), 'status');
+    my $column = $dbh->bz_column_info(a(), st());
 
     return undef unless (defined $column);
     print "updating: status column exists\n";
 
-    $column = $dbh->bz_column_info('attachment_status', 'id');
+    $column = $dbh->bz_column_info(a_s(), 'id');
     return undef unless defined $column;
     print "updating: attachment status table exists\n";
     print "updating: it is an update\n";
@@ -53,7 +53,7 @@ sub updating {
 # Checks whether we have a vanilla instance.
 sub fresh {
     my $dbh = Bugzilla->dbh;
-    my $column = $dbh->bz_column_info(a(), 'status');
+    my $column = $dbh->bz_column_info(a(), st());
 
     return undef if (defined $column);
     print "fresh: no status column\n";
@@ -62,7 +62,7 @@ sub fresh {
     return undef if (defined $column);
     print "fresh: no gnome attachment status column\n";
 
-    $column = $dbh->bz_column_info('attachment_status', 'id');
+    $column = $dbh->bz_column_info(a_s(), 'id');
     return undef if defined ($column);
     print "fresh: no attachment status table\n";
 
@@ -120,7 +120,7 @@ sub install_gnome_attachment_status {
 
     # populate fielddefs table for attachment status
     my $field_params = {
-        name => a_g_a_s(),
+        name => fd_a_g_a_s(),
         description => 'Attachment status',
         type => Bugzilla::Constants::FIELD_TYPE_SINGLE_SELECT
     };
@@ -163,24 +163,24 @@ sub update_gnome_attachment_status {
     $dbh->bz_start_transaction;
     # (1)
     add_gnome_attachment_status_column;
-    $stmt = $dbh->prepare('UPDATE ' . a() . ' SET ' . g_a_s() . ' = status') or die $dbh->errstr;
+    $stmt = $dbh->prepare('UPDATE ' . a() . ' SET ' . g_a_s() . ' = ' . st()) or die $dbh->errstr;
     $stmt->execute or die $stmt->errstr;
-    $dbh->bz_drop_column(a(), 'status');
+    $dbh->bz_drop_column(a(), st());
     # (2)
-    $dbh->bz_drop_index(a(), 'attachment_index');
+    $dbh->bz_drop_index(a(), sa() . '_index');
     $dbh->bz_add_index(a(), join('_', a(), 'ispatch', 'idx'), ['ispatch']);
     # (3)
     fill_gnome_attachment_status_table;
-    $dbh->bz_drop_table('attachment_status');
+    $dbh->bz_drop_table(a_s);
     # (4)
-    $stmt = $dbh->prepare('UPDATE fielddefs SET name = ' . a_g_a_s() . ' WHERE name = attachments.status') or die $dbh->errstr;
+    $stmt = $dbh->prepare('UPDATE fielddefs SET name = ' . fd_a_g_a_s() . ' WHERE name = ' . fd_a_s()) or die $dbh->errstr;
 
     $stmt->execute or die $stmt->errstr;
     # (5)
     my $query_rows = $dbh->selectall_arrayref('SELECT id, query ' .
                                               'FROM namedqueries ' .
                                               'WHERE query ' .
-                                              'LIKE \'%attachments.status%\'');
+                                              'LIKE \'%' . fd_a_s() . '%\'');
 
     $stmt = $dbh->prepare('UPDATE namedqueries ' .
                           'SET query = ? ' .
@@ -190,7 +190,7 @@ sub update_gnome_attachment_status {
         my $id = $row[0];
         my $query = $row[1];
 
-        $query =~ s/attachments.status/a_g_a_s()/eg;
+        $query =~ s/fd_a_s()/fd_a_g_a_s()/eg;
         $stmt->execute($query, $id) or die $stmt->errstr;
     }
     $dbh->bz_commit_transaction;
@@ -205,7 +205,7 @@ sub validate_status {
         as_dbg('    inside ', bz_a(), ' for field: ', $field);
         if (defined ($value)) {
             #my $validated_field = Bugzilla::Extension::AttachmentStatus::Field->check($value);
-            my $validated_field = Bugzilla::Field::Choice->type(a_g_a_s())->check($value);
+            my $validated_field = Bugzilla::Field::Choice->type(fd_a_g_a_s())->check($value);
             as_dbg('result: ', $validated_field);
 
             return $validated_field->name;
@@ -243,7 +243,7 @@ sub update_choice_class_map {
 sub attachment_edit_handler {
     my ($file, $vars, $context) = @_;
     my $var_name = 'all_' . g_a_s() . '_values';
-    my @values = Bugzilla::Field::Choice->type(a_g_a_s())->get_all();
+    my @values = Bugzilla::Field::Choice->type(fd_a_g_a_s())->get_all();
 
     $vars->set($var_name, \@values);
 }
