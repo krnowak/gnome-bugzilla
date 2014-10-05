@@ -165,6 +165,8 @@ sub update_gnome_attachment_status {
     add_gnome_attachment_status_column;
     $stmt = $dbh->prepare('UPDATE ' . a() . ' SET ' . g_a_s() . ' = ' . st()) or die $dbh->errstr;
     $stmt->execute or die $stmt->errstr;
+    $dbh->bz_drop_fk(a(), st());
+    $dbh->bz_drop_index(a(), a() . '_' . st());
     $dbh->bz_drop_column(a(), st());
     # (2)
     $dbh->bz_drop_index(a(), sa() . '_index');
