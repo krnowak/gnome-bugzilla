@@ -192,7 +192,7 @@ sub update_gnome_attachment_status {
         my $id = $row[0];
         my $query = $row[1];
 
-        $query =~ s/fd_a_s()/fd_a_g_a_s()/eg;
+        $query =~ s/\Qfd_a_s()\E/\Qfd_a_g_a_s()\E/eg;
         $stmt->execute($query, $id) or die $stmt->errstr;
     }
     $dbh->bz_commit_transaction;
