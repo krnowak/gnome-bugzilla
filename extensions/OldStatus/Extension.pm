@@ -172,6 +172,8 @@ sub schema_hash
     my $VAR1;
 
     $row->{'schema_data'} = eval ($row->{'schema_data'});
+
+    $row;
 }
 
 sub serialize_schema
