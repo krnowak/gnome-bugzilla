@@ -173,7 +173,7 @@ sub update_gnome_attachment_status {
     fill_gnome_attachment_status_table;
     $dbh->bz_drop_table(a_s);
     # (4)
-    $stmt = $dbh->prepare('UPDATE fielddefs SET name = ' . fd_a_g_a_s() . ' WHERE name = ' . fd_a_s()) or die $dbh->errstr;
+    $stmt = $dbh->prepare('UPDATE fielddefs SET name = \'' . fd_a_g_a_s() . '\' WHERE name = \'' . fd_a_s() . '\'') or die $dbh->errstr;
 
     $stmt->execute or die $stmt->errstr;
     # (5)
