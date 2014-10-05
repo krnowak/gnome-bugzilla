@@ -36,7 +36,7 @@ sub status_pairs {
 
 sub install_update_db {
     my $dbh = Bugzilla->dbh;
-    my $column = $dbh->bz_column_info(a(), 'status');
+    my $column = $dbh->bz_column_info(a(), st());
 
     unless (defined ($column))
     {
@@ -202,14 +202,14 @@ sub install_before_final_checks
                                                        'mimetype' => 'text/plain',
                                                        'ispatch' => 1});
 
-        $attachment->{'status'} = $pair->[0];
+        $attachment->{st()} = $pair->[0];
         $attachment->update;
         ++$counter;
     }
 
     my $stmt = $dbh->prepare('INSERT INTO namedqueries (userid, name, query) VALUES (?, ?, ?)');
 
-    $stmt->execute($user->id, 'ajwaj', '\'component=TestComponent&f1=attachments.status&o1=notequals&query_format=advanced&resolution=---&v1=none&order=bug_status%2Cpriority%2Cassigned_to%2Cbug_id\'') or die $stmt->errstr;
+    $stmt->execute($user->id, 'ajwaj', '\'component=TestComponent&f1=' . a() . '.' . st() . '&o1=notequals&query_format=advanced&resolution=---&v1=none&order=bug_status%2Cpriority%2Cassigned_to%2Cbug_id\'') or die $stmt->errstr;
     $dbh->bz_commit_transaction;
 }
 
