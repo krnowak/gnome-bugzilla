@@ -17,7 +17,7 @@ use Bugzilla::Extension::OldStatus::Util;
 use Bugzilla::Bug;
 use Bugzilla::Attachment;
 
-use List::MoreUtils qw(any);
+use List::MoreUtils qw(natatime);
 
 our $VERSION = '0.01';
 
@@ -158,9 +158,83 @@ sub first_component_of
     $components[0][0];
 }
 
+sub schema_hash
+{
+    my $dbh = Bugzilla->dbh;
+    my $stmt = $dbh->prepare('SELECT schema_data, version FROM bz_schema') or die $dbh->errstr;
+
+    $stmt->execute or die $stmt->errstr;
+
+    my $row = $stmt->fetchrow_hashref('NAME_lc');
+
+    die $stmt->errstr unless ($row);
+
+    my $VAR1;
+
+    $row->{'schema_data'} = eval ($row->{'schema_data'});
+}
+
+sub serialize_schema
+{
+    my ($schema_data) = @_;
+
+    # Make it ok to eval
+    local $Data::Dumper::Purity = 1;
+
+    # Avoid cross-refs
+    local $Data::Dumper::Deepcopy = 1;
+
+    # Always sort keys to allow textual compare
+    local $Data::Dumper::Sortkeys = 1;
+
+    return Dumper($schema_data);
+}
+
+sub store_schema
+{
+    my ($schema) = @_;
+    my $dbh = Bugzilla->dbh;
+    my $serialized = serialize_schema($schema->{'schema_data'});
+    my $stmt = $dbh->prepare('UPDATE bz_schema ' .
+                             'SET schema_data = ?, version = ?') or die $dbh->errstr;
+
+    $stmt->bind_param(1, $serialized, $dbh->BLOB_TYPE);
+    $stmt->bind_param(2, $schema->{'version'});
+    $stmt->execute() or die $stmt->errstr;
+}
+
+sub hack_the_schema
+{
+    my $schema = schema_hash;
+
+    die 'no attachments fields in schema' unless (exists ($schema->{'schema_data'}{a()}{'FIELDS'}));
+
+    my $fields = $schema->{'schema_data'}{a()}{'FIELDS'};
+    my $fields_it = natatime 2, @{$fields};
+    my $status_def = undef;
+
+    while (my @name_and_def = $fields_it->())
+    {
+        next if $name_and_def[0] ne st();
+        $status_def = $name_and_def[1];
+        last;
+    }
+
+    die 'no status field in attachments table' unless ($status_def);
+    die 'no foreign key in status field' unless (exists($status_def->{'REFERENCES'}));
+    $status_def->{'REFERENCES'}{'created'} = 1;
+
+    store_schema($schema);
+}
+
 sub install_before_final_checks
 {
     my ($self, $args) = @_;
+    my $dbh = Bugzilla->dbh;
+    my $column = $dbh->bz_column_info(a(), st());
+
+    return if (defined ($column));
+
     my $silent = $args->{'silent'};
     my $definition = {
         'NOTNULL' => 1,
@@ -171,12 +245,12 @@ sub install_before_final_checks
         },
         'TYPE' => 'varchar(64)'
     };
-    my $dbh = Bugzilla->dbh;
 
     $dbh->bz_start_transaction;
     $dbh->bz_add_column(a(), st(), $definition, 'none');
     $dbh->bz_add_index(a(), 'attachment_index', ['ispatch']);
     $dbh->bz_add_index(a(), a() . '_' . st(), [st()]);
+    hack_the_schema;
 
     my $user = first_user;
     Bugzilla->set_user($user);
