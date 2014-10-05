@@ -43,19 +43,6 @@ sub new {
 # See the documentation of Bugzilla::Hook ("perldoc Bugzilla::Hook"
 # in the bugzilla directory) for a list of all available hooks.
 
-# Either rename already existing 'status' column to
-# 'gnome_attachment_status' or create it.
-sub install_update_db {
-    if (fresh) {
-        install_gnome_attachment_status;
-    } elsif (updating) {
-        update_gnome_attachment_status;
-    } else {
-        print "install_update_db: we are already updated\n";
-        # Do nothing, we are already updated.
-    }
-}
-
 # Add 'gnome_attachment_status' table with almost the same schema as
 # 'resolution' - 'resolution' has typical selectable field-like
 # schema. One addition is a description column.
@@ -172,6 +159,32 @@ sub template_before_process {
         my $context = $args->{'context'};
 
         $handlers->{$file}($file, $vars, $context);
+    }
+}
+
+# Either rename already existing 'status' column to
+# 'gnome_attachment_status' or create it. This should be a part of
+# install_update_db, but this hook is a PITA when dealing with columns
+# that have foreign key constraints. In our case, we wanted to remove
+# a foreign key constraint from status column, but it is not really
+# removed from schema, so on next run of checksetup it would be
+# recreated. To remove it for good, we need to remove the status
+# column. To do that, we need to remove the foreign key constraint
+# anyway first, but it is not removed, because when install_update_db
+# hook is run, foreign keys are not yet set up, so bz_drop_fk does
+# nothing, but foreign key already exists in database. Without foreign
+# key removed, we are getting errors when dropping a column.
+#
+# In short: argh!
+sub install_before_final_checks
+{
+    if (fresh) {
+        install_gnome_attachment_status;
+    } elsif (updating) {
+        update_gnome_attachment_status;
+    } else {
+        print "install_update_db: we are already updated\n";
+        # Do nothing, we are already updated.
     }
 }
 
