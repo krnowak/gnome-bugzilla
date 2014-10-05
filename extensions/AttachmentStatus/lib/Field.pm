@@ -14,7 +14,7 @@ use base qw(Bugzilla::Field::Choice);
 use Bugzilla::Extension::AttachmentStatus::Util;
 
 use constant DB_TABLE => g_a_s();
-use constant FIELD_NAME => a_g_a_s();
+use constant FIELD_NAME => fd_a_g_a_s();
 use constant G_A_S_PKG => 'Bugzilla::Extension::AttachmentStatus::Field';
 
 sub DB_COLUMNS {
