@@ -151,7 +151,7 @@
 	  <div id="attachment_gnome_attachment_status_combo">
             <b><label for="gnome_attachment_status">Status</label>:</b>
             <select id="gnome_attachment_status" name="gnome_attachment_status"
-		    [% IF attachment.ispatch %] disabled [% END %]>
+		    [% UNLESS attachment.ispatch %] disabled [% END %]>
               [% FOREACH gnome_attachment_status = all_gnome_attachment_status_values %]
               <option value="[% gnome_attachment_status.value FILTER html %]"
                 [% IF attachment.gnome_attachment_status == gnome_attachment_status.value %]
