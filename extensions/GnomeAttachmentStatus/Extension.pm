@@ -13,7 +13,6 @@ use warnings;
 use base qw(Bugzilla::Extension);
 
 # The code for this is in ./extensions/GnomeAttachmentStatus/lib/*.pm
-use Bugzilla::Extension::GnomeAttachmentStatus::Util;
 use Bugzilla::Extension::GnomeAttachmentStatus::Ops;
 
 use List::MoreUtils qw(any);
