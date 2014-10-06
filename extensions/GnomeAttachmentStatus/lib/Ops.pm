@@ -17,6 +17,8 @@ use Bugzilla::Extension::GnomeAttachmentStatus::Field;
 use Bugzilla::Extension::GnomeAttachmentStatus::Bug;
 use Bugzilla::Extension::GnomeAttachmentStatus::Attachment;
 use Bugzilla::Install::Util;
+use Digest::SHA;
+use File::Spec;
 
 our @EXPORT = qw(
     update_choice_class_map
@@ -70,15 +72,70 @@ sub add_gnome_attachment_status_table_to_schema
     $schema->{g_a_s()} = $definition;
 }
 
+sub _attachment_edit_handler {
+    my ($file, $vars, $context) = @_;
+    my $var_name = 'all_' . g_a_s() . '_values';
+    my @values = Bugzilla::Field::Choice->type(fd_a_g_a_s())->get_all();
+
+    $vars->set($var_name, \@values);
+}
+
+sub _attachment_list_handler {
+    my ($file, $vars, $context) = @_;
+    my $bug_id = $vars->get('bugid');
+
+    if ($bug_id) {
+        my $bug = Bugzilla::Bug->new($bug_id);
+        my $show_status = $bug->show_gnome_attachment_status();
+
+        $vars->set('show_gnome_attachment_status', $show_status);
+    }
+}
+
+sub _get_template_handlers
+{
+    {'attachment/edit.html.tmpl' => \&_attachment_edit_handler,
+     'attachment/list.html.tmpl' => \&_attachment_list_handler};
+}
+
 sub check_overriden_templates
 {
     # template_include_path is from Bugzilla::Install::Util package.
+    my @default_paths = grep {!/^\.\/extensions\//} @{Bugzilla::Install::Util::template_include_path()};
     print "template include paths\n";
-    for my $path (template_include_path)
+    for my $path (@default_paths)
     {
         print "$path\n";
     }
     print "end of template include paths\n";
+    my @files = sort keys (%{_get_template_handlers()});
+
+    for my $file (@files)
+    {
+        my $complete_path = undef;
+
+        for my $path (@default_paths)
+        {
+            my $potential_path = File::Spec->catfile($path, $file);
+
+            next unless (-r $potential_path);
+            $complete_path = $potential_path;
+            last;
+        }
+        unless ($complete_path)
+        {
+            print "Original template for $file not found\n";
+            next;
+        }
+
+        my $sha = Digest::SHA->new(256);
+
+        $sha->addfile($complete_path);
+
+        my $digest = $sha->hexdigest;
+
+        print "Digest for $file ($complete_path) is $digest";
+    }
 }
 
 sub maybe_add_status_column
@@ -163,32 +220,6 @@ sub maybe_fixup_final_status_param
             $params->{g_a_s()} = 'none';
         }
     }
-}
-
-sub _attachment_edit_handler {
-    my ($file, $vars, $context) = @_;
-    my $var_name = 'all_' . g_a_s() . '_values';
-    my @values = Bugzilla::Field::Choice->type(fd_a_g_a_s())->get_all();
-
-    $vars->set($var_name, \@values);
-}
-
-sub _attachment_list_handler {
-    my ($file, $vars, $context) = @_;
-    my $bug_id = $vars->get('bugid');
-
-    if ($bug_id) {
-        my $bug = Bugzilla::Bug->new($bug_id);
-        my $show_status = $bug->show_gnome_attachment_status();
-
-        $vars->set('show_gnome_attachment_status', $show_status);
-    }
-}
-
-sub _get_template_handlers
-{
-    {'attachment/edit.html.tmpl' => \&_attachment_edit_handler,
-     'attachment/list.html.tmpl' => \&_attachment_list_handler};
 }
 
 sub maybe_run_template_handler
