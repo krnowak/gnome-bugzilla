@@ -49,6 +49,7 @@ sub db_schema_abstract_schema {
     my $schema = $args->{'schema'};
 
     add_gnome_attachment_status_table_to_schema($schema);
+    check_overriden_templates;
 }
 
 sub object_columns {

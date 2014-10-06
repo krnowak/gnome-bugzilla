@@ -16,10 +16,12 @@ use Bugzilla::Extension::GnomeAttachmentStatus::Util;
 use Bugzilla::Extension::GnomeAttachmentStatus::Field;
 use Bugzilla::Extension::GnomeAttachmentStatus::Bug;
 use Bugzilla::Extension::GnomeAttachmentStatus::Attachment;
+use Bugzilla::Install::Util;
 
 our @EXPORT = qw(
     update_choice_class_map
     add_gnome_attachment_status_table_to_schema
+    check_overriden_templates
     maybe_add_status_column
     maybe_add_status_update_columns
     maybe_setup_status_validator
@@ -66,6 +68,17 @@ sub add_gnome_attachment_status_table_to_schema
     # Create the table unconditionally. If we are updating from old
     # setup, we will just remove the attachment_status table.
     $schema->{g_a_s()} = $definition;
+}
+
+sub check_overriden_templates
+{
+    # template_include_path is from Bugzilla::Install::Util package.
+    print "template include paths\n";
+    for my $path (template_include_path)
+    {
+        print "$path\n";
+    }
+    print "end of template include paths\n";
 }
 
 sub maybe_add_status_column
