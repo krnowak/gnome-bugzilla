@@ -1,19 +1,16 @@
 function showOrHideGnomeAttachmentStatus() {
-    var div = document.getElementById('attachment_gnome_attachment_status_combo');
+    var combo = document.getElementById('gnome_attachment_status_combo');
+    var hidden = document.getElementById('gnome_attachment_status_hidden');
     var ispatch = document.getElementById('ispatch');
 
-    if (div === null || ispatch === null) {
+    if (combo === null || hidden === null || ispatch === null) {
 	return 1;
     }
 
-    var selects = div.getElementsByTagName('select');
+    combo.disabled = !ispatch.checked
+    hidden.disabled = ispatch.checked
 
-    if (selects.length < 1) {
-	return 1;
-    }
-    selects[0].disabled = !ispatch.checked;
-
-    1;
+    return 1;
 }
 
 document.addEventListener('DOMContentLoaded', function () {
