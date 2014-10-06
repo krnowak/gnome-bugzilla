@@ -58,13 +58,8 @@ sub db_schema_abstract_schema {
 
 sub object_columns {
     my ($self, $args) = @_;
-    as_dbg('object columns, self: ', $self, ', args: ', $args, ', bz_a: ', bz_a());
     if ($args->{'class'}->isa(bz_a())) {
-        as_dbg('    inside ', bz_a());
         push (@{$args->{'columns'}}, g_a_s());
-        as_dbg('    after ', bz_a(), ', args: ', $args);
-    } else {
-        as_dbg('    ', $args->{'class'}, ' is not a ', bz_a());
     }
 }
 
@@ -72,26 +67,18 @@ sub object_update_columns {
     my ($self, $args) = @_;
     my $object = $args->{'object'};
 
-    as_dbg('object update columns, self: ', $self, ', args: ', $args, ', bz_a: ', bz_a());
     if ($object->isa(bz_a())) {
-        as_dbg('    inside ', bz_a());
         push (@{$args->{'columns'}}, g_a_s());
-        as_dbg('    after ', bz_a(), ', args: ', $args);
         cgi_hack_update($object);
-    } else {
-        as_dbg('    ', $args->{'object'}, ' is not a ', bz_a());
     }
 }
 
 sub object_validators {
     my ($self, $args) = @_;
 
-    as_dbg('object validators, self: ', $self, ', args: ', $args, ', bz_a: ', bz_a());
     if ($args->{'class'}->isa(bz_a())) {
         my $validators = $args->{'validators'};
-        as_dbg('    inside ', bz_a());
         if (exists ($validators->{g_a_s()})) {
-            as_dbg('    one already exists');
             my $old_validator = $validators->{g_a_s()};
             $validators->{g_a_s()} = sub {
                 my ($class, $value, $field) = @_;
@@ -99,32 +86,22 @@ sub object_validators {
                 validate_status($class, &{$old_validator}(@_), $field);
             };
         } else {
-            as_dbg('    none exists so far');
             $validators->{g_a_s()} = \&validate_status;
         }
-    } else {
-        as_dbg('    ', $args->{'class'}, ' is not a ', bz_a());
     }
 }
 
 sub object_end_of_create_validators {
     my ($self, $args) = @_;
 
-    as_dbg('object end of create validators, self: ', $self, ', args: ', $args, ', bz_a: ', bz_a());
     if ($args->{'class'}->isa(bz_a())) {
         my $params = $args->{'params'};
         # assuming that status, if exists, is already validated
-        as_dbg('    inside ', bz_a());
         unless (defined $params->{g_a_s()} and $params->{'ispatch'}
                 and Bugzilla->user->in_group('editbugs'))
         {
-            as_dbg('    not a patch or no gnome attachment status parameter or we are not in editbugs group - setting attachment status to none');
             $params->{g_a_s()} = 'none';
-        } else {
-            as_dbg('    left alone');
         }
-    } else {
-        as_dbg('    ', $args->{'class'}, ' is not a ', bz_a());
     }
 }
 
@@ -133,7 +110,6 @@ sub template_before_process {
     my $handlers = $self->{'template_handlers'};
     my $file = $args->{'file'};
 
-    as_dbg('template before process, self: ', $self, ', args: ', $args);
     if (exists ($handlers->{$file})) {
         my $vars = $args->{'vars'};
         my $context = $args->{'context'};

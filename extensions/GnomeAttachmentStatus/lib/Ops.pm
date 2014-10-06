@@ -232,13 +232,10 @@ sub update_gnome_attachment_status {
 sub validate_status {
     my ($class_or_object, $value, $field) = @_;
 
-    as_dbg('validate status, class (or object): ', $class_or_object, ', value: ', $value, ', field: ', $field);
     if ($class_or_object->isa(bz_a()) && $field eq g_a_s()) {
-        as_dbg('    inside ', bz_a(), ' for field: ', $field);
         if (defined ($value)) {
             #my $validated_field = Bugzilla::Extension::GnomeAttachmentStatus::Field->check($value);
             my $validated_field = Bugzilla::Field::Choice->type(fd_a_g_a_s())->check($value);
-            as_dbg('result: ', $validated_field);
 
             return $validated_field->name;
         } else {
@@ -255,7 +252,6 @@ sub validate_status {
 sub cgi_hack_update {
     my ($attachment) = @_;
     my $cgi = Bugzilla->cgi;
-    as_dbg('    cgi: ', $cgi);
     my $status = $cgi->param(g_a_s());
     my $action = $cgi->param('action');
 
