@@ -58,51 +58,34 @@ sub db_schema_abstract_schema {
 
 sub object_columns {
     my ($self, $args) = @_;
-    if ($args->{'class'}->isa(bz_a())) {
-        push (@{$args->{'columns'}}, g_a_s());
-    }
+    my $class = $args->{'class'};
+    my $columns = $args->{'columns'};
+
+    maybe_add_status_column($class, $columns);
 }
 
 sub object_update_columns {
     my ($self, $args) = @_;
     my $object = $args->{'object'};
+    my $columns = $args->{'columns'};
 
-    if ($object->isa(bz_a())) {
-        push (@{$args->{'columns'}}, g_a_s());
-        cgi_hack_update($object);
-    }
+    maybe_add_status_update_columns($object, $columns);
 }
 
 sub object_validators {
     my ($self, $args) = @_;
+    my $class = $args->{'class'};
+    my $validators = $args->{'validators'};
 
-    if ($args->{'class'}->isa(bz_a())) {
-        my $validators = $args->{'validators'};
-        if (exists ($validators->{g_a_s()})) {
-            my $old_validator = $validators->{g_a_s()};
-            $validators->{g_a_s()} = sub {
-                my ($class, $value, $field) = @_;
-
-                validate_status($class, &{$old_validator}(@_), $field);
-            };
-        } else {
-            $validators->{g_a_s()} = \&validate_status;
-        }
-    }
+    maybe_setup_status_validator($class, $validators);
 }
 
 sub object_end_of_create_validators {
     my ($self, $args) = @_;
+    my $class = $args->{'class'};
+    my $params = $args->{'params'};
 
-    if ($args->{'class'}->isa(bz_a())) {
-        my $params = $args->{'params'};
-        # assuming that status, if exists, is already validated
-        unless (defined $params->{g_a_s()} and $params->{'ispatch'}
-                and Bugzilla->user->in_group('editbugs'))
-        {
-            $params->{g_a_s()} = 'none';
-        }
-    }
+    maybe_fixup_final_status_param($class, $params);
 }
 
 sub template_before_process {

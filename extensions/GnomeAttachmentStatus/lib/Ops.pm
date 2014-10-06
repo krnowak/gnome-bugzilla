@@ -23,11 +23,13 @@ our @EXPORT = qw(
     fresh
     install_gnome_attachment_status
     update_gnome_attachment_status
-    validate_status
-    cgi_hack_update
     update_choice_class_map
     attachment_edit_handler
     attachment_list_handler
+    maybe_add_status_column
+    maybe_add_status_update_columns
+    maybe_setup_status_validator
+    maybe_fixup_final_status_param
 );
 
 # This file can be loaded by your extension via
@@ -229,7 +231,7 @@ sub update_gnome_attachment_status {
 }
 
 # Does the attachment status validation
-sub validate_status {
+sub _validate_status {
     my ($class_or_object, $value, $field) = @_;
 
     if ($class_or_object->isa(bz_a()) && $field eq g_a_s()) {
@@ -249,7 +251,7 @@ sub validate_status {
 # XXX: Gross hack. It would be better if we had a hook (named for
 # instance 'object_cgi_update) inside attachment.cgi which provides an
 # object being updated and either cgi object or cgi params.
-sub cgi_hack_update {
+sub _cgi_hack_update {
     my ($attachment) = @_;
     my $cgi = Bugzilla->cgi;
     my $status = $cgi->param(g_a_s());
@@ -285,6 +287,58 @@ sub attachment_list_handler {
         my $show_status = $bug->show_gnome_attachment_status();
 
         $vars->set('show_gnome_attachment_status', $show_status);
+    }
+}
+
+sub maybe_add_status_column
+{
+    my ($class, $columns) = @_;
+
+    if ($class->isa(bz_a())) {
+        push (@{$columns}, g_a_s());
+    }
+}
+
+sub maybe_add_status_update_columns
+{
+    my ($object, $columns) = @_;
+
+    if ($object->isa(bz_a())) {
+        push (@{$columns}, g_a_s());
+        _cgi_hack_update($object);
+    }
+}
+
+sub maybe_setup_status_validator
+{
+    my ($class, $validators) = @_;
+
+    if ($class->isa(bz_a())) {
+        if (exists ($validators->{g_a_s()})) {
+            my $old_validator = $validators->{g_a_s()};
+
+            $validators->{g_a_s()} = sub {
+                my ($class, $value, $field) = @_;
+
+                _validate_status($class, &{$old_validator}(@_), $field);
+            };
+        } else {
+            $validators->{g_a_s()} = \&_validate_status;
+        }
+    }
+}
+
+sub maybe_fixup_final_status_param
+{
+    my ($class, $params) = @_;
+
+    if ($class->isa(bz_a())) {
+        # assuming that status, if exists, is already validated
+        unless (defined $params->{g_a_s()} and $params->{'ispatch'}
+                and Bugzilla->user->in_group('editbugs'))
+        {
+            $params->{g_a_s()} = 'none';
+        }
     }
 }
 
