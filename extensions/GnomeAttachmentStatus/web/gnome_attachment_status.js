@@ -11,5 +11,5 @@ function show_hide_gnome_attachment_status(evt) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('ispatch').addEventListener('input', show_hide_gnome_attachment_status);
+    document.getElementById('ispatch').addEventListener('change', show_hide_gnome_attachment_status);
 });
