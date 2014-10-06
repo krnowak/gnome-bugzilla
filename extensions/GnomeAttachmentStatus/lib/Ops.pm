@@ -92,26 +92,67 @@ sub _attachment_list_handler {
     }
 }
 
-sub _get_template_handlers
+# This block is to make template_infos a private static variable, so
+# it is initialized only once.
 {
-    {'attachment/edit.html.tmpl' => \&_attachment_edit_handler,
-     'attachment/list.html.tmpl' => \&_attachment_list_handler};
+    sub _init_template_infos {
+        my $infos = {
+            'attachment/edit.html.tmpl' => {
+                'handler' => \&_attachment_edit_handler,
+                'digest' => '426ceeb820cefad35cbbf10ab053c1fc9f53fa71a63dd455418bff3221a46a0e'
+            }
+            'attachment/list.html.tmpl' => {
+                'handler' => \&_attachment_list_handler,
+                'digest' => 'b0c5edd84b8cc31666d0d0b4bf36cdb981ee322995dad891cf05f0f40b2d0392'
+            }
+        };
+
+        my @extension_paths = grep {/^\.\/extensions\/GnomeAttachmentStatus\//} @{Bugzilla::Install::Util::template_include_path()};
+
+        for my $file (sort keys (%{$infos}))
+        {
+            my $complete_path = undef;
+
+            for my $path (@extension_paths)
+            {
+                my $potential_path = File::Spec->catfile($path, $file);
+
+                next unless (-r $potential_path);
+                $complete_path = $potential_path;
+                last;
+            }
+
+            my $overriden = defined ($complete_path);
+
+            $infos->{$file}{'overriden'} = $overriden;
+            if ($overriden and not exists ($infos->{$file}{'digest'}))
+            {
+                # If this happens then it is programmer's error.
+                die "No digest of original template file ($complete_path) available";
+            }
+        }
+        $infos;
+    }
+
+    my $template_infos = _init_template_infos();
+
+    sub _get_template_infos
+    {
+        $template_info;
+    }
 }
 
 sub check_overriden_templates
 {
+    print "Checking overriden templates...\n";
     # template_include_path is from Bugzilla::Install::Util package.
     my @default_paths = grep {!/^\.\/extensions\//} @{Bugzilla::Install::Util::template_include_path()};
-    print "template include paths\n";
-    for my $path (@default_paths)
-    {
-        print "$path\n";
-    }
-    print "end of template include paths\n";
-    my @files = sort keys (%{_get_template_handlers()});
+    my $infos = _get_template_infos();
 
-    for my $file (@files)
+    for my $file (sort keys (%{$infos}))
     {
+        next unless $infos->{$file}{'overriden'};
+
         my $complete_path = undef;
 
         for my $path (@default_paths)
@@ -131,10 +172,14 @@ sub check_overriden_templates
         my $sha = Digest::SHA->new(256);
 
         $sha->addfile($complete_path);
-
-        my $digest = $sha->hexdigest;
-
-        print "Digest for $file ($complete_path) is $digest";
+        if ($sha->hexdigest ne $infos->{$file}{'digest'})
+        {
+            die "Original $file (at $complete_path) has changed " .
+            'since last checksetup. Please check if the changes ' .
+            'should be backported to overriden templates and ' .
+            'update the digest in template_info variable with ' .
+            $digest;
+        }
     }
 }
 
@@ -225,10 +270,10 @@ sub maybe_fixup_final_status_param
 sub maybe_run_template_handler
 {
     my ($file, $vars, $context) = @_;
-    my $handlers = _get_template_handlers;
+    my $infos = _get_template_infos;
 
-    if (exists ($handlers->{$file})) {
-        $handlers->{$file}($file, $vars, $context);
+    if (exists ($infos->{$file})) {
+        $infos->{$file}{'handler'}($file, $vars, $context);
     }
 }
 
