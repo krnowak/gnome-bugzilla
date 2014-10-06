@@ -18,8 +18,8 @@ use Bugzilla::Extension::GnomeAttachmentStatus::Bug;
 use Bugzilla::Extension::GnomeAttachmentStatus::Attachment;
 
 our @EXPORT = qw(
-    add_gnome_attachment_status_table_to_schema
     update_choice_class_map
+    add_gnome_attachment_status_table_to_schema
     maybe_add_status_column
     maybe_add_status_update_columns
     maybe_setup_status_validator
@@ -33,20 +33,159 @@ our @EXPORT = qw(
 # used by your extension in here. (Make sure you also list them in
 # @EXPORT.)
 
-# Checks whether we are updating from old attachment status. This is
-# very specific to the setup of GNOME database.
-sub _updating {
-    my $dbh = Bugzilla->dbh;
-    my $column = $dbh->bz_column_info(a(), st());
+sub update_choice_class_map {
+    my $type = 'Bugzilla::Extension::GnomeAttachmentStatus::Field';
 
-    return undef unless (defined $column);
-    print "updating: status column exists\n";
+    unless (exists (Bugzilla::Field::Choice::CLASS_MAP->{$type->FIELD_NAME()})) {
+        Bugzilla::Field::Choice::CLASS_MAP->{$type->FIELD_NAME} = $type;
+    }
+}
 
-    $column = $dbh->bz_column_info(a_s(), 'id');
-    return undef unless defined $column;
-    print "updating: attachment status table exists\n";
-    print "updating: it is an update\n";
-    1;
+sub add_gnome_attachment_status_table_to_schema
+{
+    my ($schema) = @_;
+    my $definition = {
+        FIELDS => [
+            id                  => {TYPE => 'SMALLSERIAL', NOTNULL => 1,
+                                    PRIMARYKEY => 1},
+            value               => {TYPE => 'varchar(64)', NOTNULL => 1},
+            sortkey             => {TYPE => 'INT2', NOTNULL => 1, DEFAULT => 0},
+            isactive            => {TYPE => 'BOOLEAN', NOTNULL => 1,
+                                    DEFAULT => 'TRUE'},
+            visibility_value_id => {TYPE => 'INT2'},
+            description         => {TYPE => 'MEDIUMTEXT', NOTNULL => 1}
+        ],
+        INDEXES => [
+            gnome_attachment_status_value_idx   => {FIELDS => ['value'],
+                                                    TYPE => 'UNIQUE'},
+            gnome_attachment_status_sortkey_idx => ['sortkey', 'value'],
+            gnome_attachment_status_visibility_value_id_idx => ['visibility_value_id'],
+        ]
+    };
+
+    # Create the table unconditionally. If we are updating from old
+    # setup, we will just remove the attachment_status table.
+    $schema->{g_a_s()} = $definition;
+}
+
+sub maybe_add_status_column
+{
+    my ($class, $columns) = @_;
+
+    if ($class->isa(bz_a())) {
+        push (@{$columns}, g_a_s());
+    }
+}
+
+# XXX: Gross hack. It would be better if we had a hook (named for
+# instance 'object_cgi_update) inside attachment.cgi which provides an
+# object being updated and either cgi object or cgi params.
+sub _cgi_hack_update {
+    my ($attachment) = @_;
+    my $cgi = Bugzilla->cgi;
+    my $status = $cgi->param(g_a_s());
+    my $action = $cgi->param('action');
+
+    if (defined($status) && defined($action) && $action eq 'update') {
+        $attachment->set_gnome_attachment_status($status);
+    }
+}
+
+sub maybe_add_status_update_columns
+{
+    my ($object, $columns) = @_;
+
+    if ($object->isa(bz_a())) {
+        push (@{$columns}, g_a_s());
+        _cgi_hack_update($object);
+    }
+}
+
+# Does the attachment status validation
+sub _validate_status {
+    my ($class_or_object, $value, $field) = @_;
+
+    if ($class_or_object->isa(bz_a()) && $field eq g_a_s()) {
+        if (defined ($value)) {
+            #my $validated_field = Bugzilla::Extension::GnomeAttachmentStatus::Field->check($value);
+            my $validated_field = Bugzilla::Field::Choice->type(fd_a_g_a_s())->check($value);
+
+            return $validated_field->name;
+        } else {
+            return Bugzilla::Extension::GnomeAttachmentStatus::Field::new_none;
+        }
+    }
+
+    return $value;
+}
+
+sub maybe_setup_status_validator
+{
+    my ($class, $validators) = @_;
+
+    if ($class->isa(bz_a())) {
+        if (exists ($validators->{g_a_s()})) {
+            my $old_validator = $validators->{g_a_s()};
+
+            $validators->{g_a_s()} = sub {
+                my ($class, $value, $field) = @_;
+
+                _validate_status($class, &{$old_validator}(@_), $field);
+            };
+        } else {
+            $validators->{g_a_s()} = \&_validate_status;
+        }
+    }
+}
+
+sub maybe_fixup_final_status_param
+{
+    my ($class, $params) = @_;
+
+    if ($class->isa(bz_a())) {
+        # assuming that status, if exists, is already validated
+        unless (defined $params->{g_a_s()} and $params->{'ispatch'}
+                and Bugzilla->user->in_group('editbugs'))
+        {
+            $params->{g_a_s()} = 'none';
+        }
+    }
+}
+
+sub _attachment_edit_handler {
+    my ($file, $vars, $context) = @_;
+    my $var_name = 'all_' . g_a_s() . '_values';
+    my @values = Bugzilla::Field::Choice->type(fd_a_g_a_s())->get_all();
+
+    $vars->set($var_name, \@values);
+}
+
+sub _attachment_list_handler {
+    my ($file, $vars, $context) = @_;
+    my $bug_id = $vars->get('bugid');
+
+    if ($bug_id) {
+        my $bug = Bugzilla::Bug->new($bug_id);
+        my $show_status = $bug->show_gnome_attachment_status();
+
+        $vars->set('show_gnome_attachment_status', $show_status);
+    }
+}
+
+sub _get_template_handlers
+{
+    {'attachment/edit.html.tmpl' => \&_attachment_edit_handler,
+     'attachment/list.html.tmpl' => \&_attachment_list_handler};
+}
+
+sub maybe_run_template_handler
+{
+    my ($file, $vars, $context) = @_;
+    my $handlers = _get_template_handlers;
+
+    if (exists ($handlers->{$file})) {
+        $handlers->{$file}($file, $vars, $context);
+    }
 }
 
 # Checks whether we have a vanilla instance.
@@ -79,39 +218,7 @@ sub _fresh {
     1;
 }
 
-sub get_g_a_s_definition {
-    {TYPE => 'varchar(64)',
-     NOTNULL => 1};
-}
-
-sub add_gnome_attachment_status_table_to_schema
-{
-    my ($schema) = @_;
-    my $definition = {
-        FIELDS => [
-            id                  => {TYPE => 'SMALLSERIAL', NOTNULL => 1,
-                                    PRIMARYKEY => 1},
-            value               => {TYPE => 'varchar(64)', NOTNULL => 1},
-            sortkey             => {TYPE => 'INT2', NOTNULL => 1, DEFAULT => 0},
-            isactive            => {TYPE => 'BOOLEAN', NOTNULL => 1,
-                                    DEFAULT => 'TRUE'},
-            visibility_value_id => {TYPE => 'INT2'},
-            description         => {TYPE => 'MEDIUMTEXT', NOTNULL => 1}
-        ],
-        INDEXES => [
-            gnome_attachment_status_value_idx   => {FIELDS => ['value'],
-                                                    TYPE => 'UNIQUE'},
-            gnome_attachment_status_sortkey_idx => ['sortkey', 'value'],
-            gnome_attachment_status_visibility_value_id_idx => ['visibility_value_id'],
-        ]
-    };
-
-    # Create the table unconditionally. If we are updating from old
-    # setup, we will just remove the attachment_status table.
-    $schema->{g_a_s()} = $definition;
-}
-
-sub fill_gnome_attachment_status_table {
+sub _fill_gnome_attachment_status_table {
     my $dbh = Bugzilla->dbh;
     # gnome attachment status table is created in db_schema_abstract_schema hook
     my $insert = $dbh->prepare('INSERT INTO ' . g_a_s() . ' (value, sortkey, description) VALUES (?,?,?)') or die $dbh->errstr;
@@ -129,10 +236,15 @@ sub fill_gnome_attachment_status_table {
     }
 }
 
-sub add_gnome_attachment_status_column {
+sub _get_g_a_s_definition {
+    {TYPE => 'varchar(64)',
+     NOTNULL => 1};
+}
+
+sub _add_gnome_attachment_status_column {
     my $dbh = Bugzilla->dbh;
 
-    $dbh->bz_add_column(a(), g_a_s(), get_g_a_s_definition(), 'none');
+    $dbh->bz_add_column(a(), g_a_s(), _get_g_a_s_definition(), 'none');
     $dbh->bz_add_index(a(), idx(a(), g_a_s()), [g_a_s()]);
 }
 
@@ -141,8 +253,8 @@ sub _install_gnome_attachment_status {
 
     $dbh->bz_start_transaction;
 
-    fill_gnome_attachment_status_table;
-    add_gnome_attachment_status_column;
+    _fill_gnome_attachment_status_table;
+    _add_gnome_attachment_status_column;
 
     # populate fielddefs table for attachment status
     my $field_params = {
@@ -152,6 +264,22 @@ sub _install_gnome_attachment_status {
     };
     Bugzilla::Field->create($field_params);
     $dbh->bz_commit_transaction;
+}
+
+# Checks whether we are updating from old attachment status. This is
+# very specific to the setup of GNOME database.
+sub _updating {
+    my $dbh = Bugzilla->dbh;
+    my $column = $dbh->bz_column_info(a(), st());
+
+    return undef unless (defined $column);
+    print "updating: status column exists\n";
+
+    $column = $dbh->bz_column_info(a_s(), 'id');
+    return undef unless defined $column;
+    print "updating: attachment status table exists\n";
+    print "updating: it is an update\n";
+    1;
 }
 
 # This code is very specific to the setup of GNOME database.
@@ -188,7 +316,7 @@ sub _update_gnome_attachment_status {
 
     $dbh->bz_start_transaction;
     # (1)
-    add_gnome_attachment_status_column;
+    _add_gnome_attachment_status_column;
     $stmt = $dbh->prepare('UPDATE ' . a() . ' SET ' . g_a_s() . ' = ' . st()) or die $dbh->errstr;
     $stmt->execute or die $stmt->errstr;
     $dbh->bz_drop_fk(a(), st());
@@ -198,7 +326,7 @@ sub _update_gnome_attachment_status {
     $dbh->bz_drop_index(a(), sa() . '_index');
     $dbh->bz_add_index(a(), idx(a(), 'ispatch'), ['ispatch']);
     # (3)
-    fill_gnome_attachment_status_table;
+    _fill_gnome_attachment_status_table;
     $dbh->bz_drop_table(a_s);
     # (4)
     $stmt = $dbh->prepare('UPDATE fielddefs SET name = \'' . fd_a_g_a_s() . '\' WHERE name = \'' . fd_a_s() . '\'') or die $dbh->errstr;
@@ -224,134 +352,6 @@ sub _update_gnome_attachment_status {
         $stmt->execute($query, $id) or die $stmt->errstr;
     }
     $dbh->bz_commit_transaction;
-}
-
-# Does the attachment status validation
-sub _validate_status {
-    my ($class_or_object, $value, $field) = @_;
-
-    if ($class_or_object->isa(bz_a()) && $field eq g_a_s()) {
-        if (defined ($value)) {
-            #my $validated_field = Bugzilla::Extension::GnomeAttachmentStatus::Field->check($value);
-            my $validated_field = Bugzilla::Field::Choice->type(fd_a_g_a_s())->check($value);
-
-            return $validated_field->name;
-        } else {
-            return Bugzilla::Extension::GnomeAttachmentStatus::Field::new_none;
-        }
-    }
-
-    return $value;
-}
-
-# XXX: Gross hack. It would be better if we had a hook (named for
-# instance 'object_cgi_update) inside attachment.cgi which provides an
-# object being updated and either cgi object or cgi params.
-sub _cgi_hack_update {
-    my ($attachment) = @_;
-    my $cgi = Bugzilla->cgi;
-    my $status = $cgi->param(g_a_s());
-    my $action = $cgi->param('action');
-
-    if (defined($status) && defined($action) && $action eq 'update') {
-        $attachment->set_gnome_attachment_status($status);
-    }
-}
-
-sub update_choice_class_map {
-    my $type = 'Bugzilla::Extension::GnomeAttachmentStatus::Field';
-
-    unless (exists (Bugzilla::Field::Choice::CLASS_MAP->{$type->FIELD_NAME()})) {
-        Bugzilla::Field::Choice::CLASS_MAP->{$type->FIELD_NAME} = $type;
-    }
-}
-
-sub _attachment_edit_handler {
-    my ($file, $vars, $context) = @_;
-    my $var_name = 'all_' . g_a_s() . '_values';
-    my @values = Bugzilla::Field::Choice->type(fd_a_g_a_s())->get_all();
-
-    $vars->set($var_name, \@values);
-}
-
-sub _attachment_list_handler {
-    my ($file, $vars, $context) = @_;
-    my $bug_id = $vars->get('bugid');
-
-    if ($bug_id) {
-        my $bug = Bugzilla::Bug->new($bug_id);
-        my $show_status = $bug->show_gnome_attachment_status();
-
-        $vars->set('show_gnome_attachment_status', $show_status);
-    }
-}
-
-sub maybe_add_status_column
-{
-    my ($class, $columns) = @_;
-
-    if ($class->isa(bz_a())) {
-        push (@{$columns}, g_a_s());
-    }
-}
-
-sub maybe_add_status_update_columns
-{
-    my ($object, $columns) = @_;
-
-    if ($object->isa(bz_a())) {
-        push (@{$columns}, g_a_s());
-        _cgi_hack_update($object);
-    }
-}
-
-sub maybe_setup_status_validator
-{
-    my ($class, $validators) = @_;
-
-    if ($class->isa(bz_a())) {
-        if (exists ($validators->{g_a_s()})) {
-            my $old_validator = $validators->{g_a_s()};
-
-            $validators->{g_a_s()} = sub {
-                my ($class, $value, $field) = @_;
-
-                _validate_status($class, &{$old_validator}(@_), $field);
-            };
-        } else {
-            $validators->{g_a_s()} = \&_validate_status;
-        }
-    }
-}
-
-sub maybe_fixup_final_status_param
-{
-    my ($class, $params) = @_;
-
-    if ($class->isa(bz_a())) {
-        # assuming that status, if exists, is already validated
-        unless (defined $params->{g_a_s()} and $params->{'ispatch'}
-                and Bugzilla->user->in_group('editbugs'))
-        {
-            $params->{g_a_s()} = 'none';
-        }
-    }
-}
-
-sub _get_template_handlers
-{
-    {'attachment/edit.html.tmpl' => \&_attachment_edit_handler,
-     'attachment/list.html.tmpl' => \&_attachment_list_handler};
-}
-
-sub maybe_run_template_handler
-{
-    my ($file, $vars, $context) = @_;
-    my $handlers = _get_template_handlers;
-
-    if (exists ($handlers->{$file})) {
-        $handlers->{$file}($file, $vars, $context);
-    }
 }
 
 sub perform_migration
