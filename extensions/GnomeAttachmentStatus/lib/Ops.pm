@@ -100,7 +100,7 @@ sub _attachment_list_handler {
             'attachment/edit.html.tmpl' => {
                 'handler' => \&_attachment_edit_handler,
                 'digest' => '426ceeb820cefad35cbbf10ab053c1fc9f53fa71a63dd455418bff3221a46a0e'
-            }
+            },
             'attachment/list.html.tmpl' => {
                 'handler' => \&_attachment_list_handler,
                 'digest' => 'b0c5edd84b8cc31666d0d0b4bf36cdb981ee322995dad891cf05f0f40b2d0392'
@@ -134,11 +134,15 @@ sub _attachment_list_handler {
         $infos;
     }
 
-    my $template_infos = _init_template_infos();
+    my $template_infos = undef;
 
     sub _get_template_infos
     {
-        $template_info;
+        unless (defined ($template_infos))
+        {
+            $template_infos = _init_template_infos();
+        }
+        $template_infos;
     }
 }
 
@@ -170,14 +174,14 @@ sub check_overriden_templates
         }
 
         my $sha = Digest::SHA->new(256);
-
         $sha->addfile($complete_path);
-        if ($sha->hexdigest ne $infos->{$file}{'digest'})
+        my $digest = $sha->hexdigest();
+        if ($digest ne $infos->{$file}{'digest'})
         {
             die "Original $file (at $complete_path) has changed " .
             'since last checksetup. Please check if the changes ' .
             'should be backported to overriden templates and ' .
-            'update the digest in template_info variable with ' .
+            'update the digest in template_infos variable with ' .
             $digest;
         }
     }
