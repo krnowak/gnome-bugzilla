@@ -226,12 +226,11 @@ sub _validate_status {
 
     if ($class_or_object->isa(bz_a()) && $field eq g_a_s()) {
         if (defined ($value)) {
-            #my $validated_field = Bugzilla::Extension::GnomeAttachmentStatus::Field->check($value);
             my $validated_field = Bugzilla::Field::Choice->type(fd_a_g_a_s())->check($value);
 
             return $validated_field->name;
         } else {
-            return Bugzilla::Extension::GnomeAttachmentStatus::Field::new_none;
+            return 'none';
         }
     }
 

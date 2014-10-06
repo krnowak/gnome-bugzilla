@@ -15,17 +15,9 @@ use Bugzilla::Extension::GnomeAttachmentStatus::Util;
 
 use constant DB_TABLE => g_a_s();
 use constant FIELD_NAME => fd_a_g_a_s();
-use constant G_A_S_PKG => 'Bugzilla::Extension::GnomeAttachmentStatus::Field';
 
 sub DB_COLUMNS {
     return ($_[0]->SUPER::DB_COLUMNS, 'description');
-}
-
-sub new_none {
-    my ($type) = @_;
-    my $class = ref($type) || $type || G_A_S_PKG;
-
-    $class->new({name => 'none'});
 }
 
 1;
