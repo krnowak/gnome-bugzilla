@@ -21,8 +21,8 @@
   header = header
   subheader = subheader
   doc_section = "attachments.html"
-  javascript_urls = ['js/attachment.js', 'js/field.js']
-  style_urls = ['skins/standard/attachment.css']
+  javascript_urls = ['js/attachment.js', 'js/field.js', 'extensions/GnomeAttachmentStatus/web/gnome_attachment_status.js']
+  style_urls = ['skins/standard/attachment.css', 'extensions/GnomeAttachmentStatus/web/gnome_attachment_status.css']
   yui = [ 'autocomplete' ]
   bodyclasses = "no_javascript"
 %]
@@ -145,7 +145,7 @@
             [% END %]
           </div>
         </div>                    
-          <div id="attachment_gnome_attachment_status">
+          <div id="attachment_gnome_attachment_status" class="[% IF attachment.ispatch %] gnome_attachment_status_is_a_patch [% ELSE %] gnome_attachment_status_is_not_a_patch [% END %]">
             <select id="gnome_attachment_status" name="gnome_attachment_status">
               [% FOREACH gnome_attachment_status = all_gnome_attachment_status_values %]
               <option value="[% gnome_attachment_status.value FILTER html %]"
