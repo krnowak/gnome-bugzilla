@@ -19,17 +19,13 @@ use Bugzilla::Extension::GnomeAttachmentStatus::Attachment;
 
 our @EXPORT = qw(
     add_gnome_attachment_status_table_to_schema
-    updating
-    fresh
-    install_gnome_attachment_status
-    update_gnome_attachment_status
     update_choice_class_map
-    attachment_edit_handler
-    attachment_list_handler
     maybe_add_status_column
     maybe_add_status_update_columns
     maybe_setup_status_validator
     maybe_fixup_final_status_param
+    maybe_run_template_handler
+    perform_migration
 );
 
 # This file can be loaded by your extension via
@@ -39,7 +35,7 @@ our @EXPORT = qw(
 
 # Checks whether we are updating from old attachment status. This is
 # very specific to the setup of GNOME database.
-sub updating {
+sub _updating {
     my $dbh = Bugzilla->dbh;
     my $column = $dbh->bz_column_info(a(), st());
 
@@ -54,7 +50,7 @@ sub updating {
 }
 
 # Checks whether we have a vanilla instance.
-sub fresh {
+sub _fresh {
     my $dbh = Bugzilla->dbh;
     my $column = $dbh->bz_column_info(a(), st());
 
@@ -140,7 +136,7 @@ sub add_gnome_attachment_status_column {
     $dbh->bz_add_index(a(), idx(a(), g_a_s()), [g_a_s()]);
 }
 
-sub install_gnome_attachment_status {
+sub _install_gnome_attachment_status {
     my $dbh = Bugzilla->dbh;
 
     $dbh->bz_start_transaction;
@@ -159,7 +155,7 @@ sub install_gnome_attachment_status {
 }
 
 # This code is very specific to the setup of GNOME database.
-sub update_gnome_attachment_status {
+sub _update_gnome_attachment_status {
     # What needs to be done here:
     # 'attachments' table:
     # - create new column - 'gnome_attachment_status', copy contents
@@ -270,7 +266,7 @@ sub update_choice_class_map {
     }
 }
 
-sub attachment_edit_handler {
+sub _attachment_edit_handler {
     my ($file, $vars, $context) = @_;
     my $var_name = 'all_' . g_a_s() . '_values';
     my @values = Bugzilla::Field::Choice->type(fd_a_g_a_s())->get_all();
@@ -278,7 +274,7 @@ sub attachment_edit_handler {
     $vars->set($var_name, \@values);
 }
 
-sub attachment_list_handler {
+sub _attachment_list_handler {
     my ($file, $vars, $context) = @_;
     my $bug_id = $vars->get('bugid');
 
@@ -339,6 +335,34 @@ sub maybe_fixup_final_status_param
         {
             $params->{g_a_s()} = 'none';
         }
+    }
+}
+
+sub _get_template_handlers
+{
+    {'attachment/edit.html.tmpl' => \&_attachment_edit_handler,
+     'attachment/list.html.tmpl' => \&_attachment_list_handler};
+}
+
+sub maybe_run_template_handler
+{
+    my ($file, $vars, $context) = @_;
+    my $handlers = _get_template_handlers;
+
+    if (exists ($handlers->{$file})) {
+        $handlers->{$file}($file, $vars, $context);
+    }
+}
+
+sub perform_migration
+{
+    if (_fresh) {
+        _install_gnome_attachment_status;
+    } elsif (_updating) {
+        _update_gnome_attachment_status;
+    } else {
+        print "install_update_db: we are already updated\n";
+        # Do nothing, we are already updated.
     }
 }
 

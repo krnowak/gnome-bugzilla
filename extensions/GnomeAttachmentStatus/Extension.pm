@@ -22,10 +22,6 @@ our $VERSION = '0.01';
 
 sub new {
     my ($class) = @_;
-    my $handlers = {'attachment/edit.html.tmpl' => \&attachment_edit_handler,
-                    'attachment/list.html.tmpl' => \&attachment_list_handler
-    };
-    my $instance = {'template_handlers' => $handlers};
 
     # TODO: Store a checksum of original attachment/list.html.tmpl and
     # compare it to checksum of actual attachment/list.html.tmpl. Bail
@@ -37,7 +33,7 @@ sub new {
     # Bugzilla::Install::Util here - in my case it causes some deep
     # recursion, httpd went berserk and my computer became a zombie.
     update_choice_class_map();
-    return $class->SUPER::new($instance);
+    return $class->SUPER::new();
 }
 
 # See the documentation of Bugzilla::Hook ("perldoc Bugzilla::Hook"
@@ -90,15 +86,11 @@ sub object_end_of_create_validators {
 
 sub template_before_process {
     my ($self, $args) = @_;
-    my $handlers = $self->{'template_handlers'};
     my $file = $args->{'file'};
+    my $vars = $args->{'vars'};
+    my $context = $args->{'context'};
 
-    if (exists ($handlers->{$file})) {
-        my $vars = $args->{'vars'};
-        my $context = $args->{'context'};
-
-        $handlers->{$file}($file, $vars, $context);
-    }
+    maybe_run_template_handler ($file, $vars, $context);
 }
 
 # Either rename already existing 'status' column to
@@ -117,14 +109,7 @@ sub template_before_process {
 # In short: argh!
 sub install_before_final_checks
 {
-    if (fresh) {
-        install_gnome_attachment_status;
-    } elsif (updating) {
-        update_gnome_attachment_status;
-    } else {
-        print "install_update_db: we are already updated\n";
-        # Do nothing, we are already updated.
-    }
+    perform_migration
 }
 
 sub enabled {
