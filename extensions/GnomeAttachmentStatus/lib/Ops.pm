@@ -18,6 +18,7 @@ use Bugzilla::Extension::GnomeAttachmentStatus::Bug;
 use Bugzilla::Extension::GnomeAttachmentStatus::Attachment;
 
 our @EXPORT = qw(
+    add_gnome_attachment_status_table_to_schema
     updating
     fresh
     install_gnome_attachment_status
@@ -83,6 +84,33 @@ sub fresh {
 sub get_g_a_s_definition {
     {TYPE => 'varchar(64)',
      NOTNULL => 1};
+}
+
+sub add_gnome_attachment_status_table_to_schema
+{
+    my ($schema) = @_;
+    my $definition = {
+        FIELDS => [
+            id                  => {TYPE => 'SMALLSERIAL', NOTNULL => 1,
+                                    PRIMARYKEY => 1},
+            value               => {TYPE => 'varchar(64)', NOTNULL => 1},
+            sortkey             => {TYPE => 'INT2', NOTNULL => 1, DEFAULT => 0},
+            isactive            => {TYPE => 'BOOLEAN', NOTNULL => 1,
+                                    DEFAULT => 'TRUE'},
+            visibility_value_id => {TYPE => 'INT2'},
+            description         => {TYPE => 'MEDIUMTEXT', NOTNULL => 1}
+        ],
+        INDEXES => [
+            gnome_attachment_status_value_idx   => {FIELDS => ['value'],
+                                                    TYPE => 'UNIQUE'},
+            gnome_attachment_status_sortkey_idx => ['sortkey', 'value'],
+            gnome_attachment_status_visibility_value_id_idx => ['visibility_value_id'],
+        ]
+    };
+
+    # Create the table unconditionally. If we are updating from old
+    # setup, we will just remove the attachment_status table.
+    $schema->{g_a_s()} = $definition;
 }
 
 sub fill_gnome_attachment_status_table {
