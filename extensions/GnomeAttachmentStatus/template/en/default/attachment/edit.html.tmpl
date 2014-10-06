@@ -145,9 +145,13 @@
             [% END %]
           </div>
         </div>                    
-          <div id="attachment_gnome_attachment_status_combo" class="[% IF attachment.ispatch %] gnome_attachment_status_is_a_patch [% ELSE %] gnome_attachment_status_is_not_a_patch [% END %]">
+          <div id="attachment_gnome_attachment_status_hidden">
+	    <input type="hidden" value="none" id="gnome_attachment_status" name="gnome_attachment_status" />
+	  </div>
+	  <div id="attachment_gnome_attachment_status_combo">
             <b><label for="gnome_attachment_status">Status</label>:</b>
-            <select id="gnome_attachment_status" name="gnome_attachment_status">
+            <select id="gnome_attachment_status" name="gnome_attachment_status"
+		    [% IF attachment.ispatch %] disabled [% END %]>
               [% FOREACH gnome_attachment_status = all_gnome_attachment_status_values %]
               <option value="[% gnome_attachment_status.value FILTER html %]"
                 [% IF attachment.gnome_attachment_status == gnome_attachment_status.value %]
@@ -157,9 +161,6 @@
               [% END %]
             </select>
           </div>
-          <div id="attachment_gnome_attachment_status_hidden" class="[% IF attachment.ispatch %] gnome_attachment_status_is_not_a_patch [% ELSE %] gnome_attachment_status_is_a_patch [% END %]">
-	    <input type="hidden" value="none" id="gnome_attachment_status" name="gnome_attachment_status" />
-	  </div>
       </div>
 
       <div id="attachment_view_window">

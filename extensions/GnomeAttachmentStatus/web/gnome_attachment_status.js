@@ -1,17 +1,17 @@
 function showOrHideGnomeAttachmentStatus() {
-    var combo = document.getElementById('attachment_gnome_attachment_status_combo');
-    var hidden = document.getElementById('attachment_gnome_attachment_status_hidden');
+    var div = document.getElementById('attachment_gnome_attachment_status_combo');
     var ispatch = document.getElementById('ispatch');
 
-    if (combo !== null && hidden !== null){
-	if (ispatch.checked) {
-            YAHOO.util.Dom.replaceClass(combo, 'gnome_attachment_status_is_not_a_patch', 'gnome_attachment_status_is_a_patch');
-            YAHOO.util.Dom.replaceClass(hidden, 'gnome_attachment_status_is_a_patch', 'gnome_attachment_status_is_not_a_patch');
-	} else {
-            YAHOO.util.Dom.replaceClass(combo, 'gnome_attachment_status_is_a_patch', 'gnome_attachment_status_is_not_a_patch');
-            YAHOO.util.Dom.replaceClass(hidden, 'gnome_attachment_status_is_not_a_patch', 'gnome_attachment_status_is_a_patch');
-	}
+    if (div === null || ispatch === null) {
+	return 1;
     }
+
+    var selects = div.getElementsByTagName('select');
+
+    if (selects.length < 1) {
+	return 1;
+    }
+    selects[0].disabled = !ispatch.checked;
 
     1;
 }
