@@ -145,7 +145,7 @@
             [% END %]
           </div>
         </div>                    
-          <div id="attachment_gnome_attachment_status" class="[% IF attachment.ispatch %] gnome_attachment_status_is_a_patch [% ELSE %] gnome_attachment_status_is_not_a_patch [% END %]">
+          <div id="attachment_gnome_attachment_status_combo" class="[% IF attachment.ispatch %] gnome_attachment_status_is_a_patch [% ELSE %] gnome_attachment_status_is_not_a_patch [% END %]">
             <b><label for="gnome_attachment_status">Status</label>:</b>
             <select id="gnome_attachment_status" name="gnome_attachment_status">
               [% FOREACH gnome_attachment_status = all_gnome_attachment_status_values %]
@@ -157,6 +157,9 @@
               [% END %]
             </select>
           </div>
+          <div id="attachment_gnome_attachment_status_hidden" class="[% IF attachment.ispatch %] gnome_attachment_status_is_not_a_patch [% ELSE %] gnome_attachment_status_is_a_patch [% END %]">
+	    <input type="hidden" value="none" id="gnome_attachment_status" name="gnome_attachment_status" />
+	  </div>
       </div>
 
       <div id="attachment_view_window">
